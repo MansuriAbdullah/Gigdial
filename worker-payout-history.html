@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payout History - GigDial</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* Utility overrides */
+        .dashboard-content {
+            padding: 32px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 800;
+        }
+
+        .balance-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .btn-withdraw {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .btn-withdraw:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border-gray);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .filter-row {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-gray);
+            display: flex;
+            gap: 12px;
+            background: #f8fafc;
+            overflow-x: auto;
+        }
+
+        .chip {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-gray);
+            background: white;
+            color: var(--text-gray);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .chip.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .chip:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transaction-table th {
+            text-align: left;
+            padding: 16px 24px;
+            color: var(--text-gray);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .transaction-table td {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-gray);
+            vertical-align: middle;
+            color: var(--text-dark);
+        }
+
+        .transaction-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .amount-row {
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', monospace;
+            font-size: 15px;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+                border: none;
+                background: none;
+                padding: 0.5rem;
+            }
+
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-sidebar {
+                display: none;
+                position: fixed;
+                z-index: 50;
+                height: 100%;
+            }
+
+            .dashboard-sidebar.active {
+                display: flex;
+            }
+
+            .balance-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="worker-dashboard.html#job-requests" class="sidebar-link">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Job Requests</span>
+                    <span class="badge badge-error" style="margin-left: auto">18</span>
+                </a>
+                <a href="worker-my-services.html" class="sidebar-link">
+                    <i data-lucide="list"></i>
+                    <span>My Services</span>
+                </a>
+                <a href="worker-earnings.html" class="sidebar-link active">
+                    <i data-lucide="indian-rupee"></i>
+                    <span>Earnings</span>
+                </a>
+                <a href="worker-profile-edit.html" class="sidebar-link">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="communication.html" class="sidebar-link">
+                    <i data-lucide="message-circle"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-warning" style="margin-left: auto">5</span>
+                </a>
+                <a href="worker-settings.html" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">RK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">Rajesh Kumar</div>
+                        <div class="sidebar-user-email">Professional Plumber</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-sm w-full" style="justify-content: flex-start"
+                    onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="dashboard-header-left">
+                    <button class="mobile-menu-toggle">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div>
+                        <h1 class="dashboard-title">Payout History</h1>
+                        <p class="text-gray text-sm" style="margin-top: 4px">Track your withdrawals and
+                            payment status</p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary flex items-center gap-2" onclick="window.location.href='worker-earnings.html'">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px"></i>
+                    Back to Earnings
+                </button>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="balance-card">
+                    <div>
+                        <div class="balance-label">Available for Payout</div>
+                        <div class="balance-amount">₹4,250.00</div>
+                        <div
+                            class="flex items-center text-sm" style="opacity: 0.8; margin-top: 8px;   gap: 6px">
+                            <i data-lucide="calendar" style="width: 14px; height: 14px"></i>
+                            Next auto-payout: Oct 18, 2024
+                        </div>
+                    </div>
+                    <button class="btn-withdraw">
+                        <i data-lucide="credit-card" style="width: 18px; height: 18px"></i>
+                        Withdraw Funds
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <div class="filter-row">
+                        <div class="chip active">All Transactions</div>
+                        <div class="chip">Completed</div>
+                        <div class="chip">Pending</div>
+                        <div class="chip">Failed</div>
+                    </div>
+                    <div style="overflow-x: auto">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Method</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="text-gray" style="font-family: monospace">TRX-982374</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 500">Oct 12, 2024</div>
+                                        <div class="text-gray" style="font-size: 12px">10:30 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="landmark"
+                                                class="text-gray" style="width: 16px; height: 16px"></i>
+                                            Bank Transfer
+                                        </div>
+                                    </td>
+                                    <td class="amount-row">-₹1,200.00</td>
+                                    <td><span class="status-badge status-completed"><i data-lucide="check-circle"
+                                                style="width: 12px; height: 12px"></i> Paid</span></td>
+                                    <td><button class="btn btn-ghost btn-sm" style="color: var(--primary-blue)">View
+                                            Invoice</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="text-gray" style="font-family: monospace">TRX-982301</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 500">Oct 05, 2024</div>
+                                        <div class="text-gray" style="font-size: 12px">02:15 PM</div>
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="wallet"
+                                                class="text-gray" style="width: 16px; height: 16px"></i>
+                                            Wallet
+                                        </div>
+                                    </td>
+                                    <td class="amount-row">-₹550.00</td>
+                                    <td><span class="status-badge status-completed"><i data-lucide="check-circle"
+                                                style="width: 12px; height: 12px"></i> Paid</span></td>
+                                    <td><button class="btn btn-ghost btn-sm" style="color: var(--primary-blue)">View
+                                            Invoice</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="text-gray" style="font-family: monospace">TRX-981992</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 500">Sep 28, 2024</div>
+                                        <div class="text-gray" style="font-size: 12px">09:45 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="landmark"
+                                                class="text-gray" style="width: 16px; height: 16px"></i>
+                                            Bank Transfer
+                                        </div>
+                                    </td>
+                                    <td class="amount-row">-₹2,100.00</td>
+                                    <td><span class="status-badge status-pending"><i data-lucide="clock"
+                                                style="width: 12px; height: 12px"></i> Processing</span></td>
+                                    <td><button class="btn btn-ghost btn-sm" style="color: var(--primary-blue)">View
+                                            Invoice</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Filter chips interaction
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

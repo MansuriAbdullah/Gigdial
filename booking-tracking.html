@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Booking - GigDial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-links">
+                <a href="home.html">Back to Home</a>
+            </div>
+            <div class="top-bar-links">
+                <a href="help-center.html">Help</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="padding-top: var(--space-4)">
+        <h1 style="font-size: 24px; font-weight: 800; margin-bottom: var(--space-4)">Track Booking #GD-882910</h1>
+
+        <div class="tracking-layout">
+            <!-- Map Area -->
+            <div class="map-container">
+                <!-- Placeholder Map Image -->
+                <img src="https://images.pexels.com/photos/1770809/pexels-photo-1770809.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                    class="map-placeholder" alt="Map View">
+                <div class="map-marker">
+                    <i data-lucide="user" style="width: 20px; height: 20px"></i>
+                </div>
+                <div
+                    class="font-semibold text-sm" style="position: absolute; bottom: 16px; left: 16px; background: white; padding: 8px 12px; border-radius: var(--radius-md);   box-shadow: var(--shadow-md)">
+                    Worker is 5 mins away
+                </div>
+            </div>
+
+            <!-- Sidebar Status -->
+            <div class="status-sidebar">
+                <div class="worker-mini-profile">
+                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100"
+                        style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover">
+                    <div>
+                        <div class="font-bold">Rajesh Kumar</div>
+                        <div class="text-gray" style="font-size: 12px">4.9  • Professional Cleaner</div>
+                    </div>
+                    <a href="tel:+"
+                        style="margin-left: auto; color: var(--primary-green); background: #e6f4ea; padding: 8px; border-radius: 50%">
+                        <i data-lucide="phone" style="width: 18px; height: 18px"></i>
+                    </a>
+                </div>
+
+                <div class="otp-card">
+                    <div class="font-semibold" style="font-size: 12px;  text-transform: uppercase">Start Job OTP</div>
+                    <div class="otp-code">4 8 2 9</div>
+                    <div class="text-gray" style="font-size: 11px">Share this code with Rajesh to start the job
+                    </div>
+                </div>
+
+                <div class="stepper">
+                    <div class="step completed">
+                        <div class="step-dot"></div>
+                        <div class="step-title">Booking Confirmed</div>
+                        <div class="step-desc">10:05 AM</div>
+                    </div>
+                    <div class="step active">
+                        <div class="step-dot"></div>
+                        <div class="step-title">Worker En Route</div>
+                        <div class="step-desc">Expected arrival: 10:30 AM</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-dot"></div>
+                        <div class="step-title">Work Started</div>
+                        <div class="step-desc">Pending OTP verification</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-dot"></div>
+                        <div class="step-title">Job Completed</div>
+                        <div class="step-desc">Pending payment & review</div>
+                    </div>
+                </div>
+
+                <button class="btn-emergency">
+                    <i data-lucide="alert-triangle" style="width: 16px; height: 16px"></i>
+                    Report Safety Issue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

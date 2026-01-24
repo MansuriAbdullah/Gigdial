@@ -1,0 +1,126 @@
+{
+    "featured_workers": [
+        {
+            "id": "worker-1",
+            "name": "Rajesh Kumar",
+            "title": "Professional Plumber",
+            "service": "Plumbing",
+            "rating": 4.9,
+            "reviews": 342,
+            "experience": "8 years",
+            "location": "Bopal, Ahmedabad",
+            "verified": true,
+            "eco_friendly": false,
+            "top_rated": true,
+            "avatar": "/assets/workers/rajesh.jpg",
+            "image": "/assets/workers/rajesh-work.jpg",
+            "jobs_completed": 450
+        },
+        {
+            "id": "worker-2",
+            "name": "Priya Sharma",
+            "title": "Expert Electrician",
+            "service": "Electrical",
+            "rating": 4.8,
+            "reviews": 289,
+            "experience": "6 years",
+            "location": "Satellite, Ahmedabad",
+            "verified": true,
+            "eco_friendly": true,
+            "top_rated": true,
+            "avatar": "/assets/workers/priya.jpg",
+            "image": "/assets/workers/priya-work.jpg",
+            "jobs_completed": 380
+        },
+        {
+            "id": "worker-3",
+            "name": "Amit Patel",
+            "title": "Painting Specialist",
+            "service": "Painting",
+            "rating": 4.9,
+            "reviews": 421,
+            "experience": "10 years",
+            "location": "Maninagar, Ahmedabad",
+            "verified": true,
+            "eco_friendly": true,
+            "top_rated": true,
+            "avatar": "/assets/workers/amit.jpg",
+            "image": "/assets/workers/amit-work.jpg",
+            "jobs_completed": 520
+        },
+        {
+            "id": "worker-4",
+            "name": "Sunita Desai",
+            "title": "Home Cleaning Expert",
+            "service": "Cleaning",
+            "rating": 4.7,
+            "reviews": 198,
+            "experience": "5 years",
+            "location": "Vastrapur, Ahmedabad",
+            "verified": true,
+            "eco_friendly": true,
+            "top_rated": false,
+            "avatar": "/assets/workers/sunita.jpg",
+            "image": "/assets/workers/sunita-work.jpg",
+            "jobs_completed": 280
+        },
+        {
+            "id": "worker-5",
+            "name": "Vikram Singh",
+            "title": "AC Repair Technician",
+            "service": "AC Repair",
+            "rating": 4.8,
+            "reviews": 312,
+            "experience": "7 years",
+            "location": "Bodakdev, Ahmedabad",
+            "verified": true,
+            "eco_friendly": false,
+            "top_rated": true,
+            "avatar": "/assets/workers/vikram.jpg",
+            "image": "/assets/workers/vikram-work.jpg",
+            "jobs_completed": 410
+        },
+        {
+            "id": "worker-6",
+            "name": "Meera Joshi",
+            "title": "Carpenter & Furniture Expert",
+            "service": "Carpentry",
+            "rating": 4.9,
+            "reviews": 267,
+            "experience": "9 years",
+            "location": "Navrangpura, Ahmedabad",
+            "verified": true,
+            "eco_friendly": true,
+            "top_rated": true,
+            "avatar": "/assets/workers/meera.jpg",
+            "image": "/assets/workers/meera-work.jpg",
+            "jobs_completed": 350
+        }
+    ],
+    "trust_stats": [
+        {
+            "icon": "check-circle",
+            "value": "15,000+",
+            "label": "Services Completed",
+            "sublabel": "This month"
+        },
+        {
+            "icon": "star",
+            "value": "4.8★",
+            "label": "Average Rating",
+            "sublabel": "From 10,000+ reviews"
+        },
+        {
+            "icon": "users",
+            "value": "20,000+",
+            "label": "Verified Workers",
+            "sublabel": "Background checked"
+        },
+        {
+            "icon": "clock",
+            "value": "24/7",
+            "label": "Support Available",
+            "sublabel": "Always here to help"
+        }
+    ]
+}

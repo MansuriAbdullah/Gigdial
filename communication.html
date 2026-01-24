@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - GigDial Worker</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* Utility replacements for chat specific needs */
+        .w-full {
+            width: 100%;
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .gap-2 {
+            gap: 8px;
+        }
+
+        .gap-3 {
+            gap: 12px;
+        }
+
+        .gap-4 {
+            gap: 16px;
+        }
+
+        .p-4 {
+            padding: 16px;
+        }
+
+        .px-4 {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .py-2 {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+
+        .mt-1 {
+            margin-top: 4px;
+        }
+
+        .ml-3 {
+            margin-left: 12px;
+        }
+
+        .mr-2 {
+            margin-right: 8px;
+        }
+
+        .text-sm {
+            font-size: 14px;
+        }
+
+        .text-xs {
+            font-size: 12px;
+        }
+
+        .text-lg {
+            font-size: 18px;
+        }
+
+        .text-xl {
+            font-size: 20px;
+        }
+
+        .text-2xl {
+            font-size: 24px;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-gray {
+            color: var(--text-gray);
+        }
+
+        .text-dark {
+            color: var(--text-dark);
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .text-primary {
+            color: var(--primary-blue);
+        }
+
+        .text-success {
+            color: var(--primary-green);
+        }
+
+        .bg-white {
+            background: white;
+        }
+
+        .bg-gray-100 {
+            background: #f3f4f6;
+        }
+
+        .border-b {
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .border-t {
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .rounded-lg {
+            border-radius: 8px;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Chat specific overrides */
+        .chat-main {
+            height: calc(100vh - 80px);
+        }
+
+        .messages-area {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .media-picker {
+            display: none;
+            flex-direction: column;
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            position: absolute;
+            bottom: 60px;
+            left: 20px;
+            width: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .media-picker.active {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="worker-dashboard.html#job-requests" class="sidebar-link">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Job Requests</span>
+                    <span class="badge badge-error" style="margin-left: auto">8</span>
+                </a>
+                <a href="worker-my-services.html" class="sidebar-link">
+                    <i data-lucide="briefcase"></i>
+                    <span>My Services</span>
+                </a>
+                <a href="worker-earnings.html" class="sidebar-link">
+                    <i data-lucide="wallet"></i>
+                    <span>Earnings</span>
+                </a>
+                <a href="worker-profile-edit.html" class="sidebar-link">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="communication.html" class="sidebar-link active">
+                    <i data-lucide="message-circle"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-warning" style="margin-left: auto">5</span>
+                </a>
+                <a href="worker-settings.html" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">RK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">Rajesh Kumar</div>
+                        <div class="sidebar-user-email">Professional Plumber</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-sm w-full" style="justify-content: flex-start"
+                    onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main chat-page-main" style="padding: 0">
+
+            <!-- Mobile Toggle Header (Only visible on mobile via CSS usually, but explicit here for chat layout) -->
+            <div class="chat-top-bar border-b bg-white p-4 items-center gap-3">
+                <button class="mobile-menu-toggle btn btn-ghost btn-sm">
+                    <i data-lucide="menu"></i>
+                </button>
+                <h1 class="text-lg font-bold text-dark">Messages</h1>
+            </div>
+
+            <div class="chat-layout h-full">
+                <!-- Chat Sidebar (List) -->
+                <div class="chat-list-sidebar">
+                    <div class="p-4 border-b">
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute text-gray"
+                                style="left: 12px; top: 10px; width: 16px; height: 16px"></i>
+                            <input type="text" placeholder="Search messages..." class="form-input w-full"
+                                style="padding-left: 36px">
+                        </div>
+                    </div>
+                    <div class="chat-list">
+                        <div class="chat-item active">
+                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100"
+                                class="chat-avatar" alt="User">
+                            <div class="chat-info">
+                                <div class="chat-name">Rajesh Kumar</div>
+                                <div class="chat-preview">Sure, I'll be there by 10 AM.</div>
+                            </div>
+                            <div class="text-xs text-gray">10:30 AM</div>
+                        </div>
+                        <div class="chat-item">
+                            <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100"
+                                class="chat-avatar" alt="User">
+                            <div class="chat-info">
+                                <div class="chat-name">Priya Singh</div>
+                                <div class="chat-preview">Can you send me a photo of the...</div>
+                            </div>
+                            <div class="text-xs text-gray">Yesterday</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Chat -->
+                <div class="chat-main flex-col">
+                    <div class="chat-header justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100"
+                                class="chat-avatar" alt="User">
+                            <div>
+                                <div class="font-bold text-dark">Rajesh Kumar</div>
+                                <div class="text-xs text-success flex items-center gap-1">
+                                    <span
+                                        style="width: 8px; height: 8px; background: currentColor; border-radius: 50%; display: inline-block"></span>
+                                    Online
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="icon-btn btn-ghost" onclick="startVoiceCall()" title="Voice Call"><i
+                                    data-lucide="phone"></i></button>
+                            <button class="icon-btn btn-ghost" onclick="startVideoCall()" title="Video Call"><i
+                                    data-lucide="video"></i></button>
+                            <button class="icon-btn btn-ghost" title="More"><i data-lucide="more-vertical"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="messages-area p-4">
+                        <div class="message received">
+                            Hello! I'm Rajesh, your assigned cleaner for today.
+                        </div>
+                        <div class="message sent">
+                            Hi Rajesh. Could you please bring extra cleaning supplies for the balcony?
+                        </div>
+                        <div class="message received">
+                            Sure, I can do that. Could you send me a photo of the balcony area so I know what to expect?
+                        </div>
+                        <div class="message sent flex-col items-end">
+                            <img src="https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=300"
+                                class="message-img" alt="Balcony">
+                            <div class="mt-1">Here it is.</div>
+                        </div>
+                        <div class="message received">
+                            Thanks! I'll be there by 10 AM.
+                        </div>
+                    </div>
+
+                    <div class="input-area relative">
+                        <button class="icon-btn btn-ghost" onclick="toggleMediaPicker()">
+                            <i data-lucide="paperclip"></i>
+                        </button>
+                        <input type="text" class="form-input w-full" placeholder="Type a message...">
+                        <button class="btn btn-primary flex justify-center items-center"
+                            style="padding: 8px; border-radius: 50%; width: 40px; height: 40px">
+                            <i data-lucide="send" style="width: 18px; height: 18px"></i>
+                        </button>
+
+                        <!-- Media Picker Popup -->
+                        <div class="media-picker" id="mediaPicker">
+                            <div class="picker-option">
+                                <i data-lucide="image" class="text-success" style="width: 16px"></i> Photo Gallery
+                            </div>
+                            <div class="picker-option">
+                                <i data-lucide="camera" class="text-primary" style="width: 16px"></i> Camera
+                            </div>
+                            <div class="picker-option">
+                                <i data-lucide="file-text" style="color: #9333ea; width: 16px"></i> Document
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Video Call Overlay -->
+    <div class="call-overlay" id="videoCallOverlay">
+        <div class="video-grid">
+            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                class="remote-video" alt="Remote Video">
+            <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300"
+                class="local-video" alt="Local Video">
+        </div>
+        <div class="call-controls">
+            <button class="control-btn"><i data-lucide="mic-off"></i></button>
+            <button class="control-btn"><i data-lucide="video-off"></i></button>
+            <button class="control-btn end-call" onclick="endCall('videoCallOverlay')"><i
+                    data-lucide="phone-off"></i></button>
+            <button class="control-btn"><i data-lucide="monitor"></i></button>
+        </div>
+    </div>
+
+    <!-- Voice Call Overlay -->
+    <div class="call-overlay" id="voiceCallOverlay">
+        <div class="voice-call-ui">
+            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300"
+                class="voice-avatar" alt="Avatar">
+            <h2 class="text-2xl font-bold mb-2">Rajesh Kumar</h2>
+            <p style="opacity: 0.7; margin-bottom: 32px">00:45</p>
+        </div>
+        <div class="call-controls">
+            <button class="control-btn"><i data-lucide="mic-off"></i></button>
+            <button class="control-btn"><i data-lucide="volume-2"></i></button>
+            <button class="control-btn end-call" onclick="endCall('voiceCallOverlay')"><i
+                    data-lucide="phone-off"></i></button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        function toggleMediaPicker() {
+            const picker = document.getElementById('mediaPicker');
+            picker.classList.toggle('active');
+        }
+
+        function startVideoCall() {
+            document.getElementById('videoCallOverlay').style.display = 'flex';
+        }
+
+        function startVoiceCall() {
+            document.getElementById('voiceCallOverlay').style.display = 'flex';
+        }
+
+        function endCall(overlayId) {
+            document.getElementById(overlayId).style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

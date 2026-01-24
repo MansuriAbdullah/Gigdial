@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - GigDial Worker</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Inline Override for specific utility needs not yet in styles.css -->
+    <style>
+        .accent-primary-blue {
+            accent-color: var(--primary-blue);
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .md\:grid-cols-2 {
+            @media (min-width: 768px) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .md\:grid-cols-3 {
+            @media (min-width: 768px) {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .md\:grid-cols-4 {
+            @media (min-width: 768px) {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        .md\:col-span-2 {
+            @media (min-width: 768px) {
+                grid-column: span 2 / span 2;
+            }
+        }
+
+        .gap-3 {
+            gap: 12px;
+        }
+
+        .gap-4 {
+            gap: 16px;
+        }
+
+        .gap-6 {
+            gap: 24px;
+        }
+
+        .p-3 {
+            padding: 12px;
+        }
+
+        .p-4 {
+            padding: 16px;
+        }
+
+        .p-6 {
+            padding: 24px;
+        }
+
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+
+        .mb-3 {
+            margin-bottom: 12px;
+        }
+
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+
+        .mb-8 {
+            margin-bottom: 32px;
+        }
+
+        .mt-8 {
+            margin-top: 32px;
+        }
+
+        .pt-6 {
+            padding-top: 24px;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .aspect-square {
+            aspect-ratio: 1 / 1;
+        }
+
+        .object-cover {
+            object-fit: cover;
+        }
+
+        .rounded-lg {
+            border-radius: var(--radius-lg);
+        }
+
+        .rounded-xl {
+            border-radius: var(--radius-xl);
+        }
+
+        .border-t {
+            border-top-width: 1px;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .block {
+            display: block;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .right-0 {
+            right: 0;
+        }
+
+        .bottom-0 {
+            bottom: 0;
+        }
+
+        .top-2 {
+            top: 8px;
+        }
+
+        .right-2 {
+            right: 8px;
+        }
+
+        .bg-gray-100 {
+            background-color: #f3f4f6;
+        }
+
+        .bg-gray-200 {
+            background-color: #e5e7eb;
+        }
+
+        .bg-blue-50 {
+            background-color: #eff6ff;
+        }
+
+        .bg-green-50 {
+            background-color: #f0fdf4;
+        }
+
+        .bg-yellow-100 {
+            background-color: #fef9c3;
+        }
+
+        .text-sm {
+            font-size: 14px;
+        }
+
+        .text-xs {
+            font-size: 12px;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .text-gray-400 {
+            color: #9ca3af;
+        }
+
+        .text-gray-500 {
+            color: #6b7280;
+        }
+
+        .text-gray-600 {
+            color: #4b5563;
+        }
+
+        .text-green-800 {
+            color: #166534;
+        }
+
+        .text-green-700 {
+            color: #15803d;
+        }
+
+        .text-blue-800 {
+            color: #1e40af;
+        }
+
+        .text-blue-600 {
+            color: #2563eb;
+        }
+
+        .text-yellow-800 {
+            color: #854d0e;
+        }
+
+        .border-gray-100 {
+            border-color: #f3f4f6;
+        }
+
+        .border-gray-200 {
+            border-color: #e5e7eb;
+        }
+
+        .border-green-200 {
+            border-color: #bbf7d0;
+        }
+
+        .border-green-100 {
+            border-color: #dcfce7;
+        }
+
+        .border-yellow-200 {
+            border-color: #fde68a;
+        }
+
+        .opacity-50 {
+            opacity: 0.5;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .space-y-4>*+* {
+            margin-top: 16px;
+        }
+
+        /* Specific overrides */
+        .dashboard-section {
+            padding: 32px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#job-requests" class="sidebar-link">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Job Requests</span>
+                    <span class="badge badge-error" style="margin-left: auto">8</span>
+                </a>
+                <a href="worker-my-services.html" class="sidebar-link">
+                    <i data-lucide="briefcase"></i>
+                    <span>My Services</span>
+                </a>
+                <a href="worker-earnings.html" class="sidebar-link">
+                    <i data-lucide="wallet"></i>
+                    <span>Earnings</span>
+                </a>
+                <a href="worker-profile-edit.html" class="sidebar-link active">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="communication.html" class="sidebar-link">
+                    <i data-lucide="message-circle"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-warning" style="margin-left: auto">5</span>
+                </a>
+                <a href="worker-settings.html" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">RK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">Rajesh Kumar</div>
+                        <div class="sidebar-user-email">Professional Plumber</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-sm w-full" style="justify-content: flex-start">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+
+            <!-- Top Bar -->
+            <header class="dashboard-header">
+                <div class="dashboard-header-left">
+                    <button class="mobile-menu-toggle">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="dashboard-title">Edit Your Profile <i data-lucide="file-text" class="inline-icon"
+                            style="color: var(--primary-green)"></i>
+                    </h1>
+                </div>
+                <div class="dashboard-header-right">
+                    <button class="icon-btn flex justify-center items-center"
+                        style="background: white; border: none; padding: 8px; border-radius: 50%; width: 40px; height: 40px;    box-shadow: var(--shadow-sm)">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot" style="top: 2px; right: 2px"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="form-container">
+
+                    <!-- Profile Header -->
+                    <div class="profile-hero mb-8">
+                        <div class="relative">
+                            <div class="profile-hero-avatar flex items-center justify-center bg-gray-200 text-2xl font-bold text-gray-600 flex justify-center items-center"
+                                style="font-size: 32px">
+                                RK
+                            </div>
+                            <button
+                                class="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md border border-gray-200 hover:bg-gray-50 text-primary-blue flex justify-center items-center"
+                                style="width: 36px; height: 36px;    position: absolute; bottom: 0; right: -10px; background: white; border-radius: 50%; box-shadow: var(--shadow-md); border: 1px solid var(--border-gray)">
+                                <i data-lucide="camera" class="w-4 h-4"
+                                    style="width: 18px; height: 18px; color: var(--primary-blue)"></i>
+                            </button>
+                        </div>
+                        <div class="profile-hero-info">
+                            <h1 class="mb-1" style="font-size: 32px">Rajesh Kumar</h1>
+                            <p class="profile-hero-meta" style="font-size: 16px">Professional Plumber • Member since
+                                March 2024</p>
+                        </div>
+                    </div>
+
+                    <!-- Basic Information -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title flex items-center gap-2">
+                                <i data-lucide="user" style="color: var(--primary-blue)"></i> Basic Information
+                            </h2>
+                        </div>
+
+                        <div class="form-grid"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Full Name <span style="color: var(--warning-red)">*</span>
+                                </label>
+                                <div class="relative" style="position: relative">
+                                    <input type="text" class="form-input" style="padding-right: 40px"
+                                        value="Rajesh Kumar" placeholder="Enter your full name">
+                                    <button class="voice-btn"
+                                        style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%)"
+                                        title="Voice Input">
+                                        <i data-lucide="mic" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Phone Number <span style="color: var(--warning-red)">*</span>
+                                </label>
+                                <input type="tel" class="form-input" value="+91 98765 43210"
+                                    placeholder="+91 XXXXX XXXXX">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Email Address
+                                </label>
+                                <input type="email" class="form-input" value="rajesh.kumar@email.com"
+                                    placeholder="your@email.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Date of Birth
+                                </label>
+                                <input type="date" class="form-input" value="1985-06-15">
+                            </div>
+
+                            <div class="form-group" style="grid-column: 1 / -1">
+                                <label class="form-label">
+                                    Professional Bio
+                                </label>
+                                <div class="relative" style="position: relative">
+                                    <textarea class="form-textarea w-full" rows="3"
+                                        style="padding-right: 40px;  padding: 12px; border: 1px solid var(--border-gray); border-radius: var(--radius-md)"
+                                        placeholder="Tell customers about your experience and expertise...">Experienced plumber with 15+ years in residential and commercial plumbing. Specialized in eco-friendly solutions and emergency repairs.</textarea>
+                                    <button class="voice-btn" style="position: absolute; right: 8px; top: 12px"
+                                        title="Voice Input">
+                                        <i data-lucide="mic" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact & Location -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title flex items-center gap-2">
+                                <i data-lucide="map-pin" style="color: var(--primary-blue)"></i> Contact & Location
+                            </h2>
+                        </div>
+
+                        <div class="form-grid"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    City <span style="color: var(--warning-red)">*</span>
+                                </label>
+                                <input type="text" class="form-input" value="Ahmedabad" placeholder="Enter your city">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    State <span style="color: var(--warning-red)">*</span>
+                                </label>
+                                <input type="text" class="form-input" value="Gujarat" placeholder="Enter your state">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Pincode
+                                </label>
+                                <input type="text" class="form-input" value="380058" placeholder="Enter pincode">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Service Radius (km)
+                                </label>
+                                <input type="number" class="form-input" value="15"
+                                    placeholder="How far will you travel?">
+                            </div>
+
+                            <div class="form-group" style="grid-column: 1 / -1">
+                                <label class="form-label">
+                                    Full Address
+                                </label>
+                                <textarea class="form-textarea w-full" rows="2"
+                                    style="padding: 12px; border: 1px solid var(--border-gray); border-radius: var(--radius-md)"
+                                    placeholder="Enter your complete address...">123, Green Park Society, Bopal, Ahmedabad</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience & Skills -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title flex items-center gap-2">
+                                <i data-lucide="award" style="color: var(--primary-blue)"></i> Experience & Skills
+                            </h2>
+                        </div>
+
+                        <div class="form-grid"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Years of Experience <span style="color: var(--warning-red)">*</span>
+                                </label>
+                                <input type="number" class="form-input" value="15" placeholder="Years">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Primary Service Category <span style="color: var(--warning-red)">*</span>
+                                </label>
+                                <select class="form-input">
+                                    <option>Plumbing</option>
+                                    <option>Electrical</option>
+                                    <option>Carpentry</option>
+                                    <option>Painting</option>
+                                    <option>AC Repair</option>
+                                    <option>Cleaning</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="grid-column: 1 / -1">
+                                <label class="form-label mb-3 block">
+                                    Service Skills (Select all that apply)
+                                </label>
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                    <label
+                                        class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                        <input type="checkbox" checked class="accent-primary-blue">
+                                        <span class="text-sm">Tap Repair</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                        <input type="checkbox" checked class="accent-primary-blue">
+                                        <span class="text-sm">Pipe Installation</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                        <input type="checkbox" checked class="accent-primary-blue">
+                                        <span class="text-sm">Bathroom Fitting</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                        <input type="checkbox" class="accent-primary-blue">
+                                        <span class="text-sm">Water Heater</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                        <input type="checkbox" checked class="accent-primary-blue">
+                                        <span class="text-sm">Drainage</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                        <input type="checkbox" class="accent-primary-blue">
+                                        <span class="text-sm">Leak Detection</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="grid-column: 1 / -1">
+                                <label class="form-label mb-3 block">
+                                    Languages Spoken
+                                </label>
+                                <div class="flex flex-wrap gap-3">
+                                    <label
+                                        class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
+                                        <input type="checkbox" checked class="accent-primary-blue">
+                                        <span class="text-sm font-medium">Hindi</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
+                                        <input type="checkbox" checked class="accent-primary-blue">
+                                        <span class="text-sm font-medium">Gujarati</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
+                                        <input type="checkbox" checked class="accent-primary-blue">
+                                        <span class="text-sm font-medium">English</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
+                                        <input type="checkbox" class="accent-primary-blue">
+                                        <span class="text-sm font-medium">Marathi</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Availability -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title flex items-center gap-2">
+                                <i data-lucide="calendar" style="color: var(--primary-blue)"></i> Availability
+                            </h2>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" checked class="w-5 h-5 accent-primary-blue">
+                                    <span class="font-medium">Monday</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="time" class="form-input" style="width: 120px" value="09:00">
+                                    <span class="text-gray-400">to</span>
+                                    <input type="time" class="form-input" style="width: 120px" value="18:00">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" checked class="w-5 h-5 accent-primary-blue">
+                                    <span class="font-medium">Tuesday</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="time" class="form-input" style="width: 120px" value="09:00">
+                                    <span class="text-gray-400">to</span>
+                                    <input type="time" class="form-input" style="width: 120px" value="18:00">
+                                </div>
+                            </div>
+                            <!-- ... -->
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" checked class="w-5 h-5 accent-primary-blue">
+                                    <span class="font-medium">Wednesday</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="time" class="form-input" style="width: 120px" value="09:00">
+                                    <span class="text-gray-400">to</span>
+                                    <input type="time" class="form-input" style="width: 120px" value="18:00">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="w-5 h-5 accent-primary-blue">
+                                    <span class="font-medium">Thursday</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="time" class="form-input" style="width: 120px" value="09:00">
+                                    <span class="text-gray-400">to</span>
+                                    <input type="time" class="form-input" style="width: 120px" value="18:00">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="w-5 h-5 accent-primary-blue">
+                                    <span class="font-medium">Friday</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="time" class="form-input" style="width: 120px" value="09:00">
+                                    <span class="text-gray-400">to</span>
+                                    <input type="time" class="form-input" style="width: 120px" value="18:00">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="w-5 h-5 accent-primary-blue">
+                                    <span class="font-medium">Saturday</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="time" class="form-input" style="width: 120px" value="10:00">
+                                    <span class="text-gray-400">to</span>
+                                    <input type="time" class="form-input" style="width: 120px" value="16:00">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="w-5 h-5 accent-primary-blue">
+                                    <span class="font-medium text-gray-400">Sunday</span>
+                                </div>
+                                <div class="flex items-center gap-2 opacity-50">
+                                    <input type="time" class="form-input" style="width: 120px" value="10:00" disabled>
+                                    <span class="text-gray-400">to</span>
+                                    <input type="time" class="form-input" style="width: 120px" value="14:00" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio/Gallery -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title flex items-center gap-2">
+                                <i data-lucide="image" style="color: var(--primary-blue)"></i> Portfolio / Work Gallery
+                            </h2>
+                        </div>
+
+                        <div
+                            class="flex items-center justify-between bg-blue-50 p-4 rounded-lg mb-6 border border-blue-100">
+                            <div>
+                                <h3 class="font-semibold text-blue-800">Enable AR/3D View</h3>
+                                <p class="text-sm text-blue-600">Allow customers to view your work in augmented reality
+                                </p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" value="" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                                    style="background-color: #e5e7eb"></div>
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="relative aspect-square rounded-lg overflow-hidden group">
+                                <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=200"
+                                    alt="Work sample" class="w-full h-full object-cover">
+                                <button
+                                    class="absolute top-2 right-2 bg-white/90 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-error hover:bg-error hover:text-white"
+                                    style="position: absolute; top: 8px; right: 8px; background: white; border-radius: 50%; padding: 4px">
+                                    <i data-lucide="trash-2" class="w-4 h-4 text-warning-red"></i>
+                                </button>
+                            </div>
+                            <div class="relative aspect-square rounded-lg overflow-hidden group">
+                                <img src="https://images.unsplash.com/photo-1505798577917-a651a5d40320?auto=format&fit=crop&q=80&w=200"
+                                    alt="Work sample" class="w-full h-full object-cover">
+                                <button
+                                    class="absolute top-2 right-2 bg-white/90 p-1.5 rounded-full transition-opacity text-error hover:bg-error hover:text-white"
+                                    style="position: absolute; top: 8px; right: 8px; background: white; border-radius: 50%; padding: 4px">
+                                    <i data-lucide="trash-2" class="w-4 h-4 text-warning-red"></i>
+                                </button>
+                            </div>
+                            <div class="relative aspect-square rounded-lg overflow-hidden group">
+                                <img src="https://images.unsplash.com/photo-1581092921461-eab62e97a783?auto=format&fit=crop&q=80&w=200"
+                                    alt="Work sample" class="w-full h-full object-cover">
+                                <button
+                                    class="absolute top-2 right-2 bg-white/90 p-1.5 rounded-full transition-opacity text-error hover:bg-error hover:text-white"
+                                    style="position: absolute; top: 8px; right: 8px; background: white; border-radius: 50%; padding: 4px">
+                                    <i data-lucide="trash-2" class="w-4 h-4 text-warning-red"></i>
+                                </button>
+                            </div>
+                            <button
+                                class="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center hover:border-primary-blue hover:bg-blue-50 transition-colors w-full flex flex-col justify-center items-center"
+                                style="height: 100%; border: 2px dashed var(--border-gray); border-radius: var(--radius-lg);     background: none; cursor: pointer">
+                                <i data-lucide="plus" class="w-8 h-8 text-gray-400 mb-2"></i>
+                                <span class="text-sm font-medium text-gray-500">Add Photo</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sustainability Badge -->
+                    <div class="dashboard-section border border-green-200">
+                        <div class="section-header">
+                            <h2 class="section-title flex items-center gap-2 text-primary-green">
+                                <i data-lucide="leaf" style="color: var(--primary-green)"></i> Sustainability Badge
+                            </h2>
+                        </div>
+
+                        <div class="bg-green-50 p-6 rounded-xl border border-green-100 mb-6">
+                            <h3 class="text-lg font-bold text-green-800 mb-2 flex items-center gap-2">
+                                <i data-lucide="award" class="w-5 h-5"></i>
+                                Apply for Eco-Friendly Worker Badge
+                            </h3>
+                            <p class="text-green-700 mb-4 text-sm">
+                                Get verified as an eco-friendly service provider. This badge helps you attract
+                                environmentally conscious customers.
+                            </p>
+
+                            <div class="form-group mb-4">
+                                <label class="block font-semibold text-green-800 mb-2">
+                                    Describe your eco-friendly practices
+                                </label>
+                                <textarea class="form-textarea w-full w-full" style="border: 1px solid #bbf7d0"
+                                    placeholder="E.g., I use water-saving fixtures, recycle materials, use eco-friendly products...">I use water-efficient fixtures and promote sustainable plumbing solutions. All waste materials are properly recycled.</textarea>
+                            </div>
+
+                            <div
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold border border-yellow-200">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                                Application Pending Review
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Guidelines -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h2 class="section-title flex items-center gap-2">
+                                <i data-lucide="indian-rupee" style="color: var(--primary-blue)"></i> Pricing
+                                Guidelines
+                            </h2>
+                        </div>
+
+                        <div class="bg-blue-50 text-blue-800 p-4 rounded-lg mb-6 flex items-start gap-3">
+                            <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                            <p class="text-sm">These are your personal reference prices. Actual pricing is discussed
+                                with, and negotiated by, customers via "Call to Quote".</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px">
+                            <div class="form-group">
+                                <label class="form-label">Minimum Service Charge (₹)</label>
+                                <input type="number" class="form-input" value="299" placeholder="₹">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Hourly Rate (Optional)</label>
+                                <input type="number" class="form-input" value="500" placeholder="₹ per hour">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-gray-200 flex"
+                        style="justify-content: flex-end; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-gray)">
+                        <button class="btn btn-outline" style="min-width: 120px">
+                            Cancel
+                        </button>
+                        <button class="btn btn-primary" style="min-width: 160px">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            Save Changes
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Voice input simulation
+        const voiceButtons = document.querySelectorAll('.voice-btn');
+        voiceButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.style.color = 'red';
+                setTimeout(() => {
+                    btn.style.color = '';
+                    alert('Voice input feature coming soon!');
+                }, 2000);
+            });
+        });
+
+        // Day checkbox toggle
+        const dayCheckboxes = document.querySelectorAll('.day-checkbox input');
+        dayCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const dayRow = e.target.closest('.day-row');
+                const timeInputs = dayRow.querySelectorAll('.time-input');
+
+                if (e.target.checked) {
+                    dayRow.classList.add('active');
+                    timeInputs.forEach(input => input.disabled = false);
+                } else {
+                    dayRow.classList.remove('active');
+                    timeInputs.forEach(input => input.disabled = true);
+                }
+            });
+        });
+
+        // Save button
+        document.querySelector('.btn-primary').addEventListener('click', () => {
+            alert('Profile updated successfully! ');
+        });
+
+        // Cancel button
+        document.querySelector('.btn-outline').addEventListener('click', () => {
+            if (confirm('Discard changes?')) {
+                window.location.href = 'worker-dashboard.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

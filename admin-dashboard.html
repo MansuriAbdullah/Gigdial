@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - GigDial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="admin-sidebar-header">
+                <img src="public/images/gigdial-logo.png" alt="GigDial" style="height: 32px; width: auto;">
+                GigDial Admin
+            </a>
+            <nav>
+                <a href="admin-dashboard.html" class="admin-nav-item active">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="admin-user-management.html" class="admin-nav-item">
+                    <i data-lucide="users"></i> Users
+                </a>
+                <a href="admin-service-approval.html" class="admin-nav-item">
+                    <i data-lucide="check-square"></i> Service Approvals
+                </a>
+                <a href="admin-portfolio-approval.html" class="admin-nav-item">
+                    <i data-lucide="image"></i> Portfolio Approvals
+                </a>
+                <a href="dispute-resolution.html" class="admin-nav-item">
+                    <i data-lucide="scale"></i> Disputes
+                </a>
+                <a href="admin-content-moderation.html" class="admin-nav-item">
+                    <i data-lucide="shield-alert"></i> Moderation
+                </a>
+                <a href="policies.html" class="admin-nav-item">
+                    <i data-lucide="settings"></i> Settings
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <h1 class="admin-title">Platform Overview</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value">₹12.5L</div>
+                    <div class="kpi-trend trend-up">
+                        <i data-lucide="trending-up" class="w-4"></i> +15% vs last month
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Bookings</div>
+                    <div class="stat-value">1,240</div>
+                    <div class="kpi-trend trend-up">
+                        <i data-lucide="trending-up" class="w-4"></i> +8% vs last month
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">New Users</div>
+                    <div class="stat-value">450</div>
+                    <div class="kpi-trend trend-up">
+                        <i data-lucide="trending-up" class="w-4"></i> +12% vs last month
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Dispute Rate</div>
+                    <div class="stat-value">1.2%</div>
+                    <div class="kpi-trend trend-down">
+                        <i data-lucide="trending-down" class="w-4"></i> -0.5% vs last month
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Live Activity Map</div>
+                            <button class="btn btn-outline btn-sm">View Full Map</button>
+                        </div>
+                        <div class="map-placeholder p-8 bg-slate-50 border rounded-lg text-center">
+                            <div class="text-center">
+                                <i data-lucide="map" class="w-12 h-12 mb-2 mx-auto text-gray"></i>
+                                <div class="text-gray font-medium">Interactive Map of Active Jobs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Urgent Alerts</div>
+                        </div>
+                        <div class="alert-item">
+                            <i data-lucide="alert-triangle" class="text-error w-5"></i>
+                            <div>
+                                <div class="font-bold text-sm">High Value Dispute</div>
+                                <div class="text-xs">Booking #GD-9921 requires immediate attention.</div>
+                            </div>
+                        </div>
+                        <div class="alert-item warning">
+                            <i data-lucide="server" class="text-warning w-5"></i>
+                            <div>
+                                <div class="font-bold text-sm">Payment Gateway Latency</div>
+                                <div class="text-xs">UPI transactions are taking longer than usual.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Pending Approvals</div>
+                        </div>
+                        <div class="admin-list-item">
+                            <div>
+                                <div class="font-bold text-sm">New Worker Profiles</div>
+                                <div class="text-xs text-gray">15 pending review</div>
+                            </div>
+                            <button
+                                class="text-primary font-bold bg-transparent border-0 cursor-pointer">Review</button>
+                        </div>
+                        <div class="admin-list-item">
+                            <div>
+                                <div class="font-bold text-sm">Service Listings</div>
+                                <div class="text-xs text-gray">8 pending review</div>
+                            </div>
+                            <button
+                                class="text-primary font-bold bg-transparent border-0 cursor-pointer">Review</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

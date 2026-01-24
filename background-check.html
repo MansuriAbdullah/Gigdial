@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Check - GigDial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-links">
+                <a href="worker-profile-public.html">Back to Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="check-container">
+        <div class="shield-icon">
+            <i data-lucide="shield-check" style="width: 40px; height: 40px"></i>
+        </div>
+
+        <div class="trust-badge">
+            <i data-lucide="check" style="width: 14px"></i> GigDial Verified
+        </div>
+
+        <h1 style="font-size: 24px; font-weight: 800; margin-bottom: var(--space-2)">Background Verified</h1>
+        <p class="text-gray">This professional has passed our comprehensive background screening process.
+        </p>
+
+        <div class="check-list">
+            <div class="check-item">
+                <span class="check-label">Criminal Record</span>
+                <span class="check-status"><i data-lucide="check-circle" style="width: 16px"></i> Clear</span>
+            </div>
+            <div class="check-item">
+                <span class="check-label">Identity Verification</span>
+                <span class="check-status"><i data-lucide="check-circle" style="width: 16px"></i> Verified</span>
+            </div>
+            <div class="check-item">
+                <span class="check-label">Address Verification</span>
+                <span class="check-status"><i data-lucide="check-circle" style="width: 16px"></i> Verified</span>
+            </div>
+            <div class="check-item">
+                <span class="check-label">Reference Check</span>
+                <span class="check-status"><i data-lucide="check-circle" style="width: 16px"></i> Completed</span>
+            </div>
+        </div>
+
+        <div class="verified-date">
+            Last verified on October 1, 2024 by <strong>Checkr</strong>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

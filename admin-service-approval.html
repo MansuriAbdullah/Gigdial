@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Approvals - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="admin-sidebar-header">
+                <img src="public/images/gigdial-logo.png" alt="GigDial" style="height: 32px; width: auto;">
+                GigDial Admin
+            </a>
+            <nav>
+                <a href="admin-dashboard.html" class="admin-nav-item">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="admin-user-management.html" class="admin-nav-item">
+                    <i data-lucide="users"></i> Users
+                </a>
+                <a href="admin-service-approval.html" class="admin-nav-item active">
+                    <i data-lucide="check-square"></i> Service Approvals
+                </a>
+                <a href="admin-portfolio-approval.html" class="admin-nav-item">
+                    <i data-lucide="image"></i> Portfolio Approvals
+                </a>
+                <a href="dispute-resolution.html" class="admin-nav-item">
+                    <i data-lucide="scale"></i> Disputes
+                </a>
+                <a href="admin-content-moderation.html" class="admin-nav-item">
+                    <i data-lucide="shield-alert"></i> Moderation
+                </a>
+                <a href="policies.html" class="admin-nav-item">
+                    <i data-lucide="settings"></i> Settings
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <h1 class="admin-title">Pending Service Approvals</h1>
+
+            <div class="approval-grid">
+                <!-- Card 1 -->
+                <div class="approval-card">
+                    <img src="https://images.pexels.com/photos/224924/pexels-photo-224924.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        class="card-img" alt="Kitchen Cleaning">
+                    <div class="card-body">
+                        <div class="service-title">Advanced Kitchen Deep Clean</div>
+                        <div class="worker-info">
+                            <i data-lucide="user" class="w-4"></i> Submitted by Rajesh Kumar
+                        </div>
+                        <p class="service-desc">Includes chimney cleaning, cabinet scrubbing, and floor polishing. Using
+                            eco-friendly chemicals only.</p>
+                        <div class="price-tag">₹2,500</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-reject">Reject</button>
+                        <button class="btn-approve">Approve</button>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="approval-card">
+                    <img src="https://images.pexels.com/photos/1386649/pexels-photo-1386649.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        class="card-img" alt="Pipe Repair">
+                    <div class="card-body">
+                        <div class="service-title">Emergency Pipe Fix</div>
+                        <div class="worker-info">
+                            <i data-lucide="user" class="w-4"></i> Submitted by Amit Patel
+                        </div>
+                        <p class="service-desc">24/7 emergency service for burst pipes and major leaks. Reach within 45
+                            mins.</p>
+                        <div class="price-tag">
+                            ₹800
+                            <span class="text-xs font-normal text-gray">(Base Charge)</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-reject">Reject</button>
+                        <button class="btn-approve">Approve</button>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="approval-card">
+                    <img src="https://images.pexels.com/photos/3990359/pexels-photo-3990359.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        class="card-img" alt="Sofa Cleaning">
+                    <div class="card-body">
+                        <div class="service-title">Sofa Shampooing</div>
+                        <div class="worker-info">
+                            <i data-lucide="user" class="w-4"></i> Submitted by CleanPro Services
+                        </div>
+                        <p class="service-desc">Deep shampoo cleaning for 5-seater sofa set. Drying time 4-5 hours.</p>
+                        <div class="price-tag">₹1,200</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-reject">Reject</button>
+                        <button class="btn-approve">Approve</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Insurance Claim - GigDial</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px 0;
+            background: #f8fafc;
+        }
+
+        .policy-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            font-weight: 700;
+            color: #15803d;
+            background: white;
+            border: 1px solid #15803d;
+            padding: 4px 12px;
+            border-radius: 999px;
+        }
+
+        .text-sm {
+            font-size: 14px;
+        }
+
+        .text-xs {
+            font-size: 12px;
+        }
+
+        .text-gray {
+            color: var(--text-gray);
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .mt-1 {
+            margin-top: 4px;
+        }
+
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+
+        .mb-1 {
+            margin-bottom: 4px;
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        @media (max-width: 640px) {
+            .policy-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <!-- Standard Header -->
+        <header class="top-bar" style="background: white; border-bottom: 1px solid var(--border-gray); padding: 0">
+            <div class="container flex justify-between items-center"
+                style="height: 70px">
+                <a href="index.html" class="logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+                <a href="worker-wellness.html" class="nav-btn btn-outline text-gray"
+                    style="border: none">
+                    <i data-lucide="arrow-left" style="width: 18px; height: 18px; margin-right: 8px"></i>
+                    Back to Wellness
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="centered-form-container"
+                style="background: white; border-radius: 20px; padding: 40px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-gray)">
+                <div class="text-center" style="margin-bottom: 32px">
+                    <div
+                        class="flex justify-center items-center" style="width: 60px; height: 60px; background: #e0f2fe; border-radius: 50%; color: #0284c7;    margin: 0 auto 16px; font-size: 24px">
+                        <i data-lucide="shield-plus"></i>
+                    </div>
+                    <h1 class="form-title mb-2">File an Insurance Claim</h1>
+                    <p class="form-subtitle">Submit your claim details below. Our team will review it within 24-48
+                        hours.</p>
+                </div>
+
+                <div class="policy-card">
+                    <div class="policy-info">
+                        <h3 class="font-bold mb-1" style="color: #14532d">GigDial Worker Protection Plan</h3>
+                        <p class="text-sm text-gray">Policy #: GD-2024-12345 • Coverage: ₹5,00,000</p>
+                    </div>
+                    <div class="status-badge">
+                        Active
+                    </div>
+                </div>
+
+                <form
+                    onsubmit="event.preventDefault(); alert('Claim Submitted Successfully! Reference ID: CLM-99238'); window.location.href='worker-wellness.html';">
+                    <div class="form-group">
+                        <label class="form-label mb-2 font-semibold" style="display: block">Claim
+                            Type</label>
+                        <select class="form-input w-full"
+                            style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-gray); background: white"
+                            required>
+                            <option value="">Select type</option>
+                            <option value="medical">Medical Emergency</option>
+                            <option value="accident">Accidental Injury</option>
+                            <option value="equipment">Equipment Loss/Damage</option>
+                            <option value="disability">Temporary Disability</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label mb-2 font-semibold" style="display: block">Date of
+                            Incident</label>
+                        <input type="date" class="form-input w-full"
+                            style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-gray)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label mb-2 font-semibold" style="display: block">Incident
+                            Description</label>
+                        <textarea class="form-input w-full" rows="5"
+                            placeholder="Please describe what happened in detail..."
+                            style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-gray)"
+                            required></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 32px">
+                        <label class="form-label mb-2 font-semibold"
+                            style="display: block">Supporting Documents</label>
+                        <p class="text-xs text-gray mb-2">Upload medical bills, FIR copy, or photos of damaged
+                            equipment.</p>
+                        <div class="file-upload text-center" onclick="document.getElementById('file-input').click()"
+                            style="border: 2px dashed var(--border-gray); border-radius: 12px; padding: 24px;  cursor: pointer; background: #f8fafc; transition: all 0.2s">
+                            <div
+                                class="flex justify-center items-center" style="width: 40px; height: 40px; background: white; border-radius: 50%;    margin: 0 auto 12px; border: 1px solid var(--border-gray)">
+                                <i data-lucide="upload-cloud"
+                                    class="text-gray" style="width: 20px; height: 20px"></i>
+                            </div>
+                            <div class="font-bold text-sm" style="color: var(--primary-blue)">Click to upload documents
+                            </div>
+                            <div class="text-xs text-gray mt-1">PDF, JPG, PNG (Max 5MB)</div>
+                        </div>
+                        <input type="file" id="file-input" style="display: none" multiple>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label mb-2 font-semibold" style="display: block">Bank
+                            Account for Settlement</label>
+                        <select class="form-input w-full"
+                            style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-gray); background: white">
+                            <option>SBI - XXXX1234 (Primary)</option>
+                            <option>HDFC - XXXX5678</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full justify-center"
+                        style="padding: 14px; font-size: 16px; margin-top: 16px">
+                        Submit Claim
+                    </button>
+                    <button type="button" class="btn btn-ghost w-full justify-center"
+                        style="margin-top: 12px"
+                        onclick="window.location.href='worker-wellness.html'">
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Standard Footer -->
+        <footer class="footer">
+            <div class="container text-gray text-sm text-center">
+                <p>&copy; 2024 GigDial Inc. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

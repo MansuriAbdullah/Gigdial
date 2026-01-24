@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Addresses - GigDial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+
+    .modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="customer-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="services-catalog.html" class="sidebar-link">
+                    <i data-lucide="search"></i>
+                    <span>Browse Services</span>
+                </a>
+                <a href="customer-service-history.html" class="sidebar-link">
+                    <i data-lucide="calendar"></i>
+                    <span>Service History</span>
+                </a>
+                <a href="customer-subscriptions.html" class="sidebar-link">
+                    <i data-lucide="repeat"></i>
+                    <span>Subscriptions</span>
+                </a>
+                <a href="customer-dashboard.html#messages" class="sidebar-link">
+                    <i data-lucide="message-square"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-urgent ms-auto">3</span>
+                </a>
+                <a href="customer-dashboard.html#favorites" class="sidebar-link">
+                    <i data-lucide="heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="customer-dashboard.html#payments" class="sidebar-link">
+                    <i data-lucide="credit-card"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="customer-addresses.html" class="sidebar-link active">
+                    <i data-lucide="map-pin"></i>
+                    <span>Saved Addresses</span>
+                </a>
+                <a href="referral-program.html" class="sidebar-link">
+                    <i data-lucide="gift"></i>
+                    <span>Refer & Earn</span>
+                </a>
+                <a href="loyalty-dashboard.html" class="sidebar-link">
+                    <i data-lucide="crown"></i>
+                    <span>Loyalty Points</span>
+                </a>
+                <a href="customer-dashboard.html#settings" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-ghost btn-sm w-full text-left" onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Mobile Toggle -->
+            <div class="dashboard-header lg:hidden">
+                <button class="mobile-menu-toggle btn btn-ghost btn-sm">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="logo-mobile">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </div>
+            </div>
+
+            <div class="dashboard-header justify-between mb-8">
+                <h1 class="dashboard-title">Saved Addresses</h1>
+            </div>
+
+            <div class="addr-list">
+                <div class="addr-card">
+                    <div class="addr-details">
+                        <div class="addr-header">
+                            <div class="addr-icon"><i data-lucide="home" style="width: 16px; height: 16px"></i></div>
+                            <h3 class="addr-type">Home <span class="default-badge">Default</span></h3>
+                        </div>
+                        <div class="addr-text">Flat 402, Sunshine Apartments, MG Road, Bangalore - 560001</div>
+                    </div>
+                    <div class="addr-actions">
+                        <button class="btn btn-ghost btn-sm"><i data-lucide="edit-2" style="width: 16px"></i></button>
+                        <button class="btn btn-ghost btn-sm btn-delete"
+                            style="color: var(--warning-red); background: none"><i data-lucide="trash-2"
+                                style="width: 16px"></i></button>
+                    </div>
+                </div>
+
+                <div class="addr-card">
+                    <div class="addr-details">
+                        <div class="addr-header">
+                            <div class="addr-icon"><i data-lucide="briefcase" style="width: 16px; height: 16px"></i>
+                            </div>
+                            <h3 class="addr-type">Office</h3>
+                        </div>
+                        <div class="addr-text">Tech Park, Tower B, 5th Floor, Whitefield, Bangalore - 560066</div>
+                    </div>
+                    <div class="addr-actions">
+                        <button class="btn btn-ghost btn-sm"><i data-lucide="edit-2" style="width: 16px"></i></button>
+                        <button class="btn btn-ghost btn-sm btn-delete"
+                            style="color: var(--warning-red); background: none"><i data-lucide="trash-2"
+                                style="width: 16px"></i></button>
+                    </div>
+                </div>
+
+                <button class="add-new-addr-btn" onclick="openModal()">
+                    <i data-lucide="plus"></i> Add New Address
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Address Modal -->
+    <div class="modal-overlay" id="addrModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Address</h3>
+                <button class="btn btn-ghost btn-sm" onclick="closeModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <form onsubmit="event.preventDefault(); alert('Address Saved!'); closeModal();">
+                <div class="form-group">
+                    <label class="form-label">Label (e.g., Home, Office)</label>
+                    <input type="text" class="form-input" placeholder="Home">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Full Address</label>
+                    <input type="text" class="form-input" placeholder="House No, Street, Area">
+                </div>
+
+                <div class="row flex" style="gap: 16px">
+                    <div class="form-group" style="flex: 1">
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-input" placeholder="Bangalore">
+                    </div>
+                    <div class="form-group" style="flex: 1">
+                        <label class="form-label">Pincode</label>
+                        <input type="text" class="form-input" placeholder="560001">
+                    </div>
+                </div>
+
+                <div
+                    class="flex justify-center items-center" style="height: 150px; background: #e0e0e0; border-radius: var(--radius-md);    margin-bottom: 24px">
+                    <span
+                        class="flex items-center gap-2 font-semibold text-gray">
+                        <i data-lucide="map-pin"></i> Map Preview
+                    </span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">Save Address</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile toggle
+        const toggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        if (toggle && sidebar) {
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        function openModal() {
+            document.getElementById('addrModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('addrModal').classList.remove('active');
+        }
+
+        // Close modal on click outside
+        document.getElementById('addrModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

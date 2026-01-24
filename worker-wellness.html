@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Dashboard - GigDial Worker</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Job Requests</span>
+                    <span class="badge badge-error">8</span>
+                </a>
+                <a href="worker-my-services.html" class="sidebar-link">
+                    <i data-lucide="briefcase"></i>
+                    <span>My Services</span>
+                </a>
+                <a href="worker-earnings.html" class="sidebar-link">
+                    <i data-lucide="wallet"></i>
+                    <span>Earnings</span>
+                </a>
+                <a href="worker-profile-edit.html" class="sidebar-link">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="worker-wellness.html" class="sidebar-link active">
+                    <i data-lucide="heart"></i>
+                    <span>Wellness Dashboard</span>
+                </a>
+                <a href="communication.html" class="sidebar-link">
+                    <i data-lucide="message-circle"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-warning">5</span>
+                </a>
+                <a href="worker-settings.html" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar"></div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">Rajesh Kumar</div>
+                        <div class="sidebar-user-email">Professional Plumber</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-sm btn-block" onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+
+            <!-- Top Bar -->
+            <header class="dashboard-header">
+                <div class="dashboard-header-left">
+                    <button class="mobile-menu-toggle">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="dashboard-title">
+                        Your Wellness Dashboard
+                        <i data-lucide="heart"
+                            class="w-5 h-5 inline-block align-middle ml-2 text-success fill-current"></i>
+                    </h1>
+                </div>
+                <div class="dashboard-header-right">
+                    <button class="icon-btn">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+
+                <!-- Wellness Hero -->
+                <div class="wellness-hero bg-gradient-emerald">
+                    <div class="wellness-hero-content">
+                        <h1>
+                            Your Well-being Matters
+                            <i data-lucide="star" class="w-5 h-5 inline-block align-middle ml-2"></i>
+                        </h1>
+                        <p>We care about your health, growth, and financial security. Access comprehensive support
+                            resources designed just for you.</p>
+                    </div>
+                </div>
+
+                <!-- Wellness Stats -->
+                <div class="wellness-stats">
+                    <div class="wellness-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon health">
+                                <i data-lucide="heart-pulse" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">Active</div>
+                                <div class="stat-label">Health Insurance</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wellness-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon training">
+                                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">3/5</div>
+                                <div class="stat-label">Courses Completed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wellness-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon financial">
+                                <i data-lucide="trending-up" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">₹8,450</div>
+                                <div class="stat-label">Savings This Month</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wellness-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon support">
+                                <i data-lucide="headphones" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">24/7</div>
+                                <div class="stat-label">Support Available</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health & Insurance -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title-wrapper">
+                            <div class="section-icon bg-gradient-red">
+                                <i data-lucide="shield-plus"></i>
+                            </div>
+                            <h2 class="section-title">Health & Insurance</h2>
+                        </div>
+                    </div>
+
+                    <div class="insurance-card">
+                        <div class="insurance-header">
+                            <h3 class="text-xl text-dark m-0 flex items-center gap-2">
+                                <i data-lucide="shield-check" class="w-5 h-5 text-error"></i>
+                                GigDial Worker Health Insurance
+                            </h3>
+                            <div class="insurance-status active">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                Active
+                            </div>
+                        </div>
+
+                        <div class="insurance-details">
+                            <div class="insurance-detail">
+                                <div class="insurance-detail-label">Coverage Amount</div>
+                                <div class="insurance-detail-value">₹5,00,000</div>
+                            </div>
+                            <div class="insurance-detail">
+                                <div class="insurance-detail-label">Policy Number</div>
+                                <div class="insurance-detail-value">GD-2024-12345</div>
+                            </div>
+                            <div class="insurance-detail">
+                                <div class="insurance-detail-label">Valid Until</div>
+                                <div class="insurance-detail-value">Dec 31, 2025</div>
+                            </div>
+                            <div class="insurance-detail">
+                                <div class="insurance-detail-label">Premium</div>
+                                <div class="insurance-detail-value">₹299/month</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 mt-4">
+                            <button class="btn btn-outline-danger flex-1">
+                                <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+                                View Policy Details
+                            </button>
+                            <button onclick="window.location.href='insurance-claim.html'" class="btn btn-danger flex-1">
+                                <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+                                File a Claim
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-box info-box-blue mt-4">
+                        <h4 class="text-base text-dark m-0 mb-2 flex items-center gap-2">
+                            <i data-lucide="info" class="w-5 h-5 text-primary"></i>
+                            Health Benefits Include:
+                        </h4>
+                        <ul class="text-gray pl-6 m-0 leading-relaxed">
+                            <li>Hospitalization coverage up to ₹5 lakhs</li>
+                            <li>Free annual health checkup</li>
+                            <li>Accident insurance coverage</li>
+                            <li>Cashless treatment at 5000+ hospitals</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Training & Upskilling -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title-wrapper">
+                            <div class="section-icon bg-gradient-royal">
+                                <i data-lucide="book-open"></i>
+                            </div>
+                            <h2 class="section-title">Training & Upskilling</h2>
+                        </div>
+                        <a href="worker-dashboard.html" class="link-primary font-bold">View All Courses →</a>
+                    </div>
+
+                    <div class="course-grid">
+                        <!-- Course 1 -->
+                        <div class="course-card" onclick="window.location.href='training-player.html'">
+                            <div class="course-thumbnail bg-gradient-royal">
+                                <i data-lucide="wrench" class="w-16 h-16 text-white"></i>
+                            </div>
+                            <div class="course-content">
+                                <span class="course-badge">IN PROGRESS</span>
+                                <h3 class="course-title">Advanced Plumbing Techniques</h3>
+                                <p class="course-description">Master modern plumbing methods and eco-friendly
+                                    installations</p>
+                                <div class="course-meta">
+                                    <div class="course-meta-item">
+                                        <i data-lucide="clock" class="w-4 h-4"></i>
+                                        <span>8 hours</span>
+                                    </div>
+                                    <div class="course-meta-item">
+                                        <i data-lucide="award" class="w-4 h-4"></i>
+                                        <span>Certificate</span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Course 2 -->
+                        <div class="course-card">
+                            <div class="course-thumbnail bg-gradient-emerald">
+                                <i data-lucide="leaf" class="w-16 h-16 text-white"></i>
+                            </div>
+                            <div class="course-content">
+                                <span class="course-badge badge-success">COMPLETED</span>
+                                <h3 class="course-title">Sustainable Practices</h3>
+                                <p class="course-description">Learn eco-friendly service methods and green
+                                    certifications</p>
+                                <div class="course-meta">
+                                    <div class="course-meta-item">
+                                        <i data-lucide="clock" class="w-4 h-4"></i>
+                                        <span>4 hours</span>
+                                    </div>
+                                    <div class="course-meta-item">
+                                        <i data-lucide="award" class="w-4 h-4"></i>
+                                        <span>Certificate</span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-success w-full"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Course 3 -->
+                        <div class="course-card">
+                            <div class="course-thumbnail bg-gradient-purple">
+                                <i data-lucide="users" class="w-16 h-16 text-white"></i>
+                            </div>
+                            <div class="course-content">
+                                <span class="course-badge badge-purple">NEW</span>
+                                <h3 class="course-title">Customer Service Excellence</h3>
+                                <p class="course-description">Improve communication and customer satisfaction skills</p>
+                                <div class="course-meta">
+                                    <div class="course-meta-item">
+                                        <i data-lucide="clock" class="w-4 h-4"></i>
+                                        <span>6 hours</span>
+                                    </div>
+                                    <div class="course-meta-item">
+                                        <i data-lucide="award" class="w-4 h-4"></i>
+                                        <span>Certificate</span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Wellness -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title-wrapper">
+                            <div class="section-icon bg-gradient-emerald">
+                                <i data-lucide="piggy-bank"></i>
+                            </div>
+                            <h2 class="section-title">Financial Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="financial-grid">
+                        <div class="financial-card">
+                            <div class="financial-label">Total Savings</div>
+                            <div class="financial-amount">₹45,230</div>
+                            <div class="financial-trend text-success">
+                                <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                                +18% this month
+                            </div>
+                        </div>
+
+                        <div class="financial-card">
+                            <div class="financial-label">Emergency Fund</div>
+                            <div class="financial-amount">₹25,000</div>
+                            <div class="financial-trend text-primary">
+                                <i data-lucide="shield" class="w-4 h-4 mr-1"></i>
+                                3 months covered
+                            </div>
+                        </div>
+
+                        <div class="financial-card">
+                            <div class="financial-label">Investment Portfolio</div>
+                            <div class="financial-amount">₹20,230</div>
+                            <div class="financial-trend text-success">
+                                <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                                +12% returns
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box info-box-green mt-6">
+                        <h4 class="text-lg text-dark m-0 mb-3 flex items-center gap-2">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-success"></i>
+                            Financial Tips for You
+                        </h4>
+                        <ul class="text-gray pl-6 m-0 leading-relaxed">
+                            <li>Save 20% of your monthly earnings for emergencies</li>
+                            <li>Consider investing in mutual funds for long-term growth</li>
+                            <li>Track your expenses using our built-in expense tracker</li>
+                            <li>Explore micro-pension schemes for retirement planning</li>
+                        </ul>
+                        <button class="btn btn-success mt-4">
+                            <i data-lucide="calculator" class="w-4 h-4 mr-2"></i>
+                            Financial Planning Tool
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Support & Resources -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title-wrapper">
+                            <div class="section-icon bg-gradient-purple">
+                                <i data-lucide="life-buoy"></i>
+                            </div>
+                            <h2 class="section-title">Support & Resources</h2>
+                        </div>
+                    </div>
+
+                    <div class="support-grid">
+                        <!-- Mental Health Support -->
+                        <div class="support-card cursor-pointer">
+                            <div class="support-icon-wrapper">
+                                <i data-lucide="brain" class="w-7 h-7"></i>
+                            </div>
+                            <h3 class="support-title">Mental Health Support</h3>
+                            <p class="support-description">Free counseling sessions with certified therapists. Your
+                                mental well-being matters.</p>
+                            <button class="support-action">
+                                <i data-lucide="calendar" class="w-4 h-4"></i>
+                                Book Session
+                            </button>
+                        </div>
+
+                        <!-- Legal Assistance -->
+                        <div class="support-card cursor-pointer">
+                            <div class="support-icon-wrapper">
+                                <i data-lucide="scale" class="w-7 h-7"></i>
+                            </div>
+                            <h3 class="support-title">Legal Assistance</h3>
+                            <p class="support-description">Get free legal advice for work-related issues and contract
+                                disputes.</p>
+                            <button class="support-action">
+                                <i data-lucide="phone" class="w-4 h-4"></i>
+                                Contact Lawyer
+                            </button>
+                        </div>
+
+                        <!-- Career Guidance -->
+                        <div class="support-card cursor-pointer">
+                            <div class="support-icon-wrapper">
+                                <i data-lucide="compass" class="w-7 h-7"></i>
+                            </div>
+                            <h3 class="support-title">Career Guidance</h3>
+                            <p class="support-description">One-on-one mentorship to help you grow your service business.
+                            </p>
+                            <button class="support-action">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                                Find Mentor
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 24/7 Helpline -->
+                    <div class="helpline-card">
+                        <h3>🆘 24/7 Emergency Helpline</h3>
+                        <p>Need immediate assistance? We're here for you, anytime.</p>
+                        <div class="helpline-number">1800-GIG-HELP</div>
+                        <p class="text-sm opacity-90">Available in Hindi, English, and Gujarati</p>
+                        <button class="btn-call-now">
+                            <i data-lucide="phone-call" class="w-6 h-6"></i>
+                            Call Now
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Course card click
+        const courseCards = document.querySelectorAll('.course-card');
+        courseCards.forEach(card => {
+            card.addEventListener('click', () => {
+                alert('Course details coming soon!');
+            });
+        });
+
+        // Support action buttons
+        const supportActions = document.querySelectorAll('.support-action');
+        supportActions.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert('Booking system coming soon!');
+            });
+        });
+    </script>
+</body>
+
+</html>

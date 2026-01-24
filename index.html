@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GigDial - Digital Marketplace for Gig Workers | Ek Kaam, Ek Time, Ek Paisa</title>
+    <meta name="description"
+        content="Connect with verified gig workers for on-demand services. Digital repairs, wellness, fitness, home services, tutoring, events, and more. Subscription-based, commission-free platform.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- CSS Structure -->
+    <link rel="stylesheet" href="public/css/reset.css">
+    <link rel="stylesheet" href="public/css/global.css">
+    <link rel="stylesheet" href="public/css/typography.css">
+    <link rel="stylesheet" href="public/css/components.css">
+    <link rel="stylesheet" href="public/css/homepage.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="top-bar-links">
+                    <a href="tel:+91XXXXXXXXXX" aria-label="Call us">
+                        <i data-lucide="phone" aria-hidden="true"></i> +91-XXXX-XXXXXX
+                    </a>
+                    <a href="mailto:support@gigdial.com" aria-label="Email us">
+                        <i data-lucide="mail" aria-hidden="true"></i> support@gigdial.com
+                    </a>
+                </div>
+                <div class="top-bar-links">
+                    <a href="customer-login.html">Customer Login</a>
+                    <a href="worker-dashboard.html">Gig Worker Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo" aria-label="GigDial Home">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial Logo" width="180" height="50">
+                </a>
+
+                <div class="search-wrapper">
+                    <div class="location-select">
+                        <i data-lucide="map-pin" aria-hidden="true"></i>
+                        <select id="citySelect" aria-label="Select city">
+                            <option>Mumbai</option>
+                            <option>Delhi</option>
+                            <option>Bangalore</option>
+                            <option>Pune</option>
+                            <option>Hyderabad</option>
+                            <option>Chennai</option>
+                        </select>
+                    </div>
+
+                    <div class="search-box">
+                        <input type="search" class="search-input" id="searchInput"
+                            placeholder="Search for gig workers, services (e.g., Web Developer, Yoga Trainer)"
+                            aria-label="Search for services">
+                        <div class="search-actions">
+                            <button class="voice-btn" id="voiceBtn" aria-label="Voice search">
+                                <i data-lucide="mic" aria-hidden="true"></i>
+                            </button>
+                            <button class="search-btn" id="searchBtn">Search</button>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="nav-actions" aria-label="Main navigation">
+                    <a href="#" class="nav-btn btn-outline">Find Gigs</a>
+                    <a href="suggest-service.html" class="nav-btn btn-outline">Post a Job</a>
+                    <a href="worker-registration.html" class="nav-btn btn-primary">Join as Gig Worker</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" role="region" aria-label="Hero section">
+        <div class="hero-bg" id="heroBg"></div>
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Ek Kaam, Ek Time, Ek Paisa</h1>
+                <p class="hero-subtitle">Digital Marketplace for Verified Gig Workers & On-Demand Services</p>
+                <p class="hero-desc">Connect with expert freelancers and service providers for digital repairs,
+                    wellness, fitness, home services, tutoring, events, admin support, cleaning, beauty, coaching, and
+                    more.</p>
+
+                <div class="hero-cta">
+                    <button class="btn-cta-primary">Find a Gig Worker</button>
+                    <button class="btn-cta-secondary">Become a Worker</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">45+</div>
+                        <div class="stat-label">Service Categories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10,000+</div>
+                        <div class="stat-label">Verified Gig Workers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50,000+</div>
+                        <div class="stat-label">Happy Customers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0%</div>
+                        <div class="stat-label">Commission Fee</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Popular Categories -->
+        <section class="section-categories" aria-labelledby="categories-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="categories-title">Popular Service Categories</h2>
+                    <p class="section-subtitle">Browse verified gig workers across 45+ on-demand service categories</p>
+                </div>
+
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Categories will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Digital Services -->
+        <section class="section-services" aria-labelledby="digital-services-title">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2 id="digital-services-title">Digital & Tech Services</h2>
+                    <a href="#" class="link-more">Explore More →</a>
+                </div>
+
+                <div class="services-scroll" id="digitalServices">
+                    <!-- Services will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Wellness & Fitness -->
+        <section class="section-services section-alt" aria-labelledby="wellness-title">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2 id="wellness-title">Wellness & Fitness</h2>
+                    <a href="#" class="link-more">Explore More →</a>
+                </div>
+
+                <div class="services-scroll" id="wellnessServices">
+                    <!-- Services will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Home Services -->
+        <section class="section-services" aria-labelledby="home-services-title">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2 id="home-services-title">Home Services</h2>
+                    <a href="#" class="link-more">Explore More →</a>
+                </div>
+
+                <div class="services-scroll" id="homeServices">
+                    <!-- Services will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Tutoring -->
+        <section class="section-services section-alt" aria-labelledby="tutoring-title">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2 id="tutoring-title">Tutoring & Education</h2>
+                    <a href="#" class="link-more">Explore More →</a>
+                </div>
+
+                <div class="services-scroll" id="tutoringServices">
+                    <!-- Services will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Events & Creative -->
+        <section class="section-services" aria-labelledby="events-title">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2 id="events-title">Events & Creative Services</h2>
+                    <a href="#" class="link-more">Explore More →</a>
+                </div>
+
+                <div class="services-scroll" id="eventsServices">
+                    <!-- Services will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Beauty -->
+        <section class="section-services section-alt" aria-labelledby="beauty-title">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2 id="beauty-title">Beauty & Personal Care</h2>
+                    <a href="#" class="link-more">Explore More →</a>
+                </div>
+
+                <div class="services-scroll" id="beautyServices">
+                    <!-- Services will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose GigDial -->
+        <section class="section-features" aria-labelledby="features-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="features-title">Why Choose GigDial?</h2>
+                    <p class="section-subtitle">India's first commission-free gig worker marketplace</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-lucide="shield-check" aria-hidden="true"></i>
+                        </div>
+                        <h3>100% Verified Workers</h3>
+                        <p>Every gig worker undergoes Aadhaar and PAN verification plus comprehensive background checks
+                            for your safety.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-lucide="dollar-sign" aria-hidden="true"></i>
+                        </div>
+                        <h3>0% Commission Fee</h3>
+                        <p>Subscription-based model means workers keep 100% of their earnings. Fair pricing for
+                            customers too.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-lucide="clock" aria-hidden="true"></i>
+                        </div>
+                        <h3>On-Demand Services</h3>
+                        <p>Book services instantly or schedule for later. Flexible timing to match your convenience.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-lucide="mic" aria-hidden="true"></i>
+                        </div>
+                        <h3>Voice Search (Hindi)</h3>
+                        <p>Search in Hindi or English using voice commands - perfect for users of all literacy levels.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-lucide="heart" aria-hidden="true"></i>
+                        </div>
+                        <h3>Worker Wellness Program</h3>
+                        <p>Free health insurance, skill training, and financial support for all verified gig workers.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-lucide="star" aria-hidden="true"></i>
+                        </div>
+                        <h3>Quality Guarantee</h3>
+                        <p>Ratings, reviews, and satisfaction guarantee on all services. Your happiness is our priority.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial Logo" class="footer-logo" width="180"
+                        height="50">
+                    <p class="footer-desc">India's first commission-free digital marketplace connecting verified gig
+                        workers with customers. Ek Kaam, Ek Time, Ek Paisa - transparency and fairness for everyone.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i data-lucide="facebook" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Twitter"><i data-lucide="twitter" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Instagram"><i data-lucide="instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>For Customers</h3>
+                    <ul>
+                        <li><a href="services-catalog.html">Browse Services</a></li>
+                        <li><a href="customer-dashboard.html">Customer Dashboard</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Safety Guidelines</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>For Gig Workers</h3>
+                    <ul>
+                        <li><a href="worker-registration.html">Join as Worker</a></li>
+                        <li><a href="worker-dashboard.html">Worker Dashboard</a></li>
+                        <li><a href="#">Worker Benefits</a></li>
+                        <li><a href="#">Training Programs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Digital Services</a></li>
+                        <li><a href="#">Wellness & Fitness</a></li>
+                        <li><a href="#">Home Services</a></li>
+                        <li><a href="#">Tutoring</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 GigDial. All rights reserved. | Ek Kaam, Ek Time, Ek Paisa</p>
+                <p>Made with ❤️ in India</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookieBanner"
+        style="position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; color: white; padding: 16px; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 24px; box-shadow: 0 -4px 12px rgba(0,0,0,0.1);">
+        <div style="font-size: 14px; max-width: 600px;">
+            We use cookies to improve your experience and analyze site traffic. By continuing to use our site, you agree
+            to our <a href="privacy-policy.html" style="color: var(--primary-blue); text-decoration: underline;">Privacy
+                Policy</a>.
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button onclick="document.getElementById('cookieBanner').style.display='none'"
+                style="background: transparent; border: 1px solid white; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600;">Settings</button>
+            <button onclick="document.getElementById('cookieBanner').style.display='none'"
+                style="background: var(--primary-blue); border: none; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600;">Accept
+                All</button>
+        </div>
+    </div>
+
+    <!-- JS Modules -->
+    <script src="public/js/utils.js"></script>
+    <script src="public/js/voice.js"></script>
+    <script src="public/js/search.js"></script>
+    <script src="public/js/carousel.js"></script>
+    <script src="public/js/navigation.js"></script>
+    <script src="public/js/app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

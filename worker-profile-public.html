@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Profile - GigDial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Top Bar & Header -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-links">
+                <a href="#"><i data-lucide="phone"></i> +91-XXXX-XXXXXX</a>
+            </div>
+            <div class="top-bar-links">
+                <a href="index.html">Home</a>
+                <a href="worker-login.html">Worker Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container public-profile-grid">
+        <!-- Left Column: Profile & Content -->
+        <div>
+            <!-- Profile Header -->
+            <div class="profile-hero">
+                <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200"
+                    alt="Rajesh Kumar" class="profile-hero-avatar">
+                <div class="profile-hero-info">
+                    <h1>Rajesh Kumar</h1>
+                    <div class="verified-badge">
+                        <i data-lucide="shield-check" style="width: 14px"></i> Verified Professional
+                    </div>
+                    <div class="profile-hero-meta">
+                        <span>Member since 2021</span>
+                        <span>•</span>
+                        <span>Mumbai</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: var(--space-4)">
+                <div class="stat-card">
+                    <div class="stat-value">150+</div>
+                    <div class="stat-label">Jobs Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">On-Time Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4.9</div>
+                    <div class="stat-label">Rating</div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-gray); margin: var(--space-4) 0">
+
+            <!-- About -->
+            <section>
+                <h2 style="margin-bottom: var(--space-2)">About Me</h2>
+                <p class="text-gray" style="line-height: 1.6">
+                    Hi, I'm Rajesh. I have over 5 years of experience in professional home cleaning. I specialize in
+                    deep cleaning and sanitization. I use eco-friendly products and ensure 100% customer satisfaction.
+                </p>
+            </section>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-gray); margin: var(--space-4) 0">
+
+            <!-- Portfolio -->
+            <section>
+                <h2 style="margin-bottom: var(--space-2)">Work Portfolio</h2>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item"><img
+                            src="https://images.pexels.com/photos/4107120/pexels-photo-4107120.jpeg?auto=compress&cs=tinysrgb&w=300"
+                            alt="Work 1"></div>
+                    <div class="portfolio-item"><img
+                            src="https://images.pexels.com/photos/4099467/pexels-photo-4099467.jpeg?auto=compress&cs=tinysrgb&w=300"
+                            alt="Work 2"></div>
+                    <div class="portfolio-item"><img
+                            src="https://images.pexels.com/photos/4107284/pexels-photo-4107284.jpeg?auto=compress&cs=tinysrgb&w=300"
+                            alt="Work 3"></div>
+                </div>
+            </section>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-gray); margin: var(--space-4) 0">
+
+            <!-- Reviews -->
+            <section>
+                <h2 style="margin-bottom: var(--space-2)">Customer Reviews</h2>
+                <div class="review-list">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span class="review-user">Anita Desai</span>
+                            <span class="review-date">2 days ago</span>
+                        </div>
+                        <div class="mb-1" style="color: #FFD700">
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                        </div>
+                        <p class="text-gray text-sm">Rajesh did an amazing job! My house looks
+                            brand
+                            new. Highly recommended.</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span class="review-user">Vikram Malhotra</span>
+                            <span class="review-date">1 week ago</span>
+                        </div>
+                        <div class="mb-1" style="color: #FFD700">
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                            <i data-lucide="star" style="width:14px; fill:#FFD700"></i>
+                        </div>
+                        <p class="text-gray text-sm">Very professional and punctual. Good
+                            cleaning
+                            quality.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Right Column: CTA -->
+        <div class="sticky-cta">
+            <h3 style="margin-bottom: var(--space-2)">Book Rajesh</h3>
+            <div style="margin-bottom: var(--space-2)">
+                <div class="mb-2 font-semibold">Availability</div>
+                <div class="calendar-grid">
+                    <div class="calendar-day booked">M</div>
+                    <div class="calendar-day available">T</div>
+                    <div class="calendar-day available">W</div>
+                    <div class="calendar-day booked">T</div>
+                    <div class="calendar-day available">F</div>
+                    <div class="calendar-day available">S</div>
+                    <div class="calendar-day booked">S</div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+
+                <button class="btn btn-outline w-full justify-center"
+                    onclick="window.location.href='communication.html'">Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                    <p class="footer-desc">India's #1 Local Services Platform. Connecting you with verified
+                        professionals for all your home service needs.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="blog.html">About Us</a></li>
+                        <li><a href="blog.html">Careers</a></li>
+                        <li><a href="help-center.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="services-catalog.html">Cleaning</a></li>
+                        <li><a href="services-catalog.html">Plumbing</a></li>
+                        <li><a href="services-catalog.html">Electrical</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="help-center.html">Help Center</a></li>
+                        <li><a href="policies.html">Safety</a></li>
+                        <li><a href="terms-conditions.html">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 GigDial. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

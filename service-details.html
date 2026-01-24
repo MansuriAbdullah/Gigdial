@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Details - GigDial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-links">
+                <a href="tel:+91XXXXXXXXXX"><i data-lucide="phone"></i> +91-XXXX-XXXXXX</a>
+                <a href="mailto:support@gigdial.com"><i data-lucide="mail"></i> support@gigdial.com</a>
+            </div>
+            <div class="top-bar-links">
+                <a href="customer-dashboard.html">Customer Login</a>
+                <a href="worker-dashboard.html">Worker Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo" aria-label="GigDial Home">
+                <img src="public/images/gigdial-logo.png" alt="GigDial">
+            </a>
+            <div class="search-wrapper">
+                <div class="location-select">
+                    <i data-lucide="map-pin"></i>
+                    <select>
+                        <option>Mumbai</option>
+                        <option>Delhi</option>
+                        <option>Bangalore</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search for services...">
+                    <div class="search-actions">
+                        <button class="search-btn">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="service-hero">
+        <div class="service-hero-bg"></div>
+        <div class="container w-full">
+            <div class="service-rating">
+                <i data-lucide="star" fill="currentColor" style="width: 16px; height: 16px; color: #FFD700"></i>
+                4.8 (1.2k Reviews)
+            </div>
+            <h1 style="font-size: 48px; font-weight: 800; margin-bottom: var(--space-2)">Professional Home Cleaning
+            </h1>
+            <p style="font-size: 18px; opacity: 0.9; max-width: 600px">Deep cleaning services for your home. Kitchen,
+                bathroom, and living areas included.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container content-grid">
+        <!-- Left Column -->
+        <div class="main-content">
+            <!-- What's Included -->
+            <div class="card">
+                <h2 style="margin-bottom: var(--space-3)">What's Included</h2>
+                <div class="checklist-item">
+                    <i data-lucide="check-circle"></i>
+                    <span>Deep cleaning of all rooms including floor mopping and dusting</span>
+                </div>
+                <div class="checklist-item">
+                    <i data-lucide="check-circle"></i>
+                    <span>Bathroom cleaning with sanitization</span>
+                </div>
+                <div class="checklist-item">
+                    <i data-lucide="check-circle"></i>
+                    <span>Kitchen cleaning including platform and sink</span>
+                </div>
+                <div class="checklist-item">
+                    <i data-lucide="check-circle"></i>
+                    <span>Cobweb removal and dry dusting of walls</span>
+                </div>
+            </div>
+
+            <!-- What's Excluded -->
+            <div class="card">
+                <h2 style="margin-bottom: var(--space-3)">What's Excluded</h2>
+                <div class="checklist-item excluded">
+                    <i data-lucide="x-circle"></i>
+                    <span>Cleaning of appliances from inside (Fridge, Oven)</span>
+                </div>
+                <div class="checklist-item excluded">
+                    <i data-lucide="x-circle"></i>
+                    <span>Upholstery wet shampooing (Sofa, Carpet)</span>
+                </div>
+            </div>
+
+            <!-- Top Rated Workers -->
+            <div class="card">
+                <h2 style="margin-bottom: var(--space-3)">Top Rated Professionals</h2>
+                <div class="worker-carousel">
+                    <div class="worker-card">
+                        <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200"
+                            alt="Worker" class="worker-avatar">
+                        <h3 class="font-bold" style="font-size: 16px">Rajesh Kumar</h3>
+                        <div class="text-gray text-sm" style="margin-bottom: var(--space-2)">4.9 <i
+                                data-lucide="star" style="width: 12px; display: inline"></i> (150 jobs)</div>
+                        <button class="btn btn-primary"
+                            onclick="window.location.href='worker-profile-public.html'">View Profile</button>
+                    </div>
+                    <div class="worker-card">
+                        <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=200"
+                            alt="Worker" class="worker-avatar">
+                        <h3 class="font-bold" style="font-size: 16px">Priya Singh</h3>
+                        <div class="text-gray text-sm" style="margin-bottom: var(--space-2)">4.8 <i
+                                data-lucide="star" style="width: 12px; display: inline"></i> (98 jobs)</div>
+                        <button class="btn btn-primary"
+                            onclick="window.location.href='worker-profile-public.html'">View Profile</button>
+                    </div>
+                    <div class="worker-card">
+                        <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200"
+                            alt="Worker" class="worker-avatar">
+                        <h3 class="font-bold" style="font-size: 16px">Amit Patel</h3>
+                        <div class="text-gray text-sm" style="margin-bottom: var(--space-2)">4.7 <i
+                                data-lucide="star" style="width: 12px; display: inline"></i> (210 jobs)</div>
+                        <button class="btn btn-primary"
+                            onclick="window.location.href='worker-profile-public.html'">View Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="card">
+                <h2 style="margin-bottom: var(--space-3)">Frequently Asked Questions</h2>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How long does the cleaning take?
+                        <i data-lucide="chevron-down"></i>
+                    </div>
+                    <p class="text-gray text-sm" style="margin-top: var(--space-2)">Usually takes 4-6
+                        hours depending on the house size.</p>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Do I need to provide cleaning materials?
+                        <i data-lucide="chevron-down"></i>
+                    </div>
+                    <p class="text-gray text-sm" style="margin-top: var(--space-2)">No, our
+                        professionals bring their own eco-friendly cleaning supplies.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar (Pricing) -->
+        <div class="sidebar">
+            <div class="card sticky-sidebar">
+                <h3 style="margin-bottom: var(--space-3)">Select Package</h3>
+
+                <div class="pricing-tier active">
+                    <div class="pricing-header">
+                        <span class="font-semibold">Basic Clean</span>
+                        <span class="font-bold">₹1,499</span>
+                    </div>
+                    <p class="text-gray text-sm">1 BHK Deep Cleaning</p>
+                </div>
+
+                <div class="pricing-tier">
+                    <div class="pricing-header">
+                        <span class="font-semibold">Standard Clean</span>
+                        <span class="font-bold">₹2,499</span>
+                    </div>
+                    <p class="text-gray text-sm">2 BHK Deep Cleaning</p>
+                </div>
+
+                <div class="pricing-tier">
+                    <div class="pricing-header">
+                        <span class="font-semibold">Premium Clean</span>
+                        <span class="font-bold">₹3,499</span>
+                    </div>
+                    <p class="text-gray text-sm">3 BHK + Villa Deep Cleaning</p>
+                </div>
+
+                <div
+                    style="margin-top: var(--space-4); border-top: 1px solid var(--border-gray); padding-top: var(--space-3)">
+                    <div class="flex justify-between" style="margin-bottom: var(--space-3)">
+                        <span class="font-semibold">Total</span>
+                        <span class="service-price-tag">₹1,499</span>
+                    </div>
+                    <button class="btn btn-primary" style="font-size: 16px; padding: 12px"
+                        onclick="window.location.href='booking-confirmation.html'">Book Now</button>
+                    <p
+                        class="text-gray text-center" style="font-size: 12px;  margin-top: var(--space-2)">
+                        No hidden charges</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                    <p class="footer-desc">India's #1 Local Services Platform. Connecting you with verified
+                        professionals for all your home service needs.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="blog.html">About Us</a></li>
+                        <li><a href="blog.html">Careers</a></li>
+                        <li><a href="help-center.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="services-catalog.html">Cleaning</a></li>
+                        <li><a href="services-catalog.html">Plumbing</a></li>
+                        <li><a href="services-catalog.html">Electrical</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="help-center.html">Help Center</a></li>
+                        <li><a href="policies.html">Safety</a></li>
+                        <li><a href="terms-conditions.html">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 GigDial. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Services Data (Same as in services-catalog.html)
+        const servicesData = [
+            { id: 1, name: "Web Development", category: "Digital Services", description: "Full-stack developers, frontend & backend specialists", query: "web developer programming", rating: "4.8", workers: "1,245", price: "₹5,000", image: "https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 2, name: "App Development", category: "Digital Services", description: "iOS, Android & cross-platform mobile developers", query: "mobile app developer", rating: "4.9", workers: "892", price: "₹8,000", image: "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 3, name: "Graphic Design", category: "Digital Services", description: "Logo, branding, UI/UX & visual design experts", query: "graphic designer working", rating: "4.7", workers: "2,156", price: "₹2,000", image: "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 4, name: "Digital Marketing", category: "Digital Services", description: "SEO, social media, content marketing specialists", query: "digital marketing professional", rating: "4.8", workers: "1,567", price: "₹3,500", image: "https://images.pexels.com/photos/905163/pexels-photo-905163.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 5, name: "Yoga Trainers", category: "Wellness", description: "Certified yoga instructors for all levels", query: "yoga instructor teaching", rating: "4.9", workers: "543", price: "₹800", image: "https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 6, name: "Personal Trainers", category: "Wellness", description: "Fitness coaches & gym trainers", query: "personal trainer fitness", rating: "4.8", workers: "789", price: "₹1,200", image: "https://images.pexels.com/photos/4162451/pexels-photo-4162451.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 7, name: "Nutritionists", category: "Wellness", description: "Diet planning & nutrition counseling", query: "nutritionist consultation", rating: "4.7", workers: "432", price: "₹1,500", image: "https://images.pexels.com/photos/1105166/pexels-photo-1105166.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 8, name: "Meditation Coaches", category: "Wellness", description: "Mindfulness & stress management", query: "meditation coach", rating: "4.9", workers: "321", price: "₹1,000", image: "https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 9, name: "Cleaning Services", category: "Home Services", description: "Professional home & office cleaning", query: "cleaning service professional", rating: "4.8", workers: "1,567", price: "₹499", image: "https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 10, name: "Plumbers", category: "Home Services", description: "Plumbing repairs & installations", query: "plumber fixing pipe", rating: "4.7", workers: "892", price: "₹299", image: "https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 11, name: "Electricians", category: "Home Services", description: "Electrical repairs & wiring", query: "electrician working", rating: "4.6", workers: "745", price: "₹349", image: "https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 12, name: "Painters", category: "Home Services", description: "Interior & exterior painting", query: "painter painting wall", rating: "4.8", workers: "634", price: "₹5,000", image: "https://images.pexels.com/photos/1669754/pexels-photo-1669754.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 13, name: "Academic Tutors", category: "Tutoring", description: "Math, Science, English & more", query: "tutor teaching student", rating: "4.9", workers: "2,345", price: "₹500", image: "https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 14, name: "Music Teachers", category: "Tutoring", description: "Guitar, piano, vocals & more", query: "music teacher guitar", rating: "4.8", workers: "567", price: "₹800", image: "https://images.pexels.com/photos/1407322/pexels-photo-1407322.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 15, name: "Language Tutors", category: "Tutoring", description: "English, Spanish, French & more", query: "language teacher", rating: "4.7", workers: "892", price: "₹600", image: "https://images.pexels.com/photos/5428003/pexels-photo-5428003.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 16, name: "Coding Instructors", category: "Tutoring", description: "Programming & software skills", query: "coding instructor programming", rating: "4.9", workers: "1,234", price: "₹1,000", image: "https://images.pexels.com/photos/5496464/pexels-photo-5496464.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 17, name: "Event Planners", category: "Events", description: "Wedding, corporate & party planning", query: "event planner wedding", rating: "4.8", workers: "456", price: "₹15,000", image: "https://images.pexels.com/photos/50675/banquet-wedding-society-deco-50675.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 18, name: "Photographers", category: "Events", description: "Event, portrait & commercial photography", query: "photographer camera event", rating: "4.9", workers: "1,123", price: "₹5,000", image: "https://images.pexels.com/photos/598917/pexels-photo-598917.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 19, name: "Videographers", category: "Events", description: "Video production & editing", query: "videographer filming", rating: "4.7", workers: "678", price: "₹8,000", image: "https://images.pexels.com/photos/257904/pexels-photo-257904.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 20, name: "Content Writers", category: "Events", description: "Blog, copywriting & technical writing", query: "content writer working", rating: "4.8", workers: "2,456", price: "₹1,000", image: "https://images.pexels.com/photos/210661/pexels-photo-210661.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 21, name: "Hair Stylists", category: "Beauty", description: "Haircuts, styling & treatments", query: "hair stylist salon", rating: "4.8", workers: "892", price: "₹500", image: "https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 22, name: "Makeup Artists", category: "Beauty", description: "Bridal, party & professional makeup", query: "makeup artist working", rating: "4.9", workers: "567", price: "₹2,500", image: "https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 23, name: "Nail Artists", category: "Beauty", description: "Manicure, pedicure & nail art", query: "nail artist manicure", rating: "4.7", workers: "423", price: "₹800", image: "https://images.pexels.com/photos/3997391/pexels-photo-3997391.jpeg?auto=compress&cs=tinysrgb&w=1200" },
+            { id: 24, name: "Spa Therapists", category: "Beauty", description: "Massage & wellness treatments", query: "spa therapist massage", rating: "4.8", workers: "345", price: "₹1,500", image: "https://images.pexels.com/photos/3757942/pexels-photo-3757942.jpeg?auto=compress&cs=tinysrgb&w=1200" }
+        ];
+
+        // Get Service ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceId = parseInt(urlParams.get('id'));
+
+        // Find service data
+        const service = servicesData.find(s => s.id === serviceId) || servicesData[8]; // Default to Cleaning if not found
+
+        // Update Page Content
+        document.title = `${service.name} - GigDial`;
+        document.querySelector('.service-hero h1').textContent = service.name;
+        document.querySelector('.service-hero p').textContent = service.description;
+        document.querySelector('.service-rating').innerHTML = `
+            <i data-lucide="star" fill="currentColor" style="width: 16px; height: 16px; color: #FFD700"></i>
+            ${service.rating} (${service.workers} Reviews)
+        `;
+
+        // Update Hero Background
+        if (service.image) {
+            document.querySelector('.service-hero-bg').style.background = `linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%), url('${service.image}') center/cover`;
+        }
+
+        // Update Pricing Tiers (Mock Logic for demo)
+        const basePrice = parseInt(service.price.replace(/[^0-9]/g, ''));
+        document.querySelectorAll('.pricing-tier').forEach((tier, index) => {
+            const multiplier = index + 1;
+            const price = basePrice * multiplier;
+            tier.querySelector('.pricing-header span:last-child').textContent = `₹${price.toLocaleString()}`;
+        });
+        document.querySelector('.service-price-tag').textContent = service.price;
+
+        // Simple interaction for pricing tiers
+        const tiers = document.querySelectorAll('.pricing-tier');
+        const priceDisplay = document.querySelector('.service-price-tag');
+
+        tiers.forEach(tier => {
+            tier.addEventListener('click', () => {
+                tiers.forEach(t => t.classList.remove('active'));
+                tier.classList.add('active');
+                const price = tier.querySelector('.pricing-header span:last-child').textContent;
+                priceDisplay.textContent = price;
+            });
+        });
+    </script>
+</body>
+
+</html>

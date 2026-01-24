@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Quotes - GigDial</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px 0;
+            background: #f8fafc;
+        }
+
+        /* Utility replacements */
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+
+        .border-0 {
+            border: none !important;
+        }
+
+        .bg-transparent {
+            background: transparent !important;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .text-gray {
+            color: var(--text-gray);
+        }
+
+        .text-sm {
+            font-size: 14px;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .pl-4 {
+            padding-left: 16px;
+        }
+
+        .align-top {
+            vertical-align: top;
+        }
+
+        .p-4 {
+            padding: 16px;
+        }
+
+        .h-6 {
+            height: 24px;
+        }
+
+        .w-3 {
+            width: 12px;
+        }
+
+        .inline {
+            display: inline;
+        }
+
+        .fill-current {
+            fill: currentColor;
+        }
+
+        .text-yellow-400 {
+            color: #facc15;
+        }
+
+        /* List spacing */
+        .feature-ul {
+            list-style: disc;
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .feature-ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Accept Button Variant */
+        .btn-accept-outline {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-accept-outline:hover {
+            background: #f0f9ff;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-container {
+                padding: 16px;
+                overflow-x: auto;
+            }
+
+            .comparison-table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <!-- Standard Header -->
+        <header class="top-bar" style="background: white; border-bottom: 1px solid var(--border-gray); padding: 0">
+            <div class="container flex justify-between items-center"
+                style="height: 70px">
+                <a href="index.html" class="logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+                <a href="index.html" class="nav-btn btn-outline text-gray" style="border: none">
+                    <i data-lucide="arrow-left" style="width: 18px; height: 18px; margin-right: 8px"></i>
+                    Back to Home
+                </a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="text-center" style="margin-bottom: 40px">
+                    <h1 class="page-title">Compare Quotes</h1>
+                    <p class="page-subtitle mb-6">Compare prices, ratings, and inclusions to find the best professional
+                        for your needs.</p>
+                </div>
+
+                <div class="comparison-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th class="border-0 bg-transparent"></th>
+                                <th class="worker-col highlighted top">
+                                    <div class="badge-value">Best Value</div>
+                                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200"
+                                        class="worker-avatar-small" alt="Worker">
+                                    <div class="font-bold">Rajesh Kumar</div>
+                                </th>
+                                <th class="worker-col">
+                                    <div class="badge-rated">Top Rated</div>
+                                    <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=200"
+                                        class="worker-avatar-small" alt="Worker">
+                                    <div class="font-bold">Priya Singh</div>
+                                </th>
+                                <th class="worker-col">
+                                    <div class="h-6"></div> <!-- Spacer -->
+                                    <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200"
+                                        class="worker-avatar-small" alt="Worker">
+                                    <div class="font-bold">Amit Patel</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-4 font-bold text-gray">Price</td>
+                                <td class="worker-col highlighted">
+                                    <div class="price-large">₹1,499</div>
+                                </td>
+                                <td class="worker-col">
+                                    <div class="price-large">₹1,899</div>
+                                </td>
+                                <td class="worker-col">
+                                    <div class="price-large">₹1,650</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold text-gray">Rating</td>
+                                <td class="worker-col highlighted font-bold">
+                                    4.9 <i data-lucide="star" class="w-3 inline fill-current text-yellow-400"></i>
+                                </td>
+                                <td class="worker-col font-bold">
+                                    4.8 <i data-lucide="star" class="w-3 inline fill-current text-yellow-400"></i>
+                                </td>
+                                <td class="worker-col font-bold">
+                                    4.7 <i data-lucide="star" class="w-3 inline fill-current text-yellow-400"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold text-gray">Est. Time</td>
+                                <td class="worker-col highlighted">4 Hours</td>
+                                <td class="worker-col">3.5 Hours</td>
+                                <td class="worker-col">4 Hours</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold text-gray align-top">Included</td>
+                                <td class="worker-col highlighted">
+                                    <ul class="text-sm text-left pl-4 feature-ul">
+                                        <li>Deep Cleaning</li>
+                                        <li>Sanitization</li>
+                                    </ul>
+                                </td>
+                                <td class="worker-col">
+                                    <ul class="text-sm text-left pl-4 feature-ul">
+                                        <li>Deep Cleaning</li>
+                                        <li>Sanitization</li>
+                                        <li>Eco Products</li>
+                                    </ul>
+                                </td>
+                                <td class="worker-col">
+                                    <ul class="text-sm text-left pl-4 feature-ul">
+                                        <li>Deep Cleaning</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border-0"></td>
+                                <td class="worker-col highlighted bottom border-0">
+                                    <button class="btn-accept"
+                                        onclick="window.location.href='booking-confirmation.html'">Accept Quote</button>
+                                </td>
+                                <td class="worker-col border-0">
+                                    <button class="btn-accept-outline"
+                                        onclick="window.location.href='booking-confirmation.html'">Accept Quote</button>
+                                </td>
+                                <td class="worker-col border-0">
+                                    <button class="btn-accept-outline"
+                                        onclick="window.location.href='booking-confirmation.html'">Accept Quote</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-section">
+                        <img src="public/images/gigdial-logo.png" alt="GigDial">
+                        <p class="footer-desc">India's #1 Local Services Platform. Connecting you with verified
+                            professionals for all your home service needs.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Company</h3>
+                        <ul>
+                            <li><a href="blog.html">About Us</a></li>
+                            <li><a href="blog.html">Careers</a></li>
+                            <li><a href="help-center.html">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Services</h3>
+                        <ul>
+                            <li><a href="services-catalog.html">Cleaning</a></li>
+                            <li><a href="services-catalog.html">Plumbing</a></li>
+                            <li><a href="services-catalog.html">Electrical</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Support</h3>
+                        <ul>
+                            <li><a href="help-center.html">Help Center</a></li>
+                            <li><a href="policies.html">Safety</a></li>
+                            <li><a href="terms-conditions.html">Terms of Use</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 GigDial. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

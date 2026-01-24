@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service History - GigDial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .history-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .history-search {
+            position: relative;
+        }
+
+        .history-search input {
+            padding: 10px 10px 10px 36px;
+            border: 1px solid var(--border-gray);
+            border-radius: var(--radius-md);
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .history-search i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            color: var(--text-gray);
+        }
+
+        .history-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-icon-box.blue {
+            background: #e0f2fe;
+            color: var(--primary-blue);
+        }
+
+        .history-icon-box.yellow {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .history-icon-box.red {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .service-info h3 {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .service-meta {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid var(--border-gray);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-gray);
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="customer-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="services-catalog.html" class="sidebar-link">
+                    <i data-lucide="search"></i>
+                    <span>Browse Services</span>
+                </a>
+                <a href="customer-service-history.html" class="sidebar-link active">
+                    <i data-lucide="calendar"></i>
+                    <span>Service History</span>
+                </a>
+                <a href="customer-subscriptions.html" class="sidebar-link">
+                    <i data-lucide="repeat"></i>
+                    <span>Subscriptions</span>
+                </a>
+                <a href="customer-dashboard.html#messages" class="sidebar-link">
+                    <i data-lucide="message-square"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-urgent" style="margin-left: auto">3</span>
+                </a>
+                <a href="customer-dashboard.html#favorites" class="sidebar-link">
+                    <i data-lucide="heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="customer-dashboard.html#payments" class="sidebar-link">
+                    <i data-lucide="credit-card"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="customer-addresses.html" class="sidebar-link">
+                    <i data-lucide="map-pin"></i>
+                    <span>Saved Addresses</span>
+                </a>
+                <a href="referral-program.html" class="sidebar-link">
+                    <i data-lucide="gift"></i>
+                    <span>Refer & Earn</span>
+                </a>
+                <a href="loyalty-dashboard.html" class="sidebar-link">
+                    <i data-lucide="crown"></i>
+                    <span>Loyalty Points</span>
+                </a>
+                <a href="customer-dashboard.html#settings" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-ghost btn-sm w-full" style="justify-content: flex-start"
+                    onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Mobile Toggle -->
+            <div class="dashboard-header lg:hidden">
+                <button class="mobile-menu-toggle btn btn-ghost btn-sm">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="logo-mobile">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </div>
+            </div>
+
+            <div class="history-container">
+                <div class="dashboard-header justify-between" style="margin-bottom: 24px">
+                    <h1 class="dashboard-title">Service History</h1>
+                    <div class="history-header-actions">
+                        <div class="history-search">
+                            <i data-lucide="search"></i>
+                            <input type="text" placeholder="Search services...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Completed</button>
+                    <button class="filter-btn">Cancelled</button>
+                    <button class="filter-btn">Refunded</button>
+                </div>
+
+                <div class="history-list">
+                    <!-- Item 1 -->
+                    <div class="history-item">
+                        <div class="flex items-center" style="gap: 16px">
+                            <div class="history-icon-box blue">
+                                <i data-lucide="droplet"></i>
+                            </div>
+                            <div class="service-info">
+                                <h3>Deep Home Cleaning</h3>
+                                <div class="service-meta">Oct 14, 2024 • Rajesh Kumar • ₹1,499</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center" style="gap: 24px">
+                            <span class="status-badge status-verified">Completed</span>
+                            <div class="action-menu flex gap-2">
+                                <button class="btn btn-ghost btn-sm" title="Download Invoice"
+                                    onclick="window.location.href='invoice-receipt.html'">
+                                    <i data-lucide="download" style="width: 18px"></i>
+                                </button>
+                                <button class="btn btn-ghost btn-sm" title="Book Again">
+                                    <i data-lucide="rotate-ccw" style="width: 18px"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="history-item">
+                        <div class="flex items-center" style="gap: 16px">
+                            <div class="history-icon-box yellow">
+                                <i data-lucide="wrench"></i>
+                            </div>
+                            <div class="service-info">
+                                <h3>Plumbing Repair</h3>
+                                <div class="service-meta">Sep 28, 2024 • Amit Patel • ₹450</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center" style="gap: 24px">
+                            <span class="status-badge status-verified">Completed</span>
+                            <div class="action-menu flex gap-2">
+                                <button class="btn btn-ghost btn-sm" title="Download Invoice">
+                                    <i data-lucide="download" style="width: 18px"></i>
+                                </button>
+                                <button class="btn btn-ghost btn-sm" title="Book Again">
+                                    <i data-lucide="rotate-ccw" style="width: 18px"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="history-item">
+                        <div class="flex items-center" style="gap: 16px">
+                            <div class="history-icon-box red">
+                                <i data-lucide="zap"></i>
+                            </div>
+                            <div class="service-info">
+                                <h3>Electrical Checkup</h3>
+                                <div class="service-meta">Sep 10, 2024 • Suresh Singh • ₹0</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center" style="gap: 24px">
+                            <span class="status-badge status-rejected">Cancelled</span>
+                            <div class="action-menu flex gap-2">
+                                <button class="btn btn-ghost btn-sm" title="Help">
+                                    <i data-lucide="help-circle" style="width: 18px"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile toggle
+        const toggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        if (toggle && sidebar) {
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Filter tabs logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                // In a real app, this would filter the list
+            });
+        });
+    </script>
+</body>
+
+</html>

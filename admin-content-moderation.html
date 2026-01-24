@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Moderation - Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* Admin specific overrides */
+        .admin-sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 32px;
+            padding: 0 12px;
+        }
+
+        .admin-logo-circle {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 8px;
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #94a3b8;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .admin-nav-item:hover {
+            background: #1e293b;
+            color: #fff;
+        }
+
+        .admin-nav-item.active {
+            background: #2563eb;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .mod-card {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .content-preview {
+            padding: 24px;
+            border-right: 1px solid var(--border-gray);
+        }
+
+        .report-info {
+            padding: 24px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .type-review {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .type-message {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .type-image {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+
+        .mod-quote {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+            font-style: italic;
+            color: #334155;
+            margin: 12px 0;
+            border-left: 3px solid #cbd5e1;
+        }
+
+        .mod-meta {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 12px;
+        }
+
+        .flag-reason {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #b91c1c;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .btn-mod-action {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        .btn-warn {
+            background: #ffedd5;
+            color: #9a3412;
+            border-color: #fdba74;
+        }
+
+        .btn-warn:hover {
+            background: #fed7aa;
+        }
+
+        .btn-ignore {
+            background: white;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+
+        .btn-ignore:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .mod-card {
+                grid-template-columns: 1fr;
+            }
+
+            .content-preview {
+                border-right: none;
+                border-bottom: 1px solid var(--border-gray);
+            }
+
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container" style="background-color: #f1f5f9; grid-template-columns: 240px 1fr">
+        <!-- Admin Sidebar -->
+        <aside class="dashboard-sidebar" style="background: #0f172a; padding: 24px">
+            <a href="index.html" class="admin-sidebar-header" style="text-decoration: none">
+                <img src="public/images/gigdial-logo.png" alt="GigDial" style="height: 32px; width: auto;">
+                GigDial Admin
+            </a>
+            <nav class="flex flex-col" style="gap: 4px">
+                <a href="admin-dashboard.html" class="admin-nav-item">
+                    <i data-lucide="layout-dashboard" style="width: 18px"></i> Dashboard
+                </a>
+                <a href="admin-user-management.html" class="admin-nav-item">
+                    <i data-lucide="users" style="width: 18px"></i> Users
+                </a>
+                <a href="admin-service-approval.html" class="admin-nav-item">
+                    <i data-lucide="check-square" style="width: 18px"></i> Service Approvals
+                </a>
+                <a href="admin-portfolio-approval.html" class="admin-nav-item">
+                    <i data-lucide="image" style="width: 18px"></i> Portfolio Approvals
+                </a>
+                <a href="dispute-resolution.html" class="admin-nav-item">
+                    <i data-lucide="scale" style="width: 18px"></i> Disputes
+                </a>
+                <a href="admin-content-moderation.html" class="admin-nav-item active">
+                    <i data-lucide="shield-alert" style="width: 18px"></i> Moderation
+                </a>
+                <a href="policies.html" class="admin-nav-item">
+                    <i data-lucide="settings" style="width: 18px"></i> Settings
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main" style="padding: 32px; max-width: 1200px">
+            <header class="header">
+                <h1 class="mb-2 font-bold" style="font-size: 24px;  color: #0f172a">Content Moderation
+                    Queue</h1>
+                <p style="color: #64748b">Review reported content and automated flags</p>
+            </header>
+
+            <div class="mod-list">
+                <!-- Item 1 -->
+                <div class="mod-card">
+                    <div class="content-preview">
+                        <span class="content-type-badge type-review">Review</span>
+                        <div class="mb-2 font-bold" style="color: #1e293b">Review on "Deep Home
+                            Cleaning"</div>
+                        <p class="mod-quote">
+                            "This worker is a scammer! He stole my watch and ran away. Do not book him!"
+                        </p>
+                        <div class="mod-meta">Posted by: Anonymous User • 2 hours ago</div>
+                    </div>
+                    <div class="report-info">
+                        <div class="flag-reason">
+                            <i data-lucide="alert-triangle" style="width: 16px"></i>
+                            Flagged for: Accusation of Crime
+                        </div>
+                        <p class="mb-4 text-sm" style="color: #64748b">
+                            System auto-flagged due to keywords "stole", "scammer".
+                        </p>
+                        <div class="mod-actions">
+                            <button class="btn-mod-action btn-delete">
+                                <i data-lucide="trash-2" style="width: 14px"></i> Delete & Ban User
+                            </button>
+                            <button class="btn-mod-action btn-ignore">
+                                <i data-lucide="eye-off" style="width: 14px"></i> Ignore Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="mod-card">
+                    <div class="content-preview">
+                        <span class="content-type-badge type-message">Chat Message</span>
+                        <div class="mb-2 font-bold" style="color: #1e293b">Message in Booking #GD-8821
+                        </div>
+                        <p class="mod-quote">
+                            "Call me directly on 9998887776 to save commission fees."
+                        </p>
+                        <div class="mod-meta">Sent by: Rajesh Kumar (Worker) • 5 hours ago</div>
+                    </div>
+                    <div class="report-info">
+                        <div class="flag-reason">
+                            <i data-lucide="shield-alert" style="width: 16px"></i>
+                            Flagged for: Platform Circumvention
+                        </div>
+                        <p class="mb-4 text-sm" style="color: #64748b">
+                            System detected phone number pattern in chat.
+                        </p>
+                        <div class="mod-actions">
+                            <button class="btn-mod-action btn-warn">
+                                <i data-lucide="alert-circle" style="width: 14px"></i> Warn User
+                            </button>
+                            <button class="btn-mod-action btn-ignore">
+                                <i data-lucide="check" style="width: 14px"></i> Allow Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="mod-card">
+                    <div class="content-preview">
+                        <span class="content-type-badge type-image">Profile Photo</span>
+                        <div class="mb-2 font-bold" style="color: #1e293b">Worker Profile Update: Suresh
+                            P.</div>
+                        <div
+                            class="flex justify-center items-center" style="background: #f1f5f9; height: 150px; border-radius: 8px;    margin: 12px 0; color: #64748b">
+                            <i data-lucide="image" style="width: 32px; height: 32px; margin-right: 8px"></i>
+                            [Placeholder for User Uploaded Image]
+                        </div>
+                        <div class="mod-meta">Uploaded by: Suresh P. • 12 hours ago</div>
+                    </div>
+                    <div class="report-info">
+                        <div class="flag-reason" style="color: #ea580c">
+                            <i data-lucide="info" style="width: 16px"></i>
+                            Pending Approval: Profile Photo
+                        </div>
+                        <p class="mb-4 text-sm" style="color: #64748b">
+                            Manual approval required for all profile photos.
+                        </p>
+                        <div class="mod-actions">
+                            <button class="btn-mod-action btn-ignore"
+                                style="background: #dcfce7; color: #166534; border-color: #bbf7d0">
+                                <i data-lucide="check-circle" style="width: 14px"></i> Approve Photo
+                            </button>
+                            <button class="btn-mod-action btn-delete"
+                                style="background: white; border-color: #fee2e2; color: #991b1b">
+                                <i data-lucide="x-circle" style="width: 14px"></i> Reject Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

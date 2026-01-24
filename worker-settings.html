@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - GigDial Worker</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Job Requests</span>
+                    <span class="badge badge-error">8</span>
+                </a>
+                <a href="worker-my-services.html" class="sidebar-link">
+                    <i data-lucide="briefcase"></i>
+                    <span>My Services</span>
+                </a>
+                <a href="worker-earnings.html" class="sidebar-link">
+                    <i data-lucide="wallet"></i>
+                    <span>Earnings</span>
+                </a>
+                <a href="worker-profile-edit.html" class="sidebar-link">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="communication.html" class="sidebar-link">
+                    <i data-lucide="message-circle"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-warning">5</span>
+                </a>
+                <a href="worker-settings.html" class="sidebar-link active">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar"></div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">Rajesh Kumar</div>
+                        <div class="sidebar-user-email">Professional Plumber</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-sm btn-block" onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+
+            <!-- Top Bar -->
+            <header class="dashboard-header">
+                <div class="dashboard-header-left">
+                    <button class="mobile-menu-toggle">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="dashboard-title">Settings</h1>
+                </div>
+                <div class="dashboard-header-right">
+                    <button class="icon-btn">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="settings-container">
+
+                    <!-- Settings Header -->
+                    <div class="settings-header">
+                        <div class="settings-header-content">
+                            <h1>Account Settings</h1>
+                            <p>Manage your account preferences, notifications, and subscription</p>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-title-wrapper">
+                                <div class="section-icon bg-gradient-blue-dark">
+                                    <i data-lucide="user"></i>
+                                </div>
+                                <h2 class="section-title">Personal Information</h2>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-input" value="Rajesh Kumar">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-input" value="+91 98765 43210">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" value="rajesh.kumar@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Language Preference</label>
+                                <select class="form-input">
+                                    <option>English</option>
+                                    <option selected>Hindi</option>
+                                    <option>Gujarati</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Preferences -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-title-wrapper">
+                                <div class="section-icon bg-gradient-orange">
+                                    <i data-lucide="bell"></i>
+                                </div>
+                                <h2 class="section-title">Notification Preferences</h2>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="notification-table">
+                                <thead>
+                                    <tr>
+                                        <th>Notification Type</th>
+                                        <th class="text-center">Push</th>
+                                        <th class="text-center">Email</th>
+                                        <th class="text-center">SMS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="notification-name">New Job Requests</div>
+                                            <div class="notification-desc">Get notified when customers request your
+                                                services</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="notification-name">Job Confirmations</div>
+                                            <div class="notification-desc">Alerts when a job is confirmed or scheduled
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="notification-name">Payment Received</div>
+                                            <div class="notification-desc">Notifications when you receive payments</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="notification-name">Customer Reviews</div>
+                                            <div class="notification-desc">When customers leave reviews or ratings</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="notification-name">Promotional Offers</div>
+                                            <div class="notification-desc">Special offers and platform updates</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Privacy & Safety -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-title-wrapper">
+                                <div class="section-icon bg-gradient-red">
+                                    <i data-lucide="shield"></i>
+                                </div>
+                                <h2 class="section-title">Privacy & Safety</h2>
+                            </div>
+                        </div>
+
+                        <div class="privacy-option">
+                            <div class="privacy-header">
+                                <h3 class="privacy-title">Profile Visibility</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="privacy-desc">Make your profile visible to customers searching for services</p>
+                        </div>
+
+                        <div class="privacy-option">
+                            <div class="privacy-header">
+                                <h3 class="privacy-title">Show Phone Number</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="privacy-desc">Display your phone number on your public profile</p>
+                        </div>
+
+                        <div class="privacy-option">
+                            <div class="privacy-header">
+                                <h3 class="privacy-title">Location Sharing</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="privacy-desc">Allow customers to see your approximate location for nearby services
+                            </p>
+                        </div>
+
+                        <div class="privacy-option">
+                            <div class="privacy-header">
+                                <h3 class="privacy-title">Two-Factor Authentication</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="privacy-desc">Add an extra layer of security to your account</p>
+                        </div>
+                    </div>
+
+                    <!-- Subscription & Billing -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-title-wrapper">
+                                <div class="section-icon bg-gradient-green">
+                                    <i data-lucide="credit-card"></i>
+                                </div>
+                                <h2 class="section-title">Subscription & Billing</h2>
+                            </div>
+                        </div>
+
+                        <div class="subscription-comparison">
+                            <!-- Free Plan -->
+                            <div class="subscription-card">
+                                <h3 class="subscription-name">Free Plan</h3>
+                                <div class="subscription-price">
+                                    ₹0
+                                    <span>/month</span>
+                                </div>
+
+                                <ul class="subscription-features">
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Basic profile listing</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Up to 10 job requests/month</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Standard customer support</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="x" class="feature-icon disabled"></i>
+                                        <span>Priority job visibility</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="x" class="feature-icon disabled"></i>
+                                        <span>Advanced analytics</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="x" class="feature-icon disabled"></i>
+                                        <span>Premium badge</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="x" class="feature-icon disabled"></i>
+                                        <span>Marketing tools</span>
+                                    </li>
+                                </ul>
+
+                                <button class="btn-upgrade btn-current">Current Plan</button>
+                            </div>
+
+                            <!-- Premium Plan -->
+                            <div class="subscription-card premium">
+                                <span class="subscription-badge">Recommended</span>
+                                <h3 class="subscription-name">Premium Plan</h3>
+                                <div class="subscription-price text-success">
+                                    ₹499
+                                    <span>/month</span>
+                                </div>
+
+                                <ul class="subscription-features">
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Enhanced profile with photos</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Unlimited job requests</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>24/7 priority support</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Priority job visibility</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Advanced analytics dashboard</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Premium verified badge</span>
+                                    </li>
+                                    <li>
+                                        <i data-lucide="check" class="feature-icon"></i>
+                                        <span>Marketing & promotion tools</span>
+                                    </li>
+                                </ul>
+
+                                <button class="btn-upgrade">Upgrade to Premium</button>
+                            </div>
+                        </div>
+
+                        <div class="info-box mt-6">
+                            <h4 class="font-bold mb-2">
+                                <i data-lucide="gift" class="w-5 h-5 text-success inline mr-2"></i>
+                                Special Offer: Get 2 months free on annual subscription!
+                            </h4>
+                            <p class="text-gray m-0 text-sm">
+                                Save ₹998 when you upgrade to Premium Annual Plan (₹4,990/year)
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Help & Support -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-title-wrapper">
+                                <div class="section-icon bg-gradient-royal">
+                                    <i data-lucide="help-circle"></i>
+                                </div>
+                                <h2 class="section-title">Help & Support</h2>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <div class="help-item cursor-pointer">
+                                <div class="help-icon">
+                                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                                </div>
+                                <div class="help-content">
+                                    <h3 class="help-title">Help Center</h3>
+                                    <p class="help-desc">Browse FAQs and guides</p>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray"></i>
+                            </div>
+
+                            <div class="help-item cursor-pointer">
+                                <div class="help-icon">
+                                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                                </div>
+                                <div class="help-content">
+                                    <h3 class="help-title">Contact Support</h3>
+                                    <p class="help-desc">Chat with our support team</p>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray"></i>
+                            </div>
+
+                            <div class="help-item cursor-pointer">
+                                <div class="help-icon">
+                                    <i data-lucide="phone" class="w-6 h-6"></i>
+                                </div>
+                                <div class="help-content">
+                                    <h3 class="help-title">Call Us</h3>
+                                    <p class="help-desc">1800-GIG-HELP (24/7)</p>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray"></i>
+                            </div>
+
+                            <div class="help-item cursor-pointer">
+                                <div class="help-icon">
+                                    <i data-lucide="file-text" class="w-6 h-6"></i>
+                                </div>
+                                <div class="help-content">
+                                    <h3 class="help-title">Terms & Privacy</h3>
+                                    <p class="help-desc">Read our policies</p>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <button class="btn-save-settings">
+                        <i data-lucide="check" class="w-6 h-6"></i>
+                        Save All Settings
+                    </button>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Save settings button
+        document.querySelector('.btn-save-settings').addEventListener('click', () => {
+            alert('Settings saved successfully!');
+        });
+
+        // Upgrade button
+        document.querySelectorAll('.btn-upgrade').forEach(btn => {
+            if (!btn.classList.contains('btn-current')) {
+                btn.addEventListener('click', () => {
+                    alert('Redirecting to payment gateway...');
+                });
+            }
+        });
+
+        // Help items
+        document.querySelectorAll('.help-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const title = item.querySelector('.help-title').textContent;
+                alert(`Opening ${title}...`);
+            });
+        });
+    </script>
+</body>
+
+</html>

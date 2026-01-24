@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refer & Earn - GigDial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .referral-hero h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .referral-hero p {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .referral-code-box i {
+            width: 16px;
+            height: 16px;
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-gray);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .stat-value.green {
+            color: var(--primary-green);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="customer-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="services-catalog.html" class="sidebar-link">
+                    <i data-lucide="search"></i>
+                    <span>Browse Services</span>
+                </a>
+                <a href="customer-service-history.html" class="sidebar-link">
+                    <i data-lucide="calendar"></i>
+                    <span>Service History</span>
+                </a>
+                <a href="customer-subscriptions.html" class="sidebar-link">
+                    <i data-lucide="repeat"></i>
+                    <span>Subscriptions</span>
+                </a>
+                <a href="customer-dashboard.html#messages" class="sidebar-link">
+                    <i data-lucide="message-square"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-urgent" style="margin-left: auto">3</span>
+                </a>
+                <a href="customer-dashboard.html#favorites" class="sidebar-link">
+                    <i data-lucide="heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="customer-dashboard.html#payments" class="sidebar-link">
+                    <i data-lucide="credit-card"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="customer-addresses.html" class="sidebar-link">
+                    <i data-lucide="map-pin"></i>
+                    <span>Saved Addresses</span>
+                </a>
+                <a href="referral-program.html" class="sidebar-link active">
+                    <i data-lucide="gift"></i>
+                    <span>Refer & Earn</span>
+                </a>
+                <a href="loyalty-dashboard.html" class="sidebar-link">
+                    <i data-lucide="crown"></i>
+                    <span>Loyalty Points</span>
+                </a>
+                <a href="customer-dashboard.html#settings" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-ghost btn-sm w-full" style="justify-content: flex-start"
+                    onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Mobile Toggle -->
+            <div class="dashboard-header lg:hidden">
+                <button class="mobile-menu-toggle btn btn-ghost btn-sm">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="logo-mobile">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </div>
+            </div>
+
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Refer & Earn</h1>
+            </div>
+
+            <div class="referral-hero">
+                <h1>Invite Friends, Get ₹100</h1>
+                <p>Share the love! Give your friends ₹100 off their first booking, and you get ₹100 when they complete
+                    it.</p>
+            </div>
+
+            <div class="referral-container">
+                <div class="code-card">
+                    <h3 class="mb-2 text-gray">Your Unique Referral Code</h3>
+                    <div class="referral-code-box" onclick="alert('Code Copied!')">
+                        PRIYA2024
+                        <i data-lucide="copy"></i>
+                    </div>
+                    <p class="text-gray" style="font-size: 12px;  margin-bottom: 24px">Tap to copy</p>
+
+                    <div class="share-grid">
+                        <button class="share-btn">
+                            <div class="share-icon" style="background: #25D366">
+                                <i data-lucide="message-circle" style="width: 20px; height: 20px"></i>
+                            </div>
+                            WhatsApp
+                        </button>
+                        <button class="share-btn">
+                            <div class="share-icon" style="background: #1877F2">
+                                <i data-lucide="facebook" style="width: 20px; height: 20px"></i>
+                            </div>
+                            Facebook
+                        </button>
+                        <button class="share-btn">
+                            <div class="share-icon" style="background: #1DA1F2">
+                                <i data-lucide="twitter" style="width: 20px; height: 20px"></i>
+                            </div>
+                            Twitter
+                        </button>
+                        <button class="share-btn">
+                            <div class="share-icon" style="background: #888">
+                                <i data-lucide="mail" style="width: 20px; height: 20px"></i>
+                            </div>
+                            Email
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">3</div>
+                        <div class="text-gray text-sm">Friends Invited</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value green">₹300</div>
+                        <div class="text-gray text-sm">Total Earned</div>
+                    </div>
+                </div>
+
+                <div class="how-it-works">
+                    <h2 class="section-title text-center" style="margin-bottom: 24px">How it works</h2>
+                    <div class="step-item">
+                        <div class="step-num">1</div>
+                        <div>
+                            <div class="mb-1 font-bold">Share your code</div>
+                            <div class="text-gray text-sm">Send your unique code to friends via
+                                WhatsApp or social media.</div>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">2</div>
+                        <div>
+                            <div class="mb-1 font-bold">Friend books a service</div>
+                            <div class="text-gray text-sm">They get ₹100 off instantly on their
+                                first booking using your code.</div>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <div>
+                            <div class="mb-1 font-bold">You earn rewards</div>
+                            <div class="text-gray text-sm">Once their service is completed, ₹100
+                                is credited to your wallet.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile toggle
+        const toggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        if (toggle && sidebar) {
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+
+</html>

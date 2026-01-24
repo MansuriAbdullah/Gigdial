@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway - GigDial</title>
+    
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="nav">
+                <div class="logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </div>
+                <nav class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="services-catalog.html">Services</a>
+                    <a href="customer-dashboard.html">Dashboard</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="payment-container">
+        <div class="page-header">
+            <h1>Complete Your Payment</h1>
+            <p>Secure payment processing for your service</p>
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div class="service-details">
+                <div class="service-item">
+                    <div class="service-info">
+                        <h3 id="service-name">Home Cleaning Service</h3>
+                        <p id="service-provider">Provider: Sarah Johnson</p>
+                        <p id="service-date">Date: March 15, 2024 - 2:00 PM</p>
+                    </div>
+                    <div class="service-price">
+                        <span id="service-amount">₹1,500</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="price-breakdown">
+                <div class="price-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹1,500</span>
+                </div>
+                <div class="price-row">
+                    <span>Service Fee (10%)</span>
+                    <span id="service-fee">₹150</span>
+                </div>
+                <div class="price-row">
+                    <span>GST (18%)</span>
+                    <span id="gst">₹297</span>
+                </div>
+                <div class="price-row total">
+                    <span><strong>Total Amount</strong></span>
+                    <span><strong id="total-amount">₹1,947</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            <h2>Select Payment Method</h2>
+
+            <div class="payment-option" onclick="selectPaymentMethod('upi')">
+                <input type="radio" name="payment-method" value="upi" id="upi-radio">
+                <div class="payment-icon">
+                    <span><i data-lucide="smartphone"
+                            style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 8px"></i></span>
+                </div>
+                <div class="payment-info">
+                    <strong>UPI Payment</strong>
+                    <p>GPay, PhonePe, Paytm & more</p>
+                </div>
+            </div>
+
+            <div class="upi-options" id="upi-options">
+                <h3>Choose UPI App</h3>
+                <div class="upi-app" onclick="selectUPIApp('gpay')">
+                    <div class="payment-icon">
+                        <span><i data-lucide="smartphone"
+                                style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; color: #34A853"></i></span>
+                    </div>
+                    <div>
+                        <strong>Google Pay</strong>
+                        <p>Fast & secure payments</p>
+                    </div>
+                </div>
+                <div class="upi-app" onclick="selectUPIApp('phonepe')">
+                    <div class="payment-icon">
+                        <span><i data-lucide="smartphone"
+                                style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; color: #6739B7"></i></span>
+                    </div>
+                    <div>
+                        <strong>PhonePe</strong>
+                        <p>Simple & reliable</p>
+                    </div>
+                </div>
+                <div class="upi-app" onclick="selectUPIApp('paytm')">
+                    <div class="payment-icon">
+                        <span></span>
+                    </div>
+                    <div>
+                        <strong>Paytm</strong>
+                        <p>Most trusted UPI app</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="upi-id">Enter UPI ID</label>
+                    <input type="text" id="upi-id" placeholder="yourname@upi">
+                </div>
+            </div>
+
+            <div class="payment-option" onclick="selectPaymentMethod('card')">
+                <input type="radio" name="payment-method" value="card" id="card-radio">
+                <div class="payment-icon">
+                    <span><i data-lucide="credit-card"
+                            style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px"></i></span>
+                </div>
+                <div class="payment-info">
+                    <strong>Credit/Debit Card</strong>
+                    <p>Visa, Mastercard, RuPay</p>
+                </div>
+            </div>
+
+            <div class="card-form" id="card-form">
+                <div class="form-group">
+                    <label for="card-number">Card Number</label>
+                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="card-expiry">Expiry Date</label>
+                        <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="card-cvv">CVV</label>
+                        <input type="text" id="card-cvv" placeholder="123" maxlength="3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="card-name">Cardholder Name</label>
+                    <input type="text" id="card-name" placeholder="John Doe">
+                </div>
+            </div>
+
+            <div class="payment-option" onclick="selectPaymentMethod('netbanking')">
+                <input type="radio" name="payment-method" value="netbanking" id="netbanking-radio">
+                <div class="payment-icon">
+                    <span></span>
+                </div>
+                <div class="payment-info">
+                    <strong>Net Banking</strong>
+                    <p>All major banks supported</p>
+                </div>
+            </div>
+
+            <div class="card-form" id="netbanking-form">
+                <div class="form-group">
+                    <label for="bank-select">Select Bank</label>
+                    <select id="bank-select">
+                        <option value="">Choose your bank</option>
+                        <option value="sbi">State Bank of India</option>
+                        <option value="hdfc">HDFC Bank</option>
+                        <option value="icici">ICICI Bank</option>
+                        <option value="pnb">Punjab National Bank</option>
+                        <option value="axis">Axis Bank</option>
+                        <option value="kotak">Kotak Mahindra Bank</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="payment-option" onclick="selectPaymentMethod('wallet')">
+                <input type="radio" name="payment-method" value="wallet" id="wallet-radio">
+                <div class="payment-icon">
+                    <span></span>
+                </div>
+                <div class="payment-info">
+                    <strong>Mobile Wallets</strong>
+                    <p>Paytm Wallet, Mobikwik & more</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="security-badges">
+            <div class="security-badge">
+                <span></span>
+                <span>100% Secure</span>
+            </div>
+            <div class="security-badge">
+                <span></span>
+                <span>PCI DSS Compliant</span>
+            </div>
+            <div class="security-badge">
+                <span><i data-lucide="lock"
+                        style="width: 14px; height: 14px; display: inline-block; vertical-align: middle"></i></span>
+                <span>SSL Encrypted</span>
+            </div>
+        </div>
+
+        <div class="error-message" id="error-message">
+            Payment failed. Please try again or choose a different payment method.
+        </div>
+
+        <button class="pay-button" id="pay-button" onclick="processPayment()">
+            Pay ₹1,947
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing your payment...</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 GigDial. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedPaymentMethod = null;
+        let selectedUPIApp = null;
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+
+            // Update radio buttons
+            document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+                radio.checked = radio.value === method;
+            });
+
+            // Update visual selection
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            // Show/hide specific forms
+            document.getElementById('upi-options').classList.remove('active');
+            document.getElementById('card-form').classList.remove('active');
+            document.getElementById('netbanking-form').classList.remove('active');
+
+            if (method === 'upi') {
+                document.getElementById('upi-options').classList.add('active');
+            } else if (method === 'card') {
+                document.getElementById('card-form').classList.add('active');
+            } else if (method === 'netbanking') {
+                document.getElementById('netbanking-form').classList.add('active');
+            }
+        }
+
+        function selectUPIApp(app) {
+            selectedUPIApp = app;
+            document.querySelectorAll('.upi-app').forEach(upiApp => {
+                upiApp.style.background = '';
+                upiApp.style.borderColor = '';
+            });
+            event.currentTarget.style.background = 'var(--white)';
+            event.currentTarget.style.borderColor = 'var(--primary-green)';
+        }
+
+        function formatCardNumber(input) {
+            let value = input.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            input.value = formattedValue;
+        }
+
+        function formatExpiry(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            input.value = value;
+        }
+
+        function validatePayment() {
+            if (!selectedPaymentMethod) {
+                showError('Please select a payment method');
+                return false;
+            }
+
+            if (selectedPaymentMethod === 'upi') {
+                const upiId = document.getElementById('upi-id').value;
+                if (!upiId || !upiId.includes('@')) {
+                    showError('Please enter a valid UPI ID');
+                    return false;
+                }
+            }
+
+            if (selectedPaymentMethod === 'card') {
+                const cardNumber = document.getElementById('card-number').value;
+                const expiry = document.getElementById('card-expiry').value;
+                const cvv = document.getElementById('card-cvv').value;
+                const name = document.getElementById('card-name').value;
+
+                if (!cardNumber || cardNumber.replace(/\s/g, '').length < 16) {
+                    showError('Please enter a valid card number');
+                    return false;
+                }
+                if (!expiry || !expiry.match(/^\d{2}\/\d{2}$/)) {
+                    showError('Please enter a valid expiry date');
+                    return false;
+                }
+                if (!cvv || cvv.length < 3) {
+                    showError('Please enter a valid CVV');
+                    return false;
+                }
+                if (!name) {
+                    showError('Please enter the cardholder name');
+                    return false;
+                }
+            }
+
+            if (selectedPaymentMethod === 'netbanking') {
+                const bank = document.getElementById('bank-select').value;
+                if (!bank) {
+                    showError('Please select your bank');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.classList.add('active');
+            setTimeout(() => {
+                errorElement.classList.remove('active');
+            }, 5000);
+        }
+
+        function processPayment() {
+            if (!validatePayment()) {
+                return;
+            }
+
+            const payButton = document.getElementById('pay-button');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('error-message');
+
+            payButton.disabled = true;
+            payButton.textContent = 'Processing...';
+            loading.classList.add('active');
+            errorMessage.classList.remove('active');
+
+            // Simulate payment processing
+            setTimeout(() => {
+                // Simulate success (90% success rate for demo)
+                if (Math.random() > 0.1) {
+                    // Redirect to booking confirmation
+                    window.location.href = 'booking-confirmation.html?payment=success&order_id=' + generateOrderId();
+                } else {
+                    // Show error
+                    loading.classList.remove('active');
+                    payButton.disabled = false;
+                    payButton.textContent = 'Pay ₹1,947';
+                    showError('Payment failed. Please try again.');
+                }
+            }, 3000);
+        }
+
+        function generateOrderId() {
+            return 'GD' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
+        }
+
+        // Add event listeners
+        document.getElementById('card-number').addEventListener('input', function () {
+            formatCardNumber(this);
+        });
+
+        document.getElementById('card-expiry').addEventListener('input', function () {
+            formatExpiry(this);
+        });
+
+        document.getElementById('card-cvv').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 3);
+        });
+
+        // Load order details from URL parameters or localStorage
+        function loadOrderDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serviceName = urlParams.get('service') || localStorage.getItem('service_name') || 'Home Cleaning Service';
+            const providerName = urlParams.get('provider') || localStorage.getItem('provider_name') || 'Sarah Johnson';
+            const amount = urlParams.get('amount') || localStorage.getItem('service_amount') || '1500';
+
+            document.getElementById('service-name').textContent = serviceName;
+            document.getElementById('service-provider').textContent = 'Provider: ' + providerName;
+            document.getElementById('service-amount').textContent = '₹' + parseInt(amount).toLocaleString('en-IN');
+            document.getElementById('subtotal').textContent = '₹' + parseInt(amount).toLocaleString('en-IN');
+
+            const serviceFee = Math.round(amount * 0.1);
+            const gst = Math.round((parseInt(amount) + serviceFee) * 0.18);
+            const total = parseInt(amount) + serviceFee + gst;
+
+            document.getElementById('service-fee').textContent = '₹' + serviceFee.toLocaleString('en-IN');
+            document.getElementById('gst').textContent = '₹' + gst.toLocaleString('en-IN');
+            document.getElementById('total-amount').textContent = '₹' + total.toLocaleString('en-IN');
+            document.getElementById('pay-button').textContent = 'Pay ₹' + total.toLocaleString('en-IN');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            loadOrderDetails();
+        });
+    </script>
+</body>
+
+</html>

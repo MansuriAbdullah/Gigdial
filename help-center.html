@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - GigDial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+
+<body>
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-links">
+                <a href="index.html">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="help-hero">
+        <h1 style="font-size: 36px; font-weight: 900">How can we help you?</h1>
+        <div class="help-search-box">
+            <i data-lucide="search" class="text-gray" style="position: absolute; left: 20px; top: 16px"></i>
+            <input type="text" class="help-input" placeholder="Search for articles (e.g., refund, booking)...">
+        </div>
+    </div>
+
+    <div class="help-container">
+        <div class="category-grid">
+            <div class="cat-card">
+                <div class="cat-icon"><i data-lucide="calendar"></i></div>
+                <h3 class="mb-1 font-bold">Booking & Scheduling</h3>
+                <p class="text-gray text-sm">Reschedule, cancel, or track your service.</p>
+            </div>
+            <div class="cat-card">
+                <div class="cat-icon"><i data-lucide="credit-card"></i></div>
+                <h3 class="mb-1 font-bold">Payments & Refunds</h3>
+                <p class="text-gray text-sm">Invoices, charges, and refund status.</p>
+            </div>
+            <div class="cat-card">
+                <div class="cat-icon"><i data-lucide="shield"></i></div>
+                <h3 class="mb-1 font-bold">Safety & Trust</h3>
+                <p class="text-gray text-sm">Worker verification and emergency help.</p>
+            </div>
+        </div>
+
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: var(--space-6)">Popular Articles</h2>
+        <div class="article-list">
+            <a href="help-center.html" class="article-link">
+                How do I reschedule my booking?
+                <i data-lucide="chevron-right" class="text-gray" style="width: 16px"></i>
+            </a>
+            <a href="help-center.html" class="article-link">
+                What is the cancellation policy?
+                <i data-lucide="chevron-right" class="text-gray" style="width: 16px"></i>
+            </a>
+            <a href="help-center.html" class="article-link">
+                How to contact the worker directly?
+                <i data-lucide="chevron-right" class="text-gray" style="width: 16px"></i>
+            </a>
+            <a href="help-center.html" class="article-link">
+                I was charged twice. What should I do?
+                <i data-lucide="chevron-right" class="text-gray" style="width: 16px"></i>
+            </a>
+            <a href="help-center.html" class="article-link">
+                How to file an insurance claim?
+                <i data-lucide="chevron-right" class="text-gray" style="width: 16px"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                    <p class="footer-desc">India's #1 Local Services Platform. Connecting you with verified
+                        professionals for all your home service needs.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="blog.html">About Us</a></li>
+                        <li><a href="blog.html">Careers</a></li>
+                        <li><a href="help-center.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="services-catalog.html">Cleaning</a></li>
+                        <li><a href="services-catalog.html">Plumbing</a></li>
+                        <li><a href="services-catalog.html">Electrical</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="help-center.html">Help Center</a></li>
+                        <li><a href="policies.html">Safety</a></li>
+                        <li><a href="terms-conditions.html">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 GigDial. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

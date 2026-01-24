@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Earnings - GigDial Worker</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Inline Override for specific utility needs -->
+    <style>
+        /* Stats & Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .bg-primary {
+            background: rgba(0, 51, 102, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .bg-green {
+            background: rgba(102, 204, 51, 0.1);
+            color: var(--primary-green);
+        }
+
+        .bg-warning {
+            background: rgba(245, 124, 0, 0.1);
+            color: var(--status-orange);
+        }
+
+        .bg-error {
+            background: rgba(211, 47, 47, 0.1);
+            color: var(--warning-red);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-trend {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend-up {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-gray);
+            padding-bottom: 1px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-blue);
+            background: #f8fafc;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Tables & Filters */
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-gray);
+            align-items: center;
+        }
+
+        .form-input {
+            padding: 10px 16px;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border-gray);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-gray);
+            vertical-align: middle;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Chart */
+        .chart-container {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-gray);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-dark);
+        }
+
+        .simple-bar-chart {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 20px;
+            border-bottom: 1px solid var(--border-gray);
+            position: relative;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary-blue), #60a5fa);
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease;
+            opacity: 0.8;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            opacity: 1;
+            transform: scaleX(1.1);
+        }
+
+        .chart-bar::after {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--text-gray);
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .chart-bar:hover::after {
+            opacity: 1;
+            content: '₹' attr(data-value);
+        }
+
+        /* Withdraw Section */
+        .bank-account-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bank-account-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .withdraw-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid var(--border-gray);
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .withdrawal-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .withdrawal-item {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Utility */
+        .text-success {
+            color: var(--primary-green);
+        }
+
+        .text-error {
+            color: var(--warning-red);
+        }
+
+        .text-primary {
+            color: var(--primary-blue);
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .link-primary {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link-primary:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-warning {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        /* Modal Fix */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 450px;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="public/images/gigdial-logo.png" alt="GigDial">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="worker-dashboard.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="worker-dashboard.html#job-requests" class="sidebar-link">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Job Requests</span>
+                    <span class="badge badge-error" style="margin-left: auto">8</span>
+                </a>
+                <a href="worker-my-services.html" class="sidebar-link">
+                    <i data-lucide="briefcase"></i>
+                    <span>My Services</span>
+                </a>
+                <a href="worker-earnings.html" class="sidebar-link active">
+                    <i data-lucide="wallet"></i>
+                    <span>Earnings</span>
+                </a>
+                <a href="worker-profile-edit.html" class="sidebar-link">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="communication.html" class="sidebar-link">
+                    <i data-lucide="message-circle"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-warning" style="margin-left: auto">5</span>
+                </a>
+                <a href="worker-settings.html" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">RK</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">Rajesh Kumar</div>
+                        <div class="sidebar-user-email">Professional Plumber</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-sm w-full" style="justify-content: flex-start"
+                    onclick="window.location.href='index.html'">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="dashboard-header-left">
+                    <button class="mobile-menu-toggle">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="dashboard-title">My Earnings <i data-lucide="indian-rupee" class="inline-icon"
+                            style="color: var(--primary-green)"></i></h1>
+                </div>
+                <div class="dashboard-header-right">
+                    <button class="icon-btn flex justify-center items-center"
+                        style="background: white; border: none; padding: 8px; border-radius: 50%; width: 40px; height: 40px;    box-shadow: var(--shadow-sm)">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot" style="top: 2px; right: 2px"></span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Earnings Summary Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-primary">
+                            <i data-lucide="indian-rupee"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">₹45,680</div>
+                            <div class="stat-label">Total Earnings</div>
+                            <div class="stat-trend text-gray">Lifetime Income</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-green">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">₹12,450</div>
+                            <div class="stat-label">This Month</div>
+                            <div class="stat-trend trend-up">
+                                <i data-lucide="arrow-up" style="width: 14px; height: 14px"></i>
+                                +15% vs last month
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning">
+                            <i data-lucide="wallet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">₹3,200</div>
+                            <div class="stat-label">Available Balance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="section-card">
+                    <button class="tab-btn active" data-tab="earnings-history">Earnings History</button>
+                    <button class="tab-btn" data-tab="refund-claims">Refund Claims</button>
+                </div>
+
+                <!-- Earnings History Tab -->
+                <div class="tab-content active" id="earnings-history">
+                    <div class="filter-group">
+                        <div class="flex items-center" style="flex: 1; min-width: 200px;  gap: 10px">
+                            <i data-lucide="calendar" class="text-gray-400 w-4 h-4"></i>
+                            <span class="text-sm font-semibold text-gray-700">Filter by Date:</span>
+                        </div>
+                        <input type="date" class="form-input">
+                        <span class="text-gray">-</span>
+                        <input type="date" class="form-input">
+                        <select class="form-input">
+                            <option>All Services</option>
+                            <option>Plumbing</option>
+                            <option>Tap Repair</option>
+                        </select>
+                        <select class="form-input">
+                            <option>All Status</option>
+                            <option>Released</option>
+                            <option>In Escrow</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm">Apply</button>
+                    </div>
+
+                    <!-- Earnings Chart -->
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i data-lucide="bar-chart" class="w-5 h-5 text-primary-blue"></i>
+                            <strong>Earnings Trend (Last 6 Months)</strong>
+                        </div>
+                        <div class="simple-bar-chart">
+                            <div class="chart-bar" style="height: 60%" data-value="12k"></div>
+                            <div class="chart-bar" style="height: 75%" data-value="15k"></div>
+                            <div class="chart-bar" style="height: 55%" data-value="10k"></div>
+                            <div class="chart-bar" style="height: 85%" data-value="18k"></div>
+                            <div class="chart-bar" style="height: 70%" data-value="14k"></div>
+                            <div class="chart-bar" style="height: 90%" data-value="20k"></div>
+                        </div>
+                        <div
+                            class="flex justify-between font-semibold text-gray" style="padding-top: 8px; font-size: 12px">
+                            <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
+                        </div>
+                    </div>
+
+                    <!-- Earnings Table -->
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Job ID</th>
+                                    <th>Service</th>
+                                    <th>Customer</th>
+                                    <th>Agreed Price</th>
+                                    <th>Commission</th>
+                                    <th>Your Earnings</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mar 20, 2025</td>
+                                    <td><a href="#" class="link-primary">#GD-123</a></td>
+                                    <td>Tap Repair</td>
+                                    <td>Priya M.</td>
+                                    <td><strong>₹499</strong></td>
+                                    <td class="text-error">-₹50</td>
+                                    <td class="text-success font-bold">₹449</td>
+                                    <td><span class="badge badge-success">Released</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 19, 2025</td>
+                                    <td><a href="#" class="link-primary">#GD-124</a></td>
+                                    <td>Pipe Installation</td>
+                                    <td>Amit S.</td>
+                                    <td><strong>₹1,200</strong></td>
+                                    <td class="text-error">-₹120</td>
+                                    <td class="text-success font-bold">₹1,080</td>
+                                    <td><span class="badge badge-success">Released</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 18, 2025</td>
+                                    <td><a href="#" class="link-primary">#GD-125</a></td>
+                                    <td>Leak Repair</td>
+                                    <td>Raj K.</td>
+                                    <td><strong>₹800</strong></td>
+                                    <td class="text-error">-₹80</td>
+                                    <td class="text-success font-bold">₹720</td>
+                                    <td><span class="badge badge-warning">In Escrow</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 15, 2025</td>
+                                    <td><a href="#" class="link-primary">#GD-120</a></td>
+                                    <td>Full Plumbing Check</td>
+                                    <td>Sneha P.</td>
+                                    <td><strong>₹2,000</strong></td>
+                                    <td class="text-error">-₹200</td>
+                                    <td class="text-success font-bold">₹1,800</td>
+                                    <td><span class="badge badge-success">Released</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <!-- Refund Claims Tab -->
+                <div class="tab-content" id="refund-claims">
+                    <div class="alert alert-info my-6 flex gap-3"
+                        style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 16px; border-radius: 12px;   align-items: start">
+                        <i data-lucide="info" style="flex-shrink: 0; margin-top: 2px"></i>
+                        <div>
+                            <strong>No-Lead Refund Policy</strong>
+                            <p class="text-sm" style="margin-top: 4px; opacity: 0.9">If you subscribed for premium
+                                visibility but received fewer than 5 leads per month,
+                                you can claim a full refund.</p>
+                        </div>
+                    </div>
+
+                    <div class="card border-primary-green my-6"
+                        style="border: 1px solid #bbf7d0; padding: 24px; border-radius: 16px; background: #f0fdf4">
+                        <h3 class="mb-4 text-lg font-bold text-green-800">Submit Refund Claim</h3>
+
+                        <div class="grid-cols-2 mb-4"
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+                            <div class="form-group">
+                                <label class="form-label block mb-2 font-semibold text-green-900">Subscription
+                                    Month</label>
+                                <select class="form-input w-full bg-white">
+                                    <option>February 2025</option>
+                                    <option>January 2025</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label block mb-2 font-semibold text-green-900">Reason</label>
+                                <select class="form-input w-full bg-white">
+                                    <option>Received fewer than 5 leads</option>
+                                    <option>Poor lead quality</option>
+                                    <option>Technical issues</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label block mb-2 font-semibold text-green-900">Additional
+                                Details</label>
+                            <textarea class="form-input w-full bg-white" rows="3"
+                                placeholder="Explain your situation..."></textarea>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg" style="background: var(--primary-green)">
+                            <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                            Submit Claim
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    </main>
+    </div>
+
+
+    <script>
+        lucide.createIcons();
+
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Mobile menu
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.dashboard-sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+
+</html>

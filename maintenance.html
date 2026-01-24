@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Maintenance - GigDial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body style="background: #f1f5f9">
+
+    <div class="error-page-container">
+        <!-- Logo -->
+        <img src="public/images/gigdial-logo.png" alt="GigDial">
+
+        <div class="maint-container">
+            <div class="maint-icon">
+                <i data-lucide="wrench" style="width: 40px; height: 40px"></i>
+            </div>
+            <h1 class="maint-title">We'll be back soon!</h1>
+            <p class="maint-desc">Sorry for the inconvenience but we're performing some scheduled maintenance at the
+                moment.
+                We'll be back online shortly.</p>
+
+            <div class="status-box">
+                <div style="flex: 1">
+                    <div class="status-label">Estimated Downtime</div>
+                    <div class="status-value">2 Hours</div>
+                </div>
+                <div style="flex: 1; border-left: 1px solid var(--border-gray); padding-left: 16px">
+                    <div class="status-label">Contact Support</div>
+                    <div class="status-value text-primary">support@gigdial.com</div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-sm text-gray">
+                &copy; 2025 GigDial Inc. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
