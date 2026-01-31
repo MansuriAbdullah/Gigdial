@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { AlertCircle, MessageSquare, ExternalLink, ShieldCheck, MoreHorizontal, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AlertCircle, MessageSquare, ExternalLink, ShieldCheck, MoreHorizontal, ChevronDown, CheckCircle2, User, Send, X } from 'lucide-react';
 
 const mockDisputes = [
     {
@@ -12,8 +12,14 @@ const mockDisputes = [
         reason: "Job Incomplete",
         status: "Open",
         severity: "High",
-        date: "25 Jan 2026"
+        date: "25 Jan 2026",
+        chatLog: [
+            { sender: "Customer", msg: "He left half the work pending.", time: "10:00 AM" },
+            { sender: "Worker", msg: "I needed more tools, I told him.", time: "10:15 AM" },
+            { sender: "Customer", msg: "You never came back!", time: "10:20 AM" }
+        ]
     },
+    // ... other mock data ...
     {
         id: "DIS-002",
         user: "Anita Roy",
@@ -23,7 +29,11 @@ const mockDisputes = [
         reason: "Payment Delayed",
         status: "Investigating",
         severity: "Medium",
-        date: "22 Jan 2026"
+        date: "22 Jan 2026",
+        chatLog: [
+            { sender: "Worker", msg: "Payment is 5 days late.", time: "09:00 AM" },
+            { sender: "Customer", msg: "Processing it tomorrow.", time: "09:30 AM" }
+        ]
     },
     {
         id: "DIS-003",
@@ -34,19 +44,64 @@ const mockDisputes = [
         reason: "Damaged Items",
         status: "Action Required",
         severity: "Critical",
-        date: "20 Jan 2026"
+        date: "20 Jan 2026",
+        chatLog: []
     }
 ];
 
+const ChatModal = ({ dispute, onClose }) => (
+    <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+    >
+        <motion.div
+            initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[600px]"
+        >
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                    <MessageSquare size={18} className="text-blue-500" /> Chat Log
+                </h3>
+                <button onClick={onClose}><X size={20} className="text-slate-400 hover:text-slate-600" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+                {dispute.chatLog && dispute.chatLog.length > 0 ? (
+                    dispute.chatLog.map((msg, idx) => (
+                        <div key={idx} className={`flex flex-col ${msg.sender === 'Customer' ? 'items-end' : 'items-start'}`}>
+                            <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${msg.sender === 'Customer' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'
+                                }`}>
+                                <p className="font-bold text-xs mb-1 opacity-80">{msg.sender}</p>
+                                {msg.msg}
+                            </div>
+                            <span className="text-[10px] text-slate-400 mt-1 px-1">{msg.time}</span>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center text-slate-400 py-10 text-sm">No chat history available.</div>
+                )}
+            </div>
+            <div className="p-4 bg-white border-t border-slate-100">
+                <button
+                    onClick={onClose}
+                    className="w-full py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                >
+                    Close Log
+                </button>
+            </div>
+        </motion.div>
+    </motion.div>
+);
+
 const Disputes = () => {
     const [expandedId, setExpandedId] = useState(null);
+    const [activeChatDispute, setActiveChatDispute] = useState(null);
 
     const toggleExpand = (id) => {
         setExpandedId(expandedId === id ? null : id);
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 relative">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900">Dispute Resolution</h1>
@@ -65,8 +120,8 @@ const Disputes = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
                         className={`bg-white rounded-2xl border transition-all duration-300 overflow-hidden ${expandedId === dispute.id
-                                ? 'border-blue-500 shadow-xl shadow-blue-500/10 ring-1 ring-blue-500'
-                                : 'border-slate-100 hover:border-blue-200 hover:shadow-md'
+                            ? 'border-blue-500 shadow-xl shadow-blue-500/10 ring-1 ring-blue-500'
+                            : 'border-slate-100 hover:border-blue-200 hover:shadow-md'
                             }`}
                     >
                         {/* Header Row */}
@@ -83,7 +138,7 @@ const Disputes = () => {
                                     <div className="flex items-center gap-3">
                                         <h3 className="font-bold text-slate-900 text-lg">{dispute.reason}</h3>
                                         <span className={`px-2 py-0.5 rounded text-xs font-bold ${dispute.status === 'Open' ? 'bg-red-100 text-red-700' :
-                                                dispute.status === 'Investigating' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
+                                            dispute.status === 'Investigating' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
                                             }`}>
                                             {dispute.status}
                                         </span>
@@ -140,8 +195,11 @@ const Disputes = () => {
                                             <MessageSquare size={18} className="text-blue-500" /> Actions
                                         </h4>
                                         <div className="flex flex-wrap gap-3">
-                                            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-medium text-sm">
-                                                <MessageSquare size={16} /> Contact Parties
+                                            <button
+                                                onClick={() => setActiveChatDispute(dispute)}
+                                                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors font-medium text-sm"
+                                            >
+                                                <MessageSquare size={16} /> View Chat Logs
                                             </button>
                                             <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors font-medium text-sm">
                                                 <ExternalLink size={16} /> View Evidence
@@ -163,6 +221,10 @@ const Disputes = () => {
                     </motion.div>
                 ))}
             </div>
+
+            <AnimatePresence>
+                {activeChatDispute && <ChatModal dispute={activeChatDispute} onClose={() => setActiveChatDispute(null)} />}
+            </AnimatePresence>
         </div>
     );
 };

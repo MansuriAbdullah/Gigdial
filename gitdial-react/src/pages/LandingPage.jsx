@@ -17,6 +17,8 @@ const pageVariants = {
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
 };
 
+import SEO from '../components/Shared/SEO';
+
 const LandingPage = () => {
     return (
         <motion.div
@@ -26,6 +28,7 @@ const LandingPage = () => {
             animate="animate"
             exit="exit"
         >
+            <SEO title="Home" description="Connect with verified local professionals for all your service needs. Reliable, fast, and secure." />
             {/* Hero Section with integrated animations */}
             <Hero />
 

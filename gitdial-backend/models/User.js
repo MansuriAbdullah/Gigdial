@@ -15,6 +15,37 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    phone: {
+        type: String,
+        required: false,
+    },
+    city: {
+        type: String,
+        required: false,
+    },
+    address: {
+        type: String,
+        required: false,
+    },
+    skills: [{
+        type: String,
+    }],
+    aadhaarCard: {
+        type: String,
+        required: false,
+    },
+    panCard: {
+        type: String,
+        required: false,
+    },
+    profileImage: {
+        type: String,
+        required: false,
+    },
+    isProvider: {
+        type: Boolean,
+        default: false,
+    },
     isAdmin: {
         type: Boolean,
         required: true,

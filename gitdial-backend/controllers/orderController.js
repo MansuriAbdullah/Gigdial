@@ -105,4 +105,17 @@ export {
     getOrderById,
     updateOrderToPaid,
     getMyOrders,
+    getOrders,
+};
+
+// @desc    Get all orders
+// @route   GET /api/orders
+// @access  Private/Admin
+const getOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({}).populate('user', 'id name').populate('gig', 'title');
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Car, Wrench, Zap, Home, GraduationCap, Dumbbell, Heart, Laptop, ChevronRight, Sparkles, Star, Users, Clock } from 'lucide-react';
 
@@ -112,6 +113,7 @@ const cardVariants = {
 };
 
 const Categories = () => {
+  const { t } = useLanguage();
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
@@ -205,7 +207,7 @@ const Categories = () => {
                 <p className="text-sm text-slate-500 mb-4 font-medium">{cat.tagline}</p>
 
                 {/* Stats */}
-                <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-2 mb-2">
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-slate-400" />
                     <span className="text-sm font-medium text-slate-700">{cat.count} Experts</span>
@@ -215,6 +217,10 @@ const Categories = () => {
                     <span className="text-sm text-slate-600">24/7</span>
                   </div>
                 </div>
+
+                <button className="w-full py-2.5 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                  {t('viewWorkers')} <ChevronRight size={16} />
+                </button>
 
                 {/* Hover indicator */}
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-24 h-1 bg-gradient-to-r from-blue-500 to-lime-500 rounded-full transition-all duration-300"></div>

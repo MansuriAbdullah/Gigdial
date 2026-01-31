@@ -1,10 +1,59 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, Star, Shield, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Mail, Lock, ArrowRight, Star, Shield, Clock, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
     const [role, setRole] = useState('customer'); // 'customer' or 'worker'
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (error) setError('');
+    };
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        try {
+            const res = await fetch('/api/users/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || 'Login failed');
+            }
+
+            // Use context login
+            login(data);
+
+            // Redirect based on user role from DB (overrides toggle if mismatched, 
+            // or we could enforce toggle match. Let's just trust DB role for redirection)
+            if (data.isAdmin) {
+                navigate('/admin');
+            } else if (data.isProvider) { // Assuming backend returns isProvider
+                navigate('/worker-dashboard');
+            } else {
+                navigate('/customer-dashboard');
+            }
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-50">
@@ -52,7 +101,12 @@ const Login = () => {
                         </p>
                     </div>
 
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleLogin}>
+                        {error && (
+                            <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium">
+                                {error}
+                            </div>
+                        )}
                         <div className="space-y-2 group">
                             <label className="text-sm font-semibold text-slate-700 ml-1">Email Connection</label>
                             <div className="relative transform group-focus-within:scale-[1.01] transition-transform duration-300">
@@ -61,8 +115,12 @@ const Login = () => {
                                 </div>
                                 <input
                                     type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     placeholder="name@example.com"
                                     className="w-full pl-14 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-slate-700 placeholder:text-slate-400"
+                                    required
                                 />
                             </div>
                         </div>
@@ -78,21 +136,29 @@ const Login = () => {
                                 </div>
                                 <input
                                     type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     placeholder="••••••••"
                                     className="w-full pl-14 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-slate-700 placeholder:text-slate-400"
+                                    required
                                 />
                             </div>
                         </div>
 
-                        <button className="w-full bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-white font-bold py-4 rounded-2xl shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 mt-4">
-                            <span>Sign In</span>
-                            <ArrowRight size={20} />
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-white font-bold py-4 rounded-2xl shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:pointer-events-none"
+                        >
+                            {loading ? <Loader2 className="animate-spin" size={20} /> : 'Sign In'}
+                            {!loading && <ArrowRight size={20} />}
                         </button>
                     </form>
 
                     <p className="mt-8 text-center text-slate-500">
                         New to GigDial?{' '}
-                        <Link to="/register" className="text-primary font-bold hover:text-primary-dark underline decoration-2 decoration-transparent hover:decoration-primary/30 underline-offset-4 transition-all">
+                        <Link to={role === 'customer' ? "/register/customer" : "/register"} className="text-primary font-bold hover:text-primary-dark underline decoration-2 decoration-transparent hover:decoration-primary/30 underline-offset-4 transition-all">
                             Create Account
                         </Link>
                     </p>

@@ -2,11 +2,11 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import AdminDashboard from './AdminDashboard';
-import AdminUsers from './AdminUsers';
+import ManageWorkers from './ManageWorkers';
+import ManageCustomers from './ManageCustomers';
+import { AdminBookings, AdminAnalytics, AdminContent } from './AdminPlaceholders';
 import ServiceApprovals from './ServiceApprovals';
-import PortfolioApprovals from './PortfolioApprovals';
 import Disputes from './Disputes';
-import Moderation from './Moderation';
 import AdminSettings from './AdminSettings';
 
 const AdminPanel = () => {
@@ -14,11 +14,13 @@ const AdminPanel = () => {
         <DashboardLayout role="admin">
             <Routes>
                 <Route index element={<AdminDashboard />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="service-approvals" element={<ServiceApprovals />} />
-                <Route path="portfolio-approvals" element={<PortfolioApprovals />} />
+                <Route path="workers" element={<ManageWorkers />} />
+                <Route path="customers" element={<ManageCustomers />} />
+                <Route path="bookings" element={<AdminBookings />} />
                 <Route path="disputes" element={<Disputes />} />
-                <Route path="moderation" element={<Moderation />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="services" element={<ServiceApprovals />} />
+                <Route path="content" element={<AdminContent />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="*" element={<Navigate to="" replace />} />
             </Routes>

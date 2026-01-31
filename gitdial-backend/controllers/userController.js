@@ -24,7 +24,8 @@ const authUser = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                isAdmin: user.isAdmin
+                isAdmin: user.isAdmin,
+                isProvider: user.isProvider
             });
         } else {
             res.status(401);
@@ -40,7 +41,7 @@ const authUser = async (req, res) => {
 // @access  Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, phone, city, address, skills, isProvider } = req.body;
 
         const userExists = await User.findOne({ email });
 
@@ -49,10 +50,34 @@ const registerUser = async (req, res) => {
             throw new Error('User already exists');
         }
 
+        let profileImage = '';
+        let aadhaarCard = '';
+        let panCard = '';
+
+        if (req.files) {
+            if (req.files.profileImage) {
+                profileImage = req.files.profileImage[0].path;
+            }
+            if (req.files.aadhaarCard) {
+                aadhaarCard = req.files.aadhaarCard[0].path;
+            }
+            if (req.files.panCard) {
+                panCard = req.files.panCard[0].path;
+            }
+        }
+
         const user = await User.create({
             name,
             email,
             password,
+            phone,
+            city,
+            address,
+            skills: skills ? JSON.parse(skills) : [], // If sent as FormData, arrays might need parsing
+            isProvider: isProvider === 'true' || isProvider === true, // FormData sends booleans as strings
+            profileImage,
+            aadhaarCard,
+            panCard
         });
 
         if (user) {
@@ -61,7 +86,9 @@ const registerUser = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                isAdmin: user.isAdmin
+                isAdmin: user.isAdmin,
+                isProvider: user.isProvider,
+                profileImage: user.profileImage
             });
         } else {
             res.status(400);
@@ -95,7 +122,8 @@ const getUserProfile = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                isAdmin: user.isAdmin
+                isAdmin: user.isAdmin,
+                isProvider: user.isProvider
             });
         } else {
             res.status(404);
@@ -144,4 +172,88 @@ export {
     logoutUser,
     getUserProfile,
     updateUserProfile,
+    getUsers,
+    deleteUser,
+    getUserById,
+    updateUser,
+};
+
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Delete user
+// @route   DELETE /api/users/:id
+// @access  Private/Admin
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            await user.deleteOne();
+            res.json({ message: 'User removed' });
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get user by ID
+// @route   GET /api/users/:id
+// @access  Private/Admin
+const getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update user
+// @route   PUT /api/users/:id
+// @access  Private/Admin
+const updateUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            user.name = req.body.name || user.name;
+            user.email = req.body.email || user.email;
+            user.isAdmin = req.body.isAdmin !== undefined ? req.body.isAdmin : user.isAdmin;
+            user.isProvider = req.body.isProvider !== undefined ? req.body.isProvider : user.isProvider;
+
+            const updatedUser = await user.save();
+
+            res.json({
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                isAdmin: updatedUser.isAdmin,
+                isProvider: updatedUser.isProvider,
+            });
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };

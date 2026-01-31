@@ -17,11 +17,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ... existing imports ...
+
 // CORS configuration (adjust origin as needed)
 app.use(cors({
     origin: 'http://localhost:5173', // Vite default port
     credentials: true
 }));
+
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 import userRoutes from './routes/userRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';

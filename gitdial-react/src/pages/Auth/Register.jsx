@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Upload, ArrowRight, Check, Briefcase, FileText, Camera, Shield, Star, Award, CheckCircle, Clock, TrendingUp, Heart, BookOpen, BadgeCheck, RefreshCcw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { User, Mail, Phone, MapPin, Upload, ArrowRight, Check, Briefcase, FileText, Camera, Shield, Star, Award, CheckCircle, Clock, TrendingUp, Heart, BookOpen, BadgeCheck, RefreshCcw, Lock, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const StepIndicator = ({ currentStep, totalSteps }) => (
     <div className="flex items-center justify-center mb-8 lg:mb-12">
@@ -36,6 +36,42 @@ const StepIndicator = ({ currentStep, totalSteps }) => (
 const Register = () => {
     const [step, setStep] = useState(1);
     const [selectedSkills, setSelectedSkills] = useState([]);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phone: '',
+        city: '',
+        address: ''
+    });
+    const [files, setFiles] = useState({
+        profileImage: null,
+        aadhaarCard: null,
+        panCard: null
+    });
+    const [previews, setPreviews] = useState({
+        profileImage: null,
+        aadhaarCard: null,
+        panCard: null
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (error) setError('');
+    };
+
+    const handleFileChange = (e) => {
+        const { name, files: selectedFiles } = e.target;
+        if (selectedFiles && selectedFiles[0]) {
+            setFiles(prev => ({ ...prev, [name]: selectedFiles[0] }));
+            setPreviews(prev => ({ ...prev, [name]: URL.createObjectURL(selectedFiles[0]) }));
+        }
+    };
 
     const toggleSkill = (skill) => {
         if (selectedSkills.includes(skill)) {
@@ -45,8 +81,81 @@ const Register = () => {
         }
     };
 
-    const nextStep = () => setStep(prev => Math.min(prev + 1, 3));
-    const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
+    const validateStep1 = () => {
+        if (!formData.name || !formData.email || !formData.password || !formData.phone || !formData.city || !formData.address) {
+            setError("Please fill in all required fields");
+            return false;
+        }
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match");
+            return false;
+        }
+        if (formData.password.length < 6) {
+            setError("Password must be at least 6 characters");
+            return false;
+        }
+        return true;
+    };
+
+    const nextStep = () => {
+        if (step === 1) {
+            if (validateStep1()) {
+                setError('');
+                setStep(2);
+            }
+        } else {
+            setStep(prev => Math.min(prev + 1, 3));
+        }
+    };
+
+    const prevStep = () => {
+        setError('');
+        setStep(prev => Math.max(prev - 1, 1));
+    };
+
+    const handleRegister = async () => {
+        if (selectedSkills.length === 0) {
+            setError("Please select at least one skill");
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const data = new FormData();
+            data.append('name', formData.name);
+            data.append('email', formData.email);
+            data.append('password', formData.password);
+            data.append('phone', formData.phone);
+            data.append('city', formData.city);
+            data.append('address', formData.address);
+            data.append('isProvider', 'true');
+            data.append('skills', JSON.stringify(selectedSkills));
+
+            if (files.profileImage) data.append('profileImage', files.profileImage);
+            if (files.aadhaarCard) data.append('aadhaarCard', files.aadhaarCard);
+            if (files.panCard) data.append('panCard', files.panCard);
+
+            const res = await fetch('/api/users', {
+                method: 'POST',
+                body: data, // Fetch handles Content-Type for FormData automatically
+            });
+
+            const resData = await res.json();
+
+            if (!res.ok) {
+                throw new Error(resData.message || 'Registration failed');
+            }
+
+            // Success
+            setStep(3);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const skillsList = [
         "Home Cleaning", "Plumbing", "Electrical", "Carpentry",
@@ -80,6 +189,12 @@ const Register = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
                         {/* Left Content Area */}
                         <div className="lg:col-span-8 p-8 md:p-12">
+                            {error && (
+                                <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2">
+                                    <Shield size={16} />
+                                    {error}
+                                </div>
+                            )}
                             <AnimatePresence mode="wait">
                                 {step === 1 && (
                                     <motion.div
@@ -96,10 +211,24 @@ const Register = () => {
                                                 <p className="text-slate-500 mt-1">Tell us a bit about yourself to get started.</p>
                                             </div>
                                             <div className="relative group cursor-pointer">
-                                                <div className="w-20 h-20 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 hover:border-primary hover:bg-primary/5 hover:text-primary transition-all overflow-hidden">
-                                                    <Camera size={24} className="mb-1" />
-                                                    <span className="text-[10px] font-bold uppercase">Upload</span>
-                                                </div>
+                                                <input
+                                                    type="file"
+                                                    name="profileImage"
+                                                    onChange={handleFileChange}
+                                                    className="hidden"
+                                                    id="profile-upload"
+                                                    accept="image/*"
+                                                />
+                                                <label htmlFor="profile-upload" className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 hover:border-primary hover:bg-primary/5 hover:text-primary transition-all overflow-hidden cursor-pointer relative">
+                                                    {previews.profileImage ? (
+                                                        <img src={previews.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <>
+                                                            <Camera size={24} className="mb-1" />
+                                                            <span className="text-[10px] font-bold uppercase">Upload</span>
+                                                        </>
+                                                    )}
+                                                </label>
                                             </div>
                                         </div>
 
@@ -108,32 +237,89 @@ const Register = () => {
                                                 <label className="text-sm font-semibold text-slate-700 ml-1">Full Name</label>
                                                 <div className="relative">
                                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
-                                                    <input type="text" placeholder="John Doe" className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all" />
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        value={formData.name}
+                                                        onChange={handleChange}
+                                                        placeholder="John Doe"
+                                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="space-y-2 group">
                                                 <label className="text-sm font-semibold text-slate-700 ml-1">Email Address</label>
                                                 <div className="relative">
                                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
-                                                    <input type="email" placeholder="john@example.com" className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all" />
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        value={formData.email}
+                                                        onChange={handleChange}
+                                                        placeholder="john@example.com"
+                                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                                    />
                                                 </div>
                                             </div>
+
+                                            {/* Password Fields */}
+                                            <div className="space-y-2 group">
+                                                <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
+                                                <div className="relative">
+                                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+                                                    <input
+                                                        type="password"
+                                                        name="password"
+                                                        value={formData.password}
+                                                        onChange={handleChange}
+                                                        placeholder="Create a password"
+                                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2 group">
+                                                <label className="text-sm font-semibold text-slate-700 ml-1">Confirm Password</label>
+                                                <div className="relative">
+                                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+                                                    <input
+                                                        type="password"
+                                                        name="confirmPassword"
+                                                        value={formData.confirmPassword}
+                                                        onChange={handleChange}
+                                                        placeholder="Confirm password"
+                                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+
                                             <div className="space-y-2 group">
                                                 <label className="text-sm font-semibold text-slate-700 ml-1">Phone Number</label>
                                                 <div className="relative">
                                                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
-                                                    <input type="tel" placeholder="+91 98765 43210" className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all" />
+                                                    <input
+                                                        type="tel"
+                                                        name="phone"
+                                                        value={formData.phone}
+                                                        onChange={handleChange}
+                                                        placeholder="+91 98765 43210"
+                                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="space-y-2 group">
                                                 <label className="text-sm font-semibold text-slate-700 ml-1">City</label>
                                                 <div className="relative">
                                                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
-                                                    <select className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all appearance-none text-slate-600">
-                                                        <option>Select City</option>
-                                                        <option>Mumbai</option>
-                                                        <option>Delhi</option>
-                                                        <option>Bangalore</option>
+                                                    <select
+                                                        name="city"
+                                                        value={formData.city}
+                                                        onChange={handleChange}
+                                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all appearance-none text-slate-600"
+                                                    >
+                                                        <option value="">Select City</option>
+                                                        <option value="Mumbai">Mumbai</option>
+                                                        <option value="Delhi">Delhi</option>
+                                                        <option value="Bangalore">Bangalore</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -141,7 +327,14 @@ const Register = () => {
 
                                         <div className="space-y-2 group">
                                             <label className="text-sm font-semibold text-slate-700 ml-1">Complete Address</label>
-                                            <textarea rows="2" placeholder="House No, Building, Street Area" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"></textarea>
+                                            <textarea
+                                                name="address"
+                                                value={formData.address}
+                                                onChange={handleChange}
+                                                rows="2"
+                                                placeholder="House No, Building, Street Area"
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"
+                                            ></textarea>
                                         </div>
                                     </motion.div>
                                 )}
@@ -181,23 +374,49 @@ const Register = () => {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-2">
                                                 <label className="text-sm font-semibold text-slate-700 ml-1">Upload Aadhaar Card</label>
-                                                <div className="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer group">
+                                                <input
+                                                    type="file"
+                                                    name="aadhaarCard"
+                                                    onChange={handleFileChange}
+                                                    className="hidden"
+                                                    id="aadhaar-upload"
+                                                    accept="image/*,application/pdf"
+                                                />
+                                                <label
+                                                    htmlFor="aadhaar-upload"
+                                                    className={`border-2 border-dashed rounded-2xl p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer group block ${files.aadhaarCard ? 'border-primary bg-primary/5' : 'border-slate-300'}`}
+                                                >
                                                     <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 mx-auto mb-3 group-hover:scale-110 transition-transform">
                                                         <FileText size={20} />
                                                     </div>
-                                                    <p className="text-sm text-slate-500 font-medium">Front & Back Side</p>
+                                                    <p className="text-sm text-slate-500 font-medium">
+                                                        {files.aadhaarCard ? files.aadhaarCard.name : "Front & Back Side"}
+                                                    </p>
                                                     <p className="text-xs text-slate-400 mt-1">PDF or Image (Max 5MB)</p>
-                                                </div>
+                                                </label>
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-sm font-semibold text-slate-700 ml-1">Upload PAN Card</label>
-                                                <div className="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer group">
+                                                <input
+                                                    type="file"
+                                                    name="panCard"
+                                                    onChange={handleFileChange}
+                                                    className="hidden"
+                                                    id="pan-upload"
+                                                    accept="image/*,application/pdf"
+                                                />
+                                                <label
+                                                    htmlFor="pan-upload"
+                                                    className={`border-2 border-dashed rounded-2xl p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer group block ${files.panCard ? 'border-primary bg-primary/5' : 'border-slate-300'}`}
+                                                >
                                                     <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 mx-auto mb-3 group-hover:scale-110 transition-transform">
                                                         <Briefcase size={20} />
                                                     </div>
-                                                    <p className="text-sm text-slate-500 font-medium">Front Side Only</p>
+                                                    <p className="text-sm text-slate-500 font-medium">
+                                                        {files.panCard ? files.panCard.name : "Front Side Only"}
+                                                    </p>
                                                     <p className="text-xs text-slate-400 mt-1">PDF or Image (Max 5MB)</p>
-                                                </div>
+                                                </label>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -231,14 +450,25 @@ const Register = () => {
                                     {step > 1 ? (
                                         <button onClick={prevStep} className="px-8 py-3 text-slate-600 font-bold hover:text-primary transition-colors">Back</button>
                                     ) : <div></div>}
-                                    <button onClick={nextStep} className="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300">
-                                        {step === 2 ? 'Submit Application' : 'Next Step'} <ArrowRight size={20} />
-                                    </button>
+
+                                    {step === 2 ? (
+                                        <button
+                                            onClick={handleRegister}
+                                            disabled={loading}
+                                            className="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300 disabled:opacity-70 disabled:pointer-events-none"
+                                        >
+                                            {loading ? <Loader2 className="animate-spin" size={20} /> : 'Submit Application'}
+                                            {!loading && <ArrowRight size={20} />}
+                                        </button>
+                                    ) : (
+                                        <button onClick={nextStep} className="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300">
+                                            Next Step <ArrowRight size={20} />
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>
 
-                        {/* Right Content Area - Dynamic Sidebar */}
                         {/* Right Content Area - Dynamic Sidebar */}
                         <div className="hidden lg:flex lg:col-span-4 bg-[#0F172A] relative overflow-hidden flex-col justify-between p-4 text-white">
                             {/* Abstract Shapes/Gradients */}
