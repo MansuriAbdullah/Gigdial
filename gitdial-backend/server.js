@@ -27,7 +27,7 @@ const __dirname = path.dirname(__filename);
 
 // CORS configuration (adjust origin as needed)
 app.use(cors({
-    origin: 'http://localhost:5173', // Vite default port
+    origin: true, // Allow all origins for now (or specify array of allowed domains)
     credentials: true
 }));
 
