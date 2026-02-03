@@ -1,6 +1,8 @@
 import express from 'express';
 import {
     getGigs,
+    getMyGigs,
+    getCategories,
     getGigById,
     createGig,
     updateGig,
@@ -13,6 +15,12 @@ const router = express.Router();
 router.route('/')
     .get(getGigs)
     .post(protect, createGig);
+
+router.route('/categories')
+    .get(getCategories);
+
+router.route('/my-gigs')
+    .get(protect, getMyGigs);
 
 router.route('/:id')
     .get(getGigById)

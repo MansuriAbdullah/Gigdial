@@ -19,6 +19,7 @@ const CustomerDashboard = React.lazy(() => import('./pages/Dashboard/CustomerDas
 const AdminPanel = React.lazy(() => import('./pages/Admin/AdminPanel'));
 const ServiceCatalog = React.lazy(() => import('./pages/Services/ServiceCatalog'));
 const ServiceDetail = React.lazy(() => import('./pages/Services/ServiceDetail'));
+const BrowseWorkers = React.lazy(() => import('./pages/BrowseWorkers'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 const About = React.lazy(() => import('./pages/About'));
 const HowItWorks = React.lazy(() => import('./pages/HowItWorks'));
@@ -35,33 +36,44 @@ const LoadingFallback = () => (
 function AnimatedRoutes() {
   const location = useLocation();
 
+  // Helper to determine route key - keeps Dashboards mounted during sub-navigation
+  const getPageKey = (path) => {
+    if (path.startsWith('/worker-dashboard')) return 'worker-dashboard';
+    if (path.startsWith('/customer-dashboard')) return 'customer-dashboard';
+    if (path.startsWith('/admin')) return 'admin';
+    return path;
+  };
+
   return (
-    <AnimatePresence mode="wait">
+    <>
       <ScrollToTop />
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes location={location} key={location.pathname}>
-          {/* Public Routes with Main Layout */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/services" element={<ServiceCatalog />} />
-            <Route path="/services/:id" element={<ServiceDetail />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
-          </Route>
+      <AnimatePresence mode="wait">
+        <Suspense fallback={<LoadingFallback />} key={getPageKey(location.pathname)}>
+          <Routes location={location}>
+            {/* Public Routes with Main Layout */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/services" element={<ServiceCatalog />} />
+              <Route path="/services/:id" element={<ServiceDetail />} />
+              <Route path="/workers" element={<BrowseWorkers />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
+            </Route>
 
-          {/* Auth Routes (No Header/Footer) */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/register/customer" element={<CustomerRegister />} />
+            {/* Auth Routes (No Header/Footer) */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/register/customer" element={<CustomerRegister />} />
 
-          {/* Dashboard Routes (Custom Layout) */}
-          <Route path="/worker-dashboard/*" element={<WorkerDashboard />} />
-          <Route path="/customer-dashboard/*" element={<CustomerDashboard />} />
-          <Route path="/admin/*" element={<AdminPanel />} />
-        </Routes>
-      </Suspense>
-    </AnimatePresence>
+            {/* Dashboard Routes (Custom Layout) */}
+            <Route path="/worker-dashboard/*" element={<WorkerDashboard />} />
+            <Route path="/customer-dashboard/*" element={<CustomerDashboard />} />
+            <Route path="/admin/*" element={<AdminPanel />} />
+          </Routes>
+        </Suspense>
+      </AnimatePresence>
+    </>
   );
 }
 

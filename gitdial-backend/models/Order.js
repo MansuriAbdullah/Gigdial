@@ -16,42 +16,32 @@ const orderSchema = mongoose.Schema({
         required: true,
         ref: 'User',
     },
-    paymentMethod: {
+    amount: { type: Number, required: true },
+    tax: { type: Number, default: 0 },
+    totalAmount: { type: Number, required: true },
+    paymentMethod: { type: String, enum: ['wallet', 'card', 'upi', 'PayPal'], required: true }, // Added PayPal for compatibility with seeder
+    isPaid: { type: Boolean, default: false },
+    paidAt: { type: Date },
+
+    // Workflow Status
+    status: {
         type: String,
-        required: true,
+        enum: ['pending', 'in_progress', 'submitted', 'completed', 'cancelled', 'disputed'],
+        default: 'pending'
     },
-    paymentResult: {
-        id: { type: String },
-        status: { type: String },
-        update_time: { type: String },
-        email_address: { type: String },
-    },
-    taxPrice: {
-        type: Number,
-        required: true,
-        default: 0.0,
-    },
-    totalPrice: {
-        type: Number,
-        required: true,
-        default: 0.0,
-    },
-    isPaid: {
-        type: Boolean,
-        required: true,
-        default: false,
-    },
-    paidAt: {
-        type: Date,
-    },
-    isDelivered: {
-        type: Boolean,
-        required: true,
-        default: false,
-    },
-    deliveredAt: {
-        type: Date,
-    },
+
+    // Deliverables
+    requirements: { type: String }, // Customer requirements
+    deliveryFile: { type: String }, // Worker submission
+    deliveredAt: { type: Date },
+
+    // Review & Rating
+    rating: { type: Number, min: 1, max: 5 },
+    review: { type: String },
+    rated: { type: Boolean, default: false },
+
+    // Timestamps
+    completedAt: { type: Date },
 }, {
     timestamps: true,
 });

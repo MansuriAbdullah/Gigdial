@@ -61,17 +61,13 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
 
     const customerLinks = [
         { icon: LayoutDashboard, label: t('dashboard'), path: '/customer-dashboard' },
-        { icon: Search, label: t('browseServices'), path: '/customer-dashboard/services' },
-        { icon: Calendar, label: t('serviceHistory'), path: '/customer-dashboard/history' },
-        { icon: Repeat, label: t('mySubscriptions'), path: '/customer-dashboard/subscriptions' },
-        { icon: MessageSquare, label: t('messages'), path: '/customer-dashboard/messages' },
-        { icon: Heart, label: t('favorites'), path: '/customer-dashboard/favorites' },
+        { icon: Search, label: t('browseServices'), path: '/customer-dashboard/browse-services' },
+        { icon: Users, label: 'Browse Workers', path: '/customer-dashboard/browse-workers' },
+        { icon: Calendar, label: t('serviceHistory'), path: '/customer-dashboard/service-history' },
+        { icon: Heart, label: t('favorites'), path: '/customer-dashboard/favourites' },
         { icon: CreditCard, label: t('wallet'), path: '/customer-dashboard/wallet' },
         { icon: MapPin, label: t('savedAddresses'), path: '/customer-dashboard/addresses' },
-        { icon: Gift, label: t('referEarn'), path: '/customer-dashboard/referral' },
-        { icon: Award, label: t('loyaltyPoints'), path: '/customer-dashboard/loyalty' },
-        { icon: User, label: t('profile'), path: '/customer-dashboard/profile' },
-        { icon: Settings, label: t('settings'), path: '/customer-dashboard/settings' },
+        { icon: Gift, label: t('referEarn'), path: '/customer-dashboard/refer-earn' },
     ];
 
     const adminLinks = [

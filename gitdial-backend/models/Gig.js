@@ -1,27 +1,16 @@
 import mongoose from 'mongoose';
 
-const reviewSchema = mongoose.Schema({
-    name: { type: String, required: true },
-    rating: { type: Number, required: true },
-    comment: { type: String, required: true },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User',
-    },
-}, {
-    timestamps: true,
-});
-
 const gigSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
+        index: true,
     },
     title: {
         type: String,
         required: true,
+        index: 'text',
     },
     description: {
         type: String,
@@ -30,7 +19,11 @@ const gigSchema = mongoose.Schema({
     category: {
         type: String,
         required: true,
+        index: true,
     },
+    subCategory: { type: String },
+    tags: [{ type: String }],
+
     price: {
         type: Number,
         required: true,
@@ -45,21 +38,22 @@ const gigSchema = mongoose.Schema({
         required: true,
         default: 1,
     },
-    image: {
-        type: String,
-        required: false, // Optional for now
-    },
-    reviews: [reviewSchema],
+
+    coverImage: { type: String },
+    gallery: [{ type: String }],
+
     rating: {
         type: Number,
-        required: true,
         default: 0,
     },
     numReviews: {
         type: Number,
-        required: true,
         default: 0,
     },
+    salesCount: { type: Number, default: 0 },
+
+    isActive: { type: Boolean, default: true },
+    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
 }, {
     timestamps: true,
 });

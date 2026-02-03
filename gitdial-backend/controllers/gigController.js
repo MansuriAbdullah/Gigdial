@@ -5,8 +5,21 @@ import Gig from '../models/Gig.js';
 // @access  Public
 const getGigs = async (req, res) => {
     try {
-        const gigs = await Gig.find({});
+        const gigs = await Gig.find({})
+            .populate('user', 'name profileImage rating');
         res.json(gigs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get all categories
+// @route   GET /api/gigs/categories
+// @access  Public
+const getCategories = async (req, res) => {
+    try {
+        const categories = await Gig.distinct('category');
+        res.json(categories);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -43,7 +56,7 @@ const createGig = async (req, res) => {
             price: req.body.price || 0,
             deliveryTime: req.body.deliveryTime || 3,
             revisions: req.body.revisions || 1,
-            image: req.body.image || '/images/sample.jpg',
+            coverImage: req.body.coverImage || '/images/sample.jpg',
         });
 
         const createdGig = await gig.save();
@@ -73,7 +86,7 @@ const updateGig = async (req, res) => {
             gig.price = req.body.price || gig.price;
             gig.deliveryTime = req.body.deliveryTime || gig.deliveryTime;
             gig.revisions = req.body.revisions || gig.revisions;
-            gig.image = req.body.image || gig.image;
+            gig.coverImage = req.body.coverImage || gig.coverImage;
 
             const updatedGig = await gig.save();
             res.json(updatedGig);
@@ -112,8 +125,19 @@ const deleteGig = async (req, res) => {
     }
 };
 
+const getMyGigs = async (req, res) => {
+    try {
+        const gigs = await Gig.find({ user: req.user._id });
+        res.json(gigs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     getGigs,
+    getCategories,
+    getMyGigs,
     getGigById,
     createGig,
     updateGig,
