@@ -25,6 +25,7 @@ import {
     getReferralData,
     // Workers
     getWorkers,
+    getWorkerById,
     getWorkerCategories
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
@@ -49,6 +50,7 @@ router.route('/profile')
 
 // Worker routes
 router.get('/workers', getWorkers);
+router.get('/workers/:id', getWorkerById);
 router.get('/worker-categories', getWorkerCategories);
 
 // Address routes

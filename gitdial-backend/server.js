@@ -45,11 +45,13 @@ import adminRoutes from './routes/adminRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
 import walletRoutes from './routes/walletRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
+import cityRoutes from './routes/cityRoutes.js';
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/cities', cityRoutes);
 
 import uploadRoutes from './routes/uploadRoutes.js';
 app.use('/api/upload', uploadRoutes);

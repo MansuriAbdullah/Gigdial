@@ -4,6 +4,7 @@ import DashboardLayout from '../../layouts/DashboardLayout';
 import AdminDashboard from './AdminDashboard';
 import ManageWorkers from './ManageWorkers';
 import ManageCustomers from './ManageCustomers';
+import ManageCities from './ManageCities';
 import { AdminBookings, AdminAnalytics, AdminContent } from './AdminPlaceholders';
 import ServiceApprovals from './ServiceApprovals';
 import Disputes from './Disputes';
@@ -21,6 +22,7 @@ const AdminPanel = () => {
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="services" element={<ServiceApprovals />} />
                 <Route path="content" element={<AdminContent />} />
+                <Route path="cities" element={<ManageCities />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="*" element={<Navigate to="" replace />} />
             </Routes>

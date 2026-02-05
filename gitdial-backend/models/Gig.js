@@ -22,6 +22,7 @@ const gigSchema = mongoose.Schema({
         index: true,
     },
     subCategory: { type: String },
+    city: { type: String, required: true },
     tags: [{ type: String }],
 
     price: {

@@ -60,6 +60,45 @@ const BrowseServices = () => {
         navigate(`/services/${serviceId}`);
     };
 
+    const handleBookService = async (e, service) => {
+        e.stopPropagation();
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
+        if (!userInfo) {
+            alert('Please login to book a service');
+            navigate('/login');
+            return;
+        }
+
+        if (window.confirm(`Confirm booking for ${service.title} at ₹${service.price}?`)) {
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userInfo.token}`
+                    },
+                    body: JSON.stringify({
+                        gigId: service._id,
+                        sellerId: service.user._id,
+                        totalPrice: service.price,
+                        paymentMethod: 'wallet' // Defaulting to wallet for now
+                    })
+                });
+
+                if (res.ok) {
+                    alert('Service booked successfully! Check your orders.');
+                } else {
+                    const error = await res.json();
+                    alert(`Booking failed: ${error.message}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Something went wrong');
+            }
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
@@ -182,7 +221,10 @@ const BrowseServices = () => {
                                         <p className="text-xs text-slate-500">Starting from</p>
                                         <p className="text-xl font-bold text-slate-900">₹{service.price}</p>
                                     </div>
-                                    <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors group-hover:gap-3">
+                                    <button
+                                        onClick={(e) => handleBookService(e, service)}
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors group-hover:gap-3"
+                                    >
                                         Book Now
                                         <ChevronRight size={16} />
                                     </button>

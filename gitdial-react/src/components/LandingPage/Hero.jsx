@@ -3,6 +3,8 @@ import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Search, Briefcase, MapPin, CheckCircle, Shield, Zap, CreditCard, Phone, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 const TrustBadge = ({ icon: Icon, title, desc, color = "blue" }) => {
     const colors = {
@@ -32,6 +34,26 @@ const TrustBadge = ({ icon: Icon, title, desc, color = "blue" }) => {
 
 const Hero = () => {
     const { t } = useLanguage();
+    const [cities, setCities] = useState([]);
+
+    useEffect(() => {
+        const fetchCities = async () => {
+            try {
+                const { data } = await axios.get('http://localhost:5000/api/cities');
+                setCities(data);
+            } catch (error) {
+                console.error('Error fetching cities:', error);
+                // Fallback to default cities if API fails
+                setCities([
+                    { _id: '1', name: 'Ahmedabad' },
+                    { _id: '2', name: 'Gandhinagar' },
+                    { _id: '3', name: 'Surat' },
+                    { _id: '4', name: 'Vadodara' }
+                ]);
+            }
+        };
+        fetchCities();
+    }, []);
     return (
         <div className="relative overflow-hidden bg-white pt-28 pb-16 lg:pt-32 lg:pb-24">
             {/* Background Gradients */}
@@ -97,10 +119,12 @@ const Hero = () => {
                                 <div className="relative min-w-[160px]">
                                     <MapPin className="absolute left-3 top-3.5 text-slate-400" size={18} />
                                     <select className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 outline-none text-slate-700 font-medium appearance-none cursor-pointer hover:bg-slate-100 transition-colors">
-                                        <option value="Ahmedabad">Ahmedabad</option>
-                                        <option value="Gandhinagar">Gandhinagar</option>
-                                        <option value="Surat">Surat</option>
-                                        <option value="Vadodara">Vadodara</option>
+                                        <option value="">Select City</option>
+                                        {cities.map((city) => (
+                                            <option key={city._id} value={city.name}>
+                                                {city.name}
+                                            </option>
+                                        ))}
                                     </select>
                                     <div className="absolute right-3 top-4 pointer-events-none">
                                         <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>

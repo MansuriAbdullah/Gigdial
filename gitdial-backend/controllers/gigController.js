@@ -53,6 +53,8 @@ const createGig = async (req, res) => {
             title: req.body.title || 'Sample Gig',
             description: req.body.description || 'Sample description',
             category: req.body.category || 'General',
+            subCategory: req.body.subCategory || '', // Ensure subCategory
+            city: req.body.city || 'Others', // Ensure city
             price: req.body.price || 0,
             deliveryTime: req.body.deliveryTime || 3,
             revisions: req.body.revisions || 1,

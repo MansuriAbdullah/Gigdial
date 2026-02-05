@@ -1,4 +1,6 @@
 import User from '../models/User.js';
+import Portfolio from '../models/Portfolio.js';
+import Review from '../models/Review.js';
 import generateToken from '../utils/generateToken.js';
 
 // @desc    Auth user/set token
@@ -560,6 +562,29 @@ const getWorkerCategories = async (req, res) => {
     }
 };
 
+// @desc    Get worker by ID (Public)
+// @route   GET /api/users/workers/:id
+// @access  Public
+const getWorkerById = async (req, res) => {
+    try {
+        const worker = await User.findById(req.params.id)
+            .select('name email profileImage skills rating numReviews city bio experience completedJobs isVerified phone portfolio role')
+            .populate('portfolio');
+
+        if (worker && worker.role === 'worker') {
+            const reviews = await Review.find({ worker: req.params.id })
+                .populate('reviewer', 'name profileImage')
+                .sort({ createdAt: -1 });
+
+            res.json({ ...worker.toObject(), reviews });
+        } else {
+            return res.status(404).json({ message: 'Worker not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     authUser,
     registerUser,
@@ -586,5 +611,6 @@ export {
     getReferralData,
     // Workers
     getWorkers,
+    getWorkerById,
     getWorkerCategories
 };

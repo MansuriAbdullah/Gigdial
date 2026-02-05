@@ -79,6 +79,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
         { icon: BarChart2, label: t('analytics'), path: '/admin/analytics' },
         { icon: CheckSquare, label: t('services'), path: '/admin/services' },
         { icon: FileText, label: t('content'), path: '/admin/content' },
+        { icon: MapPin, label: 'Cities', path: '/admin/cities' },
         { icon: Settings, label: t('settings'), path: '/admin/settings' },
     ];
 

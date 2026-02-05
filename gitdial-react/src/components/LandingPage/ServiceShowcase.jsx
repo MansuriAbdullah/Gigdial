@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, ArrowRight, Sparkles, Clock, Users, Award, Zap, TrendingUp, Heart } from 'lucide-react';
 
@@ -210,225 +210,82 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue' }) 
 };
 
 const ServiceShowcase = () => {
-  const serviceData = {
-    digitalServices: [
-      {
-        title: 'Web Development',
-        rating: '4.8',
-        image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80',
-        category: 'Tech',
-        price: '4999',
-        bookings: 245
-      },
-      {
-        title: 'Graphic Design',
-        rating: '4.7',
-        image: 'https://images.unsplash.com/photo-1626785774573-4b799312c95d?auto=format&fit=crop&w=600&q=80',
-        category: 'Creative',
-        price: '2999',
-        bookings: 189
-      },
-      {
-        title: 'Video Editing',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=600&q=80',
-        category: 'Media',
-        price: '3999',
-        bookings: 312
-      },
-      {
-        title: 'Content Writing',
-        rating: '4.6',
-        image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80',
-        category: 'Writing',
-        price: '1999',
-        bookings: 167
-      },
-      {
-        title: 'SEO Optimization',
-        rating: '4.8',
-        image: 'https://images.unsplash.com/photo-1571721795195-a2ca5d481f12?auto=format&fit=crop&w=600&q=80',
-        category: 'Marketing',
-        price: '5999',
-        bookings: 278
-      },
-    ],
+  const [data, setData] = useState({
+    digitalServices: [],
+    wellnessServices: [],
+    homeServices: [],
+    tutoringServices: [],
+    creativeServices: [],
+    beautyServices: []
+  });
+  const [loading, setLoading] = useState(true);
 
-    wellnessServices: [
-      {
-        title: 'Personal Trainer',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=600&q=80',
-        category: 'Fitness',
-        price: '899',
-        bookings: 421
-      },
-      {
-        title: 'Yoga Instructor',
-        rating: '4.8',
-        image: 'https://images.unsplash.com/photo-1544367563-12123d8965cd?auto=format&fit=crop&w=600&q=80',
-        category: 'Wellness',
-        price: '699',
-        bookings: 356
-      },
-      {
-        title: 'Nutritionist',
-        rating: '4.7',
-        image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80',
-        category: 'Health',
-        price: '1299',
-        bookings: 289
-      },
-      {
-        title: 'Meditation Coach',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
-        category: 'Mindfulness',
-        price: '799',
-        bookings: 198
-      },
-    ],
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await fetch('/api/gigs');
+        const gigs = await res.json();
 
-    homeServices: [
-      {
-        title: 'Home Cleaning',
-        rating: '4.8',
-        image: 'https://images.unsplash.com/photo-1581578731117-104f8a3d46a8?auto=format&fit=crop&w=600&q=80',
-        category: 'Cleaning',
-        price: '1499',
-        bookings: 512
-      },
-      {
-        title: 'Plumbing Repair',
-        rating: '4.7',
-        image: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&w=600&q=80',
-        category: 'Repair',
-        price: '999',
-        bookings: 387
-      },
-      {
-        title: 'Electrical Help',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=600&q=80',
-        category: 'Electric',
-        price: '1299',
-        bookings: 234
-      },
-      {
-        title: 'Appliance Repair',
-        rating: '4.6',
-        image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a783?auto=format&fit=crop&w=600&q=80',
-        category: 'Maintenance',
-        price: '899',
-        bookings: 176
-      },
-    ],
+        // Categorize services
+        const categories = {
+          digitalServices: ['Tech', 'Development', 'Design', 'Media', 'Marketing', 'Writing'],
+          wellnessServices: ['Fitness', 'Health', 'Wellness', 'Yoga', 'Mindfulness'],
+          homeServices: ['Cleaning', 'Repair', 'Electric', 'Plumbing', 'Home', 'Maintenance'],
+          tutoringServices: ['Education', 'Tutor', 'Language', 'Academics'],
+          creativeServices: ['Art', 'Events', 'Photography', 'Music', 'Creative'],
+          beautyServices: ['Beauty', 'Salon', 'Makeup', 'Bridal', 'Nails', 'Spa']
+        };
 
-    tutoringServices: [
-      {
-        title: 'Mathematics',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=600&q=80',
-        category: 'Academics',
-        price: '799',
-        bookings: 421
-      },
-      {
-        title: 'Science Tuition',
-        rating: '4.8',
-        image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=600&q=80',
-        category: 'Education',
-        price: '899',
-        bookings: 356
-      },
-      {
-        title: 'Language Learning',
-        rating: '4.7',
-        image: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=600&q=80',
-        category: 'Languages',
-        price: '699',
-        bookings: 289
-      },
-      {
-        title: 'Music Lessons',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1514320291940-236122f0d358?auto=format&fit=crop&w=600&q=80',
-        category: 'Arts',
-        price: '1299',
-        bookings: 198
-      },
-    ],
+        const categorizedData = {
+          digitalServices: [],
+          wellnessServices: [],
+          homeServices: [],
+          tutoringServices: [],
+          creativeServices: [],
+          beautyServices: []
+        };
 
-    creativeServices: [
-      {
-        title: 'Photography',
-        rating: '4.8',
-        image: 'https://images.unsplash.com/photo-1554048612-387768052bf7?auto=format&fit=crop&w=600&q=80',
-        category: 'Art',
-        price: '4999',
-        bookings: 156
-      },
-      {
-        title: 'Event Planning',
-        rating: '4.7',
-        image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=80',
-        category: 'Events',
-        price: '8999',
-        bookings: 89
-      },
-      {
-        title: 'Makeup Artist',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1487412947132-75c5b98f4b7b?auto=format&fit=crop&w=600&q=80',
-        category: 'Beauty',
-        price: '2999',
-        bookings: 212
-      },
-      {
-        title: 'Interior Design',
-        rating: '4.6',
-        image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80',
-        category: 'Design',
-        price: '6999',
-        bookings: 134
-      },
-    ],
+        gigs.forEach(gig => {
+          // Map backend fields to frontend card props
+          const mappedGig = {
+            title: gig.title,
+            rating: gig.rating?.toString() || '0',
+            image: gig.coverImage || 'https://images.unsplash.com/photo-1581578731117-104f8a3d46a8?auto=format&fit=crop&w=600&q=80',
+            category: gig.category,
+            price: gig.price,
+            bookings: gig.salesCount || 0,
+            id: gig._id
+          };
 
-    beautyServices: [
-      {
-        title: 'Bridal Makeup',
-        rating: '4.9',
-        image: 'https://images.unsplash.com/photo-1487412947132-75c5b98f4b7b?auto=format&fit=crop&w=600&q=80',
-        category: 'Bridal',
-        price: '8999',
-        bookings: 156
-      },
-      {
-        title: 'Hair Styling',
-        rating: '4.8',
-        image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=600&q=80',
-        category: 'Salon',
-        price: '1999',
-        bookings: 289
-      },
-      {
-        title: 'Spa & Massage',
-        rating: '4.7',
-        image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=600&q=80',
-        category: 'Wellness',
-        price: '2999',
-        bookings: 367
-      },
-      {
-        title: 'Manicure',
-        rating: '4.6',
-        image: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=600&q=80',
-        category: 'Nails',
-        price: '1499',
-        bookings: 412
-      },
-    ],
-  };
+          // Find matching category group
+          let added = false;
+          for (const [key, keywords] of Object.entries(categories)) {
+            if (keywords.some(k => gig.category.toLowerCase().includes(k.toLowerCase()))) {
+              categorizedData[key].push(mappedGig);
+              added = true;
+              break;
+            }
+          }
+          // Fallback if no specific category match, put in 'digitalServices' or just skip
+          if (!added) {
+            categorizedData.homeServices.push(mappedGig); // Default bucket
+          }
+        });
+
+        setData(categorizedData);
+      } catch (err) {
+        console.error("Failed to fetch services", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  if (loading) return <div className="py-24 text-center">Loading services...</div>;
+
+  const serviceData = data;
 
   return (
     <section className="py-24 bg-gradient-to-b from-slate-50 via-white to-slate-50 relative overflow-hidden">

@@ -1,6 +1,7 @@
 import Order from '../models/Order.js';
 import User from '../models/User.js';
 import Wallet from '../models/Wallet.js';
+import Notification from '../models/Notification.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -24,10 +25,21 @@ const addOrderItems = async (req, res) => {
                 user: req.user._id,
                 seller: sellerId,
                 paymentMethod,
-                totalPrice,
+                amount: totalPrice,
+                totalAmount: totalPrice,
             });
 
             const createdOrder = await order.save();
+
+            // Notify Seller
+            await Notification.create({
+                recipient: sellerId,
+                type: 'order_status',
+                title: 'New Order Received',
+                message: `You have received a new order of ₹${totalPrice}!`,
+                link: '/worker-dashboard/leads'
+            });
+
             res.status(201).json(createdOrder);
         }
     } catch (error) {

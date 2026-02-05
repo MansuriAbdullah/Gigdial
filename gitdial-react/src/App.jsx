@@ -20,6 +20,7 @@ const AdminPanel = React.lazy(() => import('./pages/Admin/AdminPanel'));
 const ServiceCatalog = React.lazy(() => import('./pages/Services/ServiceCatalog'));
 const ServiceDetail = React.lazy(() => import('./pages/Services/ServiceDetail'));
 const BrowseWorkers = React.lazy(() => import('./pages/BrowseWorkers'));
+const WorkerPublicProfile = React.lazy(() => import('./pages/WorkerPublicProfile'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 const About = React.lazy(() => import('./pages/About'));
 const HowItWorks = React.lazy(() => import('./pages/HowItWorks'));
@@ -57,6 +58,7 @@ function AnimatedRoutes() {
               <Route path="/services" element={<ServiceCatalog />} />
               <Route path="/services/:id" element={<ServiceDetail />} />
               <Route path="/workers" element={<BrowseWorkers />} />
+              <Route path="/workers/:id" element={<WorkerPublicProfile />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
             </Route>

@@ -1,12 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Calendar, Star, Download, Filter, Search, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import html2canvas from 'html2canvas';
+import RateModal from '../../../components/Dashboard/RateModal';
+import InvoiceTemplate from '../../../components/Dashboard/InvoiceTemplate';
 
 const ServiceHistory = () => {
     const [bookings, setBookings] = useState([]);
     const [filter, setFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isRateModalOpen, setIsRateModalOpen] = useState(false);
+    const invoiceRef = useRef(null);
+
+    const handleRateClick = (order) => {
+        setSelectedOrder(order);
+        setIsRateModalOpen(true);
+    };
+
+    const handleRateSubmit = async (orderId, rating, comment) => {
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const res = await fetch(`/api/orders/${orderId}/review`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userInfo.token}`
+                },
+                body: JSON.stringify({ rating, review: comment })
+            });
+
+            if (res.ok) {
+                alert('Review submitted successfully!');
+                setIsRateModalOpen(false);
+                fetchServiceHistory(); // Refresh to show updated rating
+            } else {
+                const error = await res.json();
+                alert(error.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Failed to submit review');
+        }
+    };
+
+    const handleInvoiceClick = async (order) => {
+        setSelectedOrder(order);
+        // Wait for state update and render
+        setTimeout(async () => {
+            if (invoiceRef.current) {
+                try {
+                    const canvas = await html2canvas(invoiceRef.current, {
+                        scale: 2,
+                        backgroundColor: '#ffffff'
+                    });
+                    const imgData = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.download = `Invoice-${order._id.slice(-6)}.png`;
+                    link.href = imgData;
+                    link.click();
+                } catch (err) {
+                    console.error('Invoice generation failed', err);
+                    alert('Could not generate invoice');
+                }
+            }
+        }, 100);
+    };
 
     useEffect(() => {
         fetchServiceHistory();
@@ -96,8 +157,8 @@ const ServiceHistory = () => {
                             key={status}
                             onClick={() => setFilter(status)}
                             className={`px-4 py-2 rounded-xl font-bold capitalize transition-colors ${filter === status
-                                    ? 'bg-slate-900 text-white'
-                                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                                ? 'bg-slate-900 text-white'
+                                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
                                 }`}
                         >
                             {status}
@@ -152,12 +213,18 @@ const ServiceHistory = () => {
 
                                 <div className="flex gap-2">
                                     {booking.status === 'completed' && !booking.rated && (
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 font-bold rounded-xl hover:bg-yellow-500 transition-colors">
+                                        <button
+                                            onClick={() => handleRateClick(booking)}
+                                            className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 font-bold rounded-xl hover:bg-yellow-500 transition-colors"
+                                        >
                                             <Star size={16} />
                                             Rate
                                         </button>
                                     )}
-                                    <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors">
+                                    <button
+                                        onClick={() => handleInvoiceClick(booking)}
+                                        className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                                    >
                                         <Download size={16} />
                                         Invoice
                                     </button>
@@ -221,6 +288,16 @@ const ServiceHistory = () => {
                     </div>
                 </div>
             )}
+
+            {/* Modals & Templates */}
+            <RateModal
+                isOpen={isRateModalOpen}
+                onClose={() => setIsRateModalOpen(false)}
+                onSubmit={handleRateSubmit}
+                order={selectedOrder || {}}
+            />
+
+            <InvoiceTemplate order={selectedOrder} invoiceRef={invoiceRef} />
         </div>
     );
 };

@@ -8,13 +8,68 @@ const BrowseWorkers = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
     useEffect(() => {
         fetchWorkers();
         fetchCategories();
+        if (userInfo) {
+            fetchFavorites();
+        }
     }, []);
+
+    const fetchFavorites = async () => {
+        try {
+            const response = await fetch('/api/users/favourites', {
+                headers: {
+                    'Authorization': `Bearer ${userInfo?.token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setFavorites(data.map(fav => fav._id));
+            }
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
+        }
+    };
+
+    const handleToggleFavorite = async (workerId) => {
+        if (!userInfo) {
+            navigate('/login');
+            return;
+        }
+
+        const isFav = favorites.includes(workerId);
+        const method = isFav ? 'DELETE' : 'POST';
+        const url = isFav ? `/api/users/favourites/${workerId}` : '/api/users/favourites';
+        const body = isFav ? {} : { workerId };
+
+        try {
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userInfo?.token}`
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                if (isFav) {
+                    setFavorites(favorites.filter(id => id !== workerId));
+                } else {
+                    setFavorites([...favorites, workerId]);
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+        }
+    };
 
     const fetchWorkers = async () => {
         try {
@@ -94,8 +149,8 @@ const BrowseWorkers = () => {
                 <button
                     onClick={() => setSelectedCategory('all')}
                     className={`px-6 py-2.5 rounded-full font-bold whitespace-nowrap transition-all ${selectedCategory === 'all'
-                            ? 'bg-slate-900 text-white shadow-lg'
-                            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                        ? 'bg-slate-900 text-white shadow-lg'
+                        : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
                         }`}
                 >
                     All Workers
@@ -105,8 +160,8 @@ const BrowseWorkers = () => {
                         key={category}
                         onClick={() => setSelectedCategory(category)}
                         className={`px-6 py-2.5 rounded-full font-bold whitespace-nowrap transition-all ${selectedCategory === category
-                                ? 'bg-slate-900 text-white shadow-lg'
-                                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                            ? 'bg-slate-900 text-white shadow-lg'
+                            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
                             }`}
                     >
                         {category}
@@ -138,9 +193,21 @@ const BrowseWorkers = () => {
                                         {worker.name?.charAt(0)}
                                     </div>
                                 )}
-                                <div className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-red-50 transition-colors">
-                                    <Heart size={18} className="text-slate-400 hover:text-red-500 transition-colors" />
-                                </div>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleFavorite(worker._id);
+                                    }}
+                                    className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-red-50 transition-colors group/heart z-10"
+                                >
+                                    <Heart
+                                        size={18}
+                                        className={`transition-colors ${favorites.includes(worker._id)
+                                            ? 'text-red-500 fill-red-500'
+                                            : 'text-slate-400 group-hover/heart:text-red-500'
+                                            }`}
+                                    />
+                                </button>
                                 {worker.isVerified && (
                                     <div className="absolute top-3 left-3 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
                                         <Award size={12} />
@@ -205,7 +272,13 @@ const BrowseWorkers = () => {
                                 </div>
 
                                 {/* CTA Button */}
-                                <button className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors group-hover:gap-3">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/workers/${worker._id}`);
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors group-hover:gap-3"
+                                >
                                     <Briefcase size={16} />
                                     View Profile
                                     <ChevronRight size={16} />

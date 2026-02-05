@@ -141,6 +141,18 @@ const WorkerServices = () => {
         }
     };
 
+    const serviceCategories = [
+        "Plumbing", "Electrical", "Cleaning", "Carpentry", "Painting", "Cooking", "Gardening",
+        "Pest Control", "Appliance Repair", "Home Salon", "Makeup Artist", "Photography", "Driver",
+        "Yoga Instructor", "Tutor", "Interior Design", "Event Planning", "Car Wash", "Laundry",
+        "Disinfection", "Security", "Babysitting", "Elderly Care", "Physiotherapy", "Fitness Trainer",
+        "Massage Therapy", "Computer Repair", "Mobile Repair", "CCTV Installation", "Packers & Movers",
+        "Wedding Planner", "DJ & Music", "Catering", "Mehendi Artist", "Home Renovation", "Waterproofing",
+        "Sofa Cleaning", "Carpet Cleaning", "Chimney Cleaning", "Water Tank Cleaning",
+        "AC Service & Repair", "Refrigerator Repair", "Washing Machine Repair", "Microwave Repair",
+        "RO Water Purifier Service", "Geyser Service", "TV Mounting & Repair"
+    ];
+
     return (
         <div className="space-y-6 relative">
             <div className="flex justify-between items-center">
@@ -218,17 +230,21 @@ const WorkerServices = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-                                    <select name="category" value={formData.category} onChange={handleInputChange} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                                        <option value="">Select</option>
-                                        <option value="Plumbing">Plumbing</option>
-                                        <option value="Cleaning">Cleaning</option>
-                                        <option value="Electrical">Electrical</option>
-                                        <option value="Carpentry">Carpentry</option>
-                                        <option value="Painting">Painting</option>
-                                        <option value="Cooking">Cooking</option>
-                                        <option value="Gardening">Gardening</option>
-                                        <option value="Other">Other</option>
-                                    </select>
+                                    <input
+                                        type="text"
+                                        name="category"
+                                        value={formData.category}
+                                        onChange={handleInputChange}
+                                        required
+                                        list="service-categories"
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        placeholder="Select or type category"
+                                    />
+                                    <datalist id="service-categories">
+                                        {serviceCategories.map((cat) => (
+                                            <option key={cat} value={cat} />
+                                        ))}
+                                    </datalist>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Price (₹)</label>
@@ -268,9 +284,9 @@ const WorkerServices = () => {
                             </div>
                         </form>
                     </div>
-                </div>
+                </div >
             )}
-        </div>
+        </div >
     );
 };
 
