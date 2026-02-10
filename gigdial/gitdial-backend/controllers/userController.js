@@ -63,7 +63,10 @@ const registerUser = async (req, res) => {
             address,
             skills: role === 'worker' ? skills : undefined,
             role: role || 'customer',
-            profileImage: req.file ? req.file.path : undefined
+            isProvider: role === 'worker',
+            profileImage: req.files?.profileImage?.[0]?.path,
+            aadhaarCard: req.files?.aadhaarCard?.[0]?.path,
+            panCard: req.files?.panCard?.[0]?.path
         });
 
         if (user) {
