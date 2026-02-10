@@ -1,17 +1,27 @@
 import express from 'express';
 import {
-    addOrderItems,
+    createOrder,
     getOrderById,
-    updateOrderToPaid,
     getMyOrders,
+    getSellerOrders,
+    updateOrderStatus,
+    cancelOrder,
+    submitReview,
+    getOrders
 } from '../controllers/orderController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.route('/').post(protect, addOrderItems);
+// Public routes (none for orders usually)
+
+// Protected routes
+router.route('/').post(protect, createOrder).get(protect, admin, getOrders);
 router.route('/myorders').get(protect, getMyOrders);
+router.route('/seller').get(protect, getSellerOrders);
 router.route('/:id').get(protect, getOrderById);
-router.route('/:id/pay').put(protect, updateOrderToPaid);
+router.route('/:id/status').put(protect, updateOrderStatus);
+router.route('/:id/cancel').put(protect, cancelOrder);
+router.route('/:id/review').post(protect, submitReview);
 
 export default router;
