@@ -37,12 +37,14 @@ import userRoutes from './routes/userRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
+import cityRoutes from './routes/cityRoutes.js';
 
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/cities', cityRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');
