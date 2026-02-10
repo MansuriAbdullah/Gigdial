@@ -17,7 +17,9 @@ import {
     getAddresses,
     addAddress,
     updateAddress,
-    deleteAddress
+    deleteAddress,
+    getWallet,
+    addMoneyToWallet
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -51,6 +53,10 @@ router.route('/addresses')
 router.route('/addresses/:id')
     .put(protect, updateAddress)
     .delete(protect, deleteAddress);
+
+// Wallet Routes (MUST BE BEFORE ADMIN /:id ROUTE)
+router.get('/wallet', protect, getWallet);
+router.post('/wallet/add', protect, addMoneyToWallet);
 
 // Admin routes
 router.route('/')

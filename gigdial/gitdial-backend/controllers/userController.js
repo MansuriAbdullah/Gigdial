@@ -519,6 +519,58 @@ const deleteAddress = async (req, res) => {
     }
 };
 
+// @desc    Get user wallet
+// @route   GET /api/users/wallet
+// @access  Private
+const getWallet = async (req, res) => {
+    try {
+        let wallet = await Wallet.findOne({ user: req.user._id });
+
+        if (!wallet) {
+            // Create wallet if not exists
+            wallet = await Wallet.create({ user: req.user._id, balance: 0 });
+        }
+
+        res.json({
+            balance: wallet.balance,
+            transactions: wallet.transactions
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Add money to wallet
+// @route   POST /api/users/wallet/add
+// @access  Private
+const addMoneyToWallet = async (req, res) => {
+    try {
+        const { amount } = req.body;
+        const wallet = await Wallet.findOne({ user: req.user._id });
+
+        if (wallet) {
+            wallet.balance += amount;
+            wallet.transactions.push({
+                type: 'credit',
+                amount: amount,
+                description: 'Added money to wallet',
+                status: 'completed'
+            });
+
+            await wallet.save();
+            res.json({
+                balance: wallet.balance,
+                transactions: wallet.transactions
+            });
+        } else {
+            res.status(404);
+            throw new Error('Wallet not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     authUser,
     registerUser,
@@ -537,5 +589,7 @@ export {
     getAddresses,
     addAddress,
     updateAddress,
-    deleteAddress
+    deleteAddress,
+    getWallet,
+    addMoneyToWallet
 };
