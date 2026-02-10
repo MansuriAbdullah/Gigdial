@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import { Users, DollarSign, CheckCircle, AlertCircle, TrendingUp, Activity, BarChart2, MoreHorizontal, ArrowUpRight, Calendar, Bell, Briefcase } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { Users, DollarSign, CheckCircle, AlertCircle, TrendingUp, Activity, BarChart2, MoreHorizontal, ArrowUpRight, Calendar, Bell, Briefcase, ShoppingBag, Loader } from 'lucide-react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 const StatCard = ({ title, value, change, icon: Icon, color, trend, delay }) => (
     <motion.div
@@ -51,7 +53,7 @@ const ActivityItem = ({ icon: Icon, title, time, type, delay }) => (
                 <span className="text-xs font-semibold text-slate-400 whitespace-nowrap">{time}</span>
             </div>
             <p className="text-xs text-slate-500 mt-1 line-clamp-1">
-                New activity detected on the platform requiring attention.
+                New activity detected on the platform.
             </p>
         </div>
     </motion.div>
@@ -59,6 +61,69 @@ const ActivityItem = ({ icon: Icon, title, time, type, delay }) => (
 
 const AdminDashboard = () => {
     const { t } = useLanguage();
+    const { user } = useAuth();
+    const [stats, setStats] = useState({
+        totalWorkers: 0,
+        totalCustomers: 0,
+        activeBookings: 0,
+        totalRevenue: 0,
+        recentActivities: []
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${user?.token}`,
+                    },
+                };
+                const { data } = await axios.get('/api/users/dashboard/stats', config);
+
+                // Combine recent users and orders for activity feed
+                const activities = [
+                    ...data.recentUsers.map(u => ({
+                        type: 'user',
+                        title: `New ${u.role === 'worker' ? 'Worker' : 'Customer'}: ${u.name}`,
+                        time: new Date(u.createdAt),
+                        id: u._id
+                    })),
+                    ...data.recentOrders.map(o => ({
+                        type: 'money',
+                        title: `New Booking by ${o.user?.name || 'User'}`,
+                        time: new Date(o.createdAt),
+                        id: o._id
+                    }))
+                ].sort((a, b) => b.time - a.time).slice(0, 5);
+
+                setStats({
+                    totalWorkers: data.totalWorkers,
+                    totalCustomers: data.totalCustomers,
+                    activeBookings: data.activeBookings,
+                    totalRevenue: data.totalRevenue,
+                    recentActivities: activities
+                });
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching admin stats:', error);
+                setLoading(false);
+            }
+        };
+
+        if (user?.token) {
+            fetchStats();
+        }
+    }, [user]);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-[60vh]">
+                <Loader className="animate-spin text-blue-600" size={40} />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-8 max-w-[1600px] mx-auto">
             {/* Header Banner */}
@@ -82,7 +147,7 @@ const AdminDashboard = () => {
                     <div className="flex items-center gap-4">
                         <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-3 border border-white/10">
                             <Calendar size={18} className="text-blue-400" />
-                            <span className="font-bold text-sm">Jan 27, 2026</span>
+                            <span className="font-bold text-sm">{new Date().toLocaleDateString()}</span>
                         </div>
                         <button className="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl transition-colors shadow-lg shadow-blue-600/30 relative">
                             <Bell size={20} />
@@ -100,8 +165,8 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
                     title={t('totalWorkers')}
-                    value="1,245"
-                    change={`+15 ${t('pending')}`}
+                    value={stats.totalWorkers}
+                    change={`Active`}
                     icon={Briefcase}
                     color="blue"
                     trend="up"
@@ -109,8 +174,8 @@ const AdminDashboard = () => {
                 />
                 <StatCard
                     title={t('totalCustomers')}
-                    value="24,589"
-                    change="+8.2%"
+                    value={stats.totalCustomers}
+                    change="Registered"
                     icon={Users}
                     color="green"
                     trend="up"
@@ -118,7 +183,7 @@ const AdminDashboard = () => {
                 />
                 <StatCard
                     title={t('activeBookings')}
-                    value="842"
+                    value={stats.activeBookings}
                     change={t('liveNow')}
                     icon={Calendar}
                     color="purple"
@@ -127,7 +192,7 @@ const AdminDashboard = () => {
                 />
                 <StatCard
                     title={t('totalRevenue')}
-                    value="$128,450"
+                    value={`₹${stats.totalRevenue.toLocaleString()}`}
                     change="+12.5%"
                     icon={DollarSign}
                     color="orange"
@@ -137,7 +202,7 @@ const AdminDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Main Graph Section */}
+                {/* Main Graph Section (Placeholder Visualization) */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -174,7 +239,7 @@ const AdminDashboard = () => {
                                     <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-600 to-indigo-500 opacity-80 h-full rounded-t-xl group-hover:opacity-100 transition-opacity" />
                                     {/* Tooltip */}
                                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                                        ${h * 150}
+                                        ₹{h * 150}
                                     </div>
                                 </motion.div>
                                 <span className="text-xs font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
@@ -200,10 +265,21 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <ActivityItem icon={DollarSign} title={t('subscriptionPurchased')} time="2 min ago" type="money" delay={0.7} />
-                        <ActivityItem icon={Users} title={`${t('workerRegistration')}: Rahul K.`} time="15 min ago" type="user" delay={0.8} />
-                        <ActivityItem icon={AlertCircle} title={`${t('disputeRaised')} User #482`} time="42 min ago" type="alert" delay={0.9} />
-                        <ActivityItem icon={Users} title={`${t('customerRegistration')}: Priya S.`} time="1 hr ago" type="user" delay={1.0} />
+                        {stats.recentActivities.length > 0 ? (
+                            stats.recentActivities.map((activity, index) => (
+                                <ActivityItem
+                                    key={index}
+                                    icon={activity.type === 'money' ? ShoppingBag : Users}
+                                    title={activity.title}
+                                    time={activity.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    type={activity.type}
+                                    delay={0.7 + (index * 0.1)}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-slate-500 text-center py-4">No recent activity</p>
+                        )}
+
                         <div className="pt-4 mt-2 border-t border-slate-50">
                             <button className="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2">
                                 {t('viewFullHistory')} <ArrowUpRight size={16} />

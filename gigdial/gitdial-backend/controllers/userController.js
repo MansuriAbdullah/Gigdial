@@ -596,6 +596,36 @@ const addMoneyToWallet = async (req, res) => {
     }
 };
 
+// @desc    Get admin dashboard stats
+// @route   GET /api/users/dashboard/stats
+// @access  Private/Admin
+const getAdminStats = async (req, res) => {
+    try {
+        const totalUsers = await User.countDocuments();
+        const totalWorkers = await User.countDocuments({ role: 'worker' });
+        const totalCustomers = await User.countDocuments({ role: 'customer' });
+
+        const orders = await Order.find();
+        const activeBookings = orders.filter(o => !o.isDelivered).length;
+        const totalRevenue = orders.reduce((acc, order) => acc + (order.isPaid ? order.totalPrice : 0), 0);
+
+        const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5);
+        const recentOrders = await Order.find().populate('user', 'name').sort({ createdAt: -1 }).limit(5);
+
+        res.json({
+            totalUsers,
+            totalWorkers,
+            totalCustomers,
+            activeBookings,
+            totalRevenue,
+            recentUsers,
+            recentOrders
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     authUser,
     registerUser,
@@ -616,5 +646,6 @@ export {
     updateAddress,
     deleteAddress,
     getWallet,
-    addMoneyToWallet
+    addMoneyToWallet,
+    getAdminStats
 };

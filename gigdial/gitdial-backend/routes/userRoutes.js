@@ -19,7 +19,8 @@ import {
     updateAddress,
     deleteAddress,
     getWallet,
-    addMoneyToWallet
+    addMoneyToWallet,
+    getAdminStats
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -59,6 +60,8 @@ router.get('/wallet', protect, getWallet);
 router.post('/wallet/add', protect, addMoneyToWallet);
 
 // Admin routes
+router.get('/dashboard/stats', protect, admin, getAdminStats);
+
 router.route('/')
     .get(protect, admin, getUsers);
 
