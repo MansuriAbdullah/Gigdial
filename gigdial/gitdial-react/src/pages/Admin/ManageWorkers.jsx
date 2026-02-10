@@ -60,7 +60,7 @@ const ManageWorkers = () => {
 
     const handleAction = async (id, action) => {
         try {
-            let url = `/api/admin/worker/${id}/${action}`; // approve or reject
+            let url = `/api/users/workers/${id}/${action}`; // approve or reject
             let body = {};
 
             if (action === 'ban') {

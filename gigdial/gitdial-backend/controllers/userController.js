@@ -372,7 +372,7 @@ const approveWorker = async (req, res) => {
     try {
         const worker = await User.findById(req.params.id);
 
-        if (worker && worker.role === 'worker') {
+        if (worker && (worker.role === 'worker' || worker.isProvider)) {
             worker.isApproved = true;
             await worker.save();
 
@@ -400,7 +400,7 @@ const rejectWorker = async (req, res) => {
     try {
         const worker = await User.findById(req.params.id);
 
-        if (worker && worker.role === 'worker') {
+        if (worker && (worker.role === 'worker' || worker.isProvider)) {
             worker.isApproved = false;
             await worker.save();
 
