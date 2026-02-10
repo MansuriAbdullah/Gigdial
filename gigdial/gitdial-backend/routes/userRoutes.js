@@ -13,7 +13,11 @@ import {
     getUserById,
     updateUser,
     approveWorker,
-    rejectWorker
+    rejectWorker,
+    getAddresses,
+    addAddress,
+    updateAddress,
+    deleteAddress
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -38,6 +42,15 @@ router.route('/profile')
     .put(protect, updateUserProfile);
 
 router.get('/worker/dashboard/:id', protect, getWorkerDashboardStats);
+
+// Address Management Routes
+router.route('/addresses')
+    .get(protect, getAddresses)
+    .post(protect, addAddress);
+
+router.route('/addresses/:id')
+    .put(protect, updateAddress)
+    .delete(protect, deleteAddress);
 
 // Admin routes
 router.route('/')

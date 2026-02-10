@@ -76,7 +76,7 @@ const ServiceHistory = () => {
     const fetchServiceHistory = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const response = await fetch('/api/orders/my-orders', {
+            const response = await fetch('/api/orders/myorders', {
                 headers: {
                     'Authorization': `Bearer ${userInfo?.token}`
                 }

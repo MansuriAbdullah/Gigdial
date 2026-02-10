@@ -412,6 +412,113 @@ const rejectWorker = async (req, res) => {
     }
 };
 
+// @desc    Get user addresses
+// @route   GET /api/users/addresses
+// @access  Private
+const getAddresses = async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (user) {
+        res.json(user.savedAddresses || []);
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+};
+
+// @desc    Add new address
+// @route   POST /api/users/addresses
+// @access  Private
+const addAddress = async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        const { type, name, phone, addressLine1, addressLine2, city, state, pincode, isDefault } = req.body;
+
+        const newAddress = {
+            type,
+            name,
+            phone,
+            addressLine1,
+            addressLine2,
+            city,
+            state,
+            pincode,
+            isDefault
+        };
+
+        if (isDefault) {
+            user.savedAddresses.forEach(addr => addr.isDefault = false);
+        }
+
+        user.savedAddresses.push(newAddress);
+        await user.save();
+        res.status(201).json(user.savedAddresses);
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+};
+
+// @desc    Update address
+// @route   PUT /api/users/addresses/:id
+// @access  Private
+const updateAddress = async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        const address = user.savedAddresses.id(req.params.id);
+
+        if (address) {
+            address.type = req.body.type || address.type;
+            address.name = req.body.name || address.name;
+            address.phone = req.body.phone || address.phone;
+            address.addressLine1 = req.body.addressLine1 || address.addressLine1;
+            address.addressLine2 = req.body.addressLine2 || address.addressLine2;
+            address.city = req.body.city || address.city;
+            address.state = req.body.state || address.state;
+            address.pincode = req.body.pincode || address.pincode;
+
+            if (req.body.isDefault !== undefined) {
+                address.isDefault = req.body.isDefault;
+                if (address.isDefault) {
+                    user.savedAddresses.forEach(addr => {
+                        if (addr._id.toString() !== req.params.id) {
+                            addr.isDefault = false;
+                        }
+                    });
+                }
+            }
+
+            await user.save();
+            res.json(user.savedAddresses);
+        } else {
+            res.status(404);
+            throw new Error('Address not found');
+        }
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+};
+
+// @desc    Delete address
+// @route   DELETE /api/users/addresses/:id
+// @access  Private
+const deleteAddress = async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        user.savedAddresses = user.savedAddresses.filter(
+            (addr) => addr._id.toString() !== req.params.id
+        );
+        await user.save();
+        res.json(user.savedAddresses);
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+};
+
 export {
     authUser,
     registerUser,
@@ -426,5 +533,9 @@ export {
     getUserById,
     updateUser,
     approveWorker,
-    rejectWorker
+    rejectWorker,
+    getAddresses,
+    addAddress,
+    updateAddress,
+    deleteAddress
 };

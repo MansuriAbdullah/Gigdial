@@ -42,6 +42,24 @@ const userSchema = mongoose.Schema({
         type: String,
         required: false,
     },
+    savedAddresses: [{
+        type: {
+            type: String,
+            enum: ['home', 'work', 'other'],
+            default: 'home'
+        },
+        name: String,
+        phone: String,
+        addressLine1: String,
+        addressLine2: String,
+        city: String,
+        state: String,
+        pincode: String,
+        isDefault: {
+            type: Boolean,
+            default: false
+        }
+    }],
     isProvider: {
         type: Boolean,
         default: false,
