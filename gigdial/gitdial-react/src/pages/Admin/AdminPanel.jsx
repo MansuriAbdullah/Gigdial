@@ -5,7 +5,9 @@ import AdminDashboard from './AdminDashboard';
 import ManageWorkers from './ManageWorkers';
 import ManageCustomers from './ManageCustomers';
 import ManageCities from './ManageCities';
-import { AdminBookings, AdminAnalytics, AdminContent } from './AdminPlaceholders';
+import AdminBookings from './AdminBookings';
+import AdminAnalytics from './AdminAnalytics';
+import ManageContent from './ManageContent';
 import ServiceApprovals from './ServiceApprovals';
 import Disputes from './Disputes';
 import AdminSettings from './AdminSettings';
@@ -21,7 +23,7 @@ const AdminPanel = () => {
                 <Route path="disputes" element={<Disputes />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="services" element={<ServiceApprovals />} />
-                <Route path="content" element={<AdminContent />} />
+                <Route path="content" element={<ManageContent />} />
                 <Route path="cities" element={<ManageCities />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="*" element={<Navigate to="" replace />} />

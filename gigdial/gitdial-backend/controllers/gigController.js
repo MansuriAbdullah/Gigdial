@@ -112,10 +112,31 @@ const deleteGig = async (req, res) => {
     }
 };
 
+// @desc    Update gig status (Admin)
+// @route   PUT /api/gigs/:id/status
+// @access  Private/Admin
+const updateGigStatus = async (req, res) => {
+    try {
+        const gig = await Gig.findById(req.params.id);
+
+        if (gig) {
+            gig.status = req.body.status || gig.status;
+            const updatedGig = await gig.save();
+            res.json(updatedGig);
+        } else {
+            res.status(404);
+            throw new Error('Gig not found');
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
 export {
     getGigs,
     getGigById,
     createGig,
     updateGig,
     deleteGig,
+    updateGigStatus
 };

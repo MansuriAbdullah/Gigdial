@@ -38,6 +38,8 @@ import gigRoutes from './routes/gigRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import cityRoutes from './routes/cityRoutes.js';
+import disputeRoutes from './routes/disputeRoutes.js';
+import contentRoutes from './routes/contentRoutes.js';
 
 // Routes
 app.use('/api/users', userRoutes);
@@ -45,6 +47,8 @@ app.use('/api/gigs', gigRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/cities', cityRoutes);
+app.use('/api/disputes', disputeRoutes);
+app.use('/api/content', contentRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');
