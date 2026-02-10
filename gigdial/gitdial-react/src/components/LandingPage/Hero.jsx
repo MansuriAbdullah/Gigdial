@@ -39,7 +39,7 @@ const Hero = () => {
     useEffect(() => {
         const fetchCities = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/cities');
+                const { data } = await axios.get('/api/cities');
                 setCities(data);
             } catch (error) {
                 console.error('Error fetching cities:', error);
