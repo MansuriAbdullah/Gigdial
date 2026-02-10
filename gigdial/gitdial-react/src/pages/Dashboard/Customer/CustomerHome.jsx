@@ -24,7 +24,7 @@ const CustomerHome = () => {
 
             // Fetch bookings
             try {
-                const bookingsRes = await fetch('/api/orders/my-orders', {
+                const bookingsRes = await fetch('/api/orders/myorders', {
                     headers: { 'Authorization': `Bearer ${userInfo?.token}` }
                 });
                 if (bookingsRes.ok) {

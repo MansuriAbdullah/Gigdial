@@ -16,7 +16,7 @@ const authUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
-            generateToken(res, user._id);
+            const token = generateToken(res, user._id);
 
             res.status(200).json({
                 _id: user._id,
@@ -26,7 +26,8 @@ const authUser = async (req, res) => {
                 profileImage: user.profileImage,
                 phone: user.phone,
                 city: user.city,
-                isApproved: user.isApproved
+                isApproved: user.isApproved,
+                token
             });
         } else {
             res.status(401);
@@ -67,7 +68,7 @@ const registerUser = async (req, res) => {
             // Create wallet for user
             await Wallet.create({ user: user._id, balance: 0 });
 
-            generateToken(res, user._id);
+            const token = generateToken(res, user._id);
 
             res.status(201).json({
                 _id: user._id,
@@ -75,7 +76,8 @@ const registerUser = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 phone: user.phone,
-                city: user.city
+                city: user.city,
+                token
             });
         } else {
             res.status(400);

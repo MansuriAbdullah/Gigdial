@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Plus, Edit2, Trash2, Home, Briefcase, Heart, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SavedAddresses = () => {
+    const navigate = useNavigate();
     const [addresses, setAddresses] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -26,6 +28,7 @@ const SavedAddresses = () => {
     const fetchAddresses = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            if (!userInfo) return;
             const response = await fetch('/api/users/addresses', {
                 headers: {
                     'Authorization': `Bearer ${userInfo?.token}`
@@ -45,6 +48,7 @@ const SavedAddresses = () => {
 
             if (!userInfo || !userInfo.token) {
                 alert('Please login to save address');
+                navigate('/login');
                 return;
             }
 
