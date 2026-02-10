@@ -46,6 +46,9 @@ router.route('/profile')
 
 router.get('/worker/dashboard/:id', protect, getWorkerDashboardStats);
 
+router.put('/workers/:id/approve', protect, admin, approveWorker);
+router.put('/workers/:id/reject', protect, admin, rejectWorker);
+
 // Address Management Routes
 router.route('/addresses')
     .get(protect, getAddresses)
@@ -70,7 +73,6 @@ router.route('/:id')
     .get(protect, admin, getUserById)
     .put(protect, admin, updateUser);
 
-router.put('/workers/:id/approve', protect, admin, approveWorker);
-router.put('/workers/:id/reject', protect, admin, rejectWorker);
+
 
 export default router;

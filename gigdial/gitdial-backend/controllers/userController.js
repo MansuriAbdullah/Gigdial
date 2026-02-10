@@ -372,9 +372,13 @@ const approveWorker = async (req, res) => {
     try {
         const worker = await User.findById(req.params.id);
 
-        if (worker && (worker.role === 'worker' || worker.isProvider)) {
+        if (worker) {
             worker.isApproved = true;
             worker.kycStatus = 'approved';
+            // Ensure correct role assignment
+            if (worker.role !== 'worker') worker.role = 'worker';
+            if (!worker.isProvider) worker.isProvider = true;
+
             await worker.save();
 
             // Create notification
@@ -387,7 +391,7 @@ const approveWorker = async (req, res) => {
 
             res.json({ message: 'Worker approved successfully' });
         } else {
-            res.status(404).json({ message: 'Worker not found' });
+            res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -401,9 +405,11 @@ const rejectWorker = async (req, res) => {
     try {
         const worker = await User.findById(req.params.id);
 
-        if (worker && (worker.role === 'worker' || worker.isProvider)) {
+        if (worker) {
             worker.isApproved = false;
             worker.kycStatus = 'rejected';
+
+            // Allow rejection even if role is inconsistent
             await worker.save();
 
             // Create notification
@@ -416,7 +422,7 @@ const rejectWorker = async (req, res) => {
 
             res.json({ message: 'Worker rejected successfully' });
         } else {
-            res.status(404).json({ message: 'Worker not found' });
+            res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
