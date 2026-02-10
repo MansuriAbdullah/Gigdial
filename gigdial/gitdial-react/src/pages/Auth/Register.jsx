@@ -131,6 +131,7 @@ const Register = () => {
             data.append('city', formData.city);
             data.append('address', formData.address);
             data.append('isProvider', 'true');
+            data.append('role', 'worker');
             data.append('skills', JSON.stringify(selectedSkills));
 
             if (files.profileImage) data.append('profileImage', files.profileImage);
