@@ -69,6 +69,20 @@ const userSchema = mongoose.Schema({
         required: true,
         default: false,
     },
+    role: {
+        type: String,
+        enum: ['customer', 'worker', 'admin'],
+        default: 'customer'
+    },
+    kycStatus: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+    },
+    isApproved: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true,
 });

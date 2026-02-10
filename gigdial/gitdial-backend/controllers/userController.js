@@ -374,6 +374,7 @@ const approveWorker = async (req, res) => {
 
         if (worker && (worker.role === 'worker' || worker.isProvider)) {
             worker.isApproved = true;
+            worker.kycStatus = 'approved';
             await worker.save();
 
             // Create notification
@@ -402,6 +403,7 @@ const rejectWorker = async (req, res) => {
 
         if (worker && (worker.role === 'worker' || worker.isProvider)) {
             worker.isApproved = false;
+            worker.kycStatus = 'rejected';
             await worker.save();
 
             // Create notification
