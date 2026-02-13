@@ -10,7 +10,7 @@ const WorkerEarnings = () => {
 
     const fetchWallet = async () => {
         try {
-            const response = await fetch('/api/wallet/my-wallet', {
+            const response = await fetch('/api/users/wallet', {
                 headers: {
                     'Authorization': `Bearer ${userInfo?.token}`
                 }

@@ -63,7 +63,7 @@ const gigSchema = mongoose.Schema({
     status: {
         type: String,
         enum: ['active', 'pending', 'rejected'],
-        default: 'active' // For now default active to not break existing
+        default: 'pending'
     }
 }, {
     timestamps: true,

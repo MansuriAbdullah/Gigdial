@@ -5,8 +5,44 @@ import Gig from '../models/Gig.js';
 // @access  Public
 const getGigs = async (req, res) => {
     try {
-        const gigs = await Gig.find({});
+        const gigs = await Gig.find({ status: 'active' }).populate('user', 'name profileImage rating numReviews');
         res.json(gigs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get all gigs (Admin)
+// @route   GET /api/gigs/admin/all
+// @access  Private/Admin
+const getAllGigs = async (req, res) => {
+    try {
+        const gigs = await Gig.find({}).populate('user', 'name profileImage rating numReviews');
+        res.json(gigs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get my gigs
+// @route   GET /api/gigs/my-gigs
+// @access  Private
+const getMyGigs = async (req, res) => {
+    try {
+        const gigs = await Gig.find({ user: req.user._id });
+        res.json(gigs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get all unique categories
+// @route   GET /api/gigs/categories
+// @access  Public
+const getCategories = async (req, res) => {
+    try {
+        const categories = await Gig.distinct('category');
+        res.json(categories);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -17,7 +53,7 @@ const getGigs = async (req, res) => {
 // @access  Public
 const getGigById = async (req, res) => {
     try {
-        const gig = await Gig.findById(req.params.id);
+        const gig = await Gig.findById(req.params.id).populate('user', 'name profileImage rating numReviews');
 
         if (gig) {
             res.json(gig);
@@ -132,11 +168,27 @@ const updateGigStatus = async (req, res) => {
     }
 };
 
+// @desc    Get gigs by worker ID
+// @route   GET /api/gigs/worker/:workerId
+// @access  Public
+const getGigsByWorker = async (req, res) => {
+    try {
+        const gigs = await Gig.find({ user: req.params.workerId, status: 'active' });
+        res.json(gigs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     getGigs,
     getGigById,
     createGig,
     updateGig,
     deleteGig,
-    updateGigStatus
+    updateGigStatus,
+    getMyGigs,
+    getAllGigs,
+    getCategories,
+    getGigsByWorker
 };

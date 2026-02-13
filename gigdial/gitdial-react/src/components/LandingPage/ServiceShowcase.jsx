@@ -1,13 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Star, ArrowRight, Sparkles, Clock, Users, Award, Zap, TrendingUp, Heart } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, ArrowRight, Sparkles, Clock, Users, Award, Zap, TrendingUp, Heart, X, Phone, Send } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
-const ServiceCard = ({ title, rating, image, category, price, bookings }) => (
+const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, workerId }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.9 }}
     whileInView={{ opacity: 1, scale: 1 }}
     whileHover={{ scale: 1.03, y: -8 }}
     viewport={{ once: true }}
+    onClick={() => onBook({ title, workerId, image })}
     className="relative flex-shrink-0 w-72 bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-lg hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 group cursor-pointer"
   >
     {/* Premium badge for high ratings */}
@@ -83,6 +87,10 @@ const ServiceCard = ({ title, rating, image, category, price, bookings }) => (
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onBook({ title, workerId, image });
+          }}
           className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg"
         >
           Book Now
@@ -95,7 +103,7 @@ const ServiceCard = ({ title, rating, image, category, price, bookings }) => (
   </motion.div>
 );
 
-const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue' }) => {
+const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', onBook }) => {
   const scrollContainer = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -191,7 +199,7 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue' }) 
       >
         <div className="flex space-x-6 w-max">
           {services.map((service, idx) => (
-            <ServiceCard key={idx} {...service} />
+            <ServiceCard key={idx} {...service} onBook={onBook} />
           ))}
         </div>
       </div>
@@ -219,6 +227,15 @@ const ServiceShowcase = () => {
     beautyServices: []
   });
   const [loading, setLoading] = useState(true);
+
+  // Modal State
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -250,11 +267,12 @@ const ServiceShowcase = () => {
           const mappedGig = {
             title: gig.title,
             rating: gig.rating?.toString() || '0',
-            image: gig.coverImage || 'https://images.unsplash.com/photo-1581578731117-104f8a3d46a8?auto=format&fit=crop&w=600&q=80',
+            image: gig.image || gig.coverImage || 'https://images.unsplash.com/photo-1581578731117-104f8a3d46a8?auto=format&fit=crop&w=600&q=80',
             category: gig.category,
             price: gig.price,
             bookings: gig.salesCount || 0,
-            id: gig._id
+            id: gig._id,
+            workerId: gig.user?._id || gig.user // Use ID if object, or directly if string
           };
 
           // Find matching category group
@@ -282,6 +300,33 @@ const ServiceShowcase = () => {
 
     fetchServices();
   }, []);
+
+  const handleBookClick = (service) => {
+    setSelectedService(service);
+    setModalOpen(true);
+  };
+
+  const handleSubmitContact = (e) => {
+    e.preventDefault();
+    if (!phoneNumber.trim()) {
+      toast.error("Please enter your phone number");
+      return;
+    }
+
+    setSending(true);
+    // Simulate processing
+    setTimeout(() => {
+      setSending(false);
+      setModalOpen(false);
+      // Navigate to profile with phone number in state
+      navigate(`/workers/${selectedService.workerId}`, {
+        state: {
+          prefilledPhoneNumber: phoneNumber,
+          fromLandingPage: true
+        }
+      });
+    }, 500);
+  };
 
   if (loading) return <div className="py-24 text-center">Loading services...</div>;
 
@@ -320,36 +365,42 @@ const ServiceShowcase = () => {
             services={serviceData.digitalServices}
             icon={Zap}
             color="blue"
+            onBook={handleBookClick}
           />
           <ServiceRow
             title="Wellness & Fitness"
             services={serviceData.wellnessServices}
             icon={Heart}
             color="red"
+            onBook={handleBookClick}
           />
           <ServiceRow
             title="Home Services"
             services={serviceData.homeServices}
             icon={Sparkles}
             color="green"
+            onBook={handleBookClick}
           />
           <ServiceRow
             title="Tutoring & Education"
             services={serviceData.tutoringServices}
             icon={Award}
             color="purple"
+            onBook={handleBookClick}
           />
           <ServiceRow
             title="Events & Creative Services"
             services={serviceData.creativeServices}
             icon={TrendingUp}
             color="orange"
+            onBook={handleBookClick}
           />
           <ServiceRow
             title="Beauty & Personal Care"
             services={serviceData.beautyServices}
             icon={Star}
             color="lime"
+            onBook={handleBookClick}
           />
         </div>
 
@@ -373,6 +424,120 @@ const ServiceShowcase = () => {
           </div>
         </motion.div>
       </div>
+
+
+
+      {/* Contact Modal */}
+      <AnimatePresence>
+        {modalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+            >
+              <button
+                onClick={() => setModalOpen(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Phone className="text-blue-600 w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900">Connect with Worker</h3>
+                <p className="text-slate-500 mt-2">Enter your number to view profile and connect.</p>
+              </div>
+
+              <form onSubmit={handleSubmitContact} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="+91 9876543210"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  {sending ? 'Redirecting...' : (
+                    <>
+                      <Send size={18} /> View Profile
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+
+      {/* Contact Modal */}
+      <AnimatePresence>
+        {modalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+            >
+              <button
+                onClick={() => setModalOpen(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Phone className="text-blue-600 w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900">Connect with Worker</h3>
+                <p className="text-slate-500 mt-2">Enter your number to view profile and connect.</p>
+              </div>
+
+              <form onSubmit={handleSubmitContact} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="+91 9876543210"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  {sending ? 'Redirecting...' : (
+                    <>
+                      <Send size={18} /> View Profile
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </section>
   );
 };

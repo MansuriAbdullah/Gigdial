@@ -28,10 +28,10 @@ const RateModal = ({ isOpen, onClose, onSubmit, order }) => {
 
                 <div className="p-8 flex flex-col items-center">
                     <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-3xl font-bold text-blue-600 mb-4">
-                        {order.workerName?.charAt(0)}
+                        {order.seller?.name?.charAt(0)}
                     </div>
-                    <h4 className="text-lg font-bold text-slate-900">{order.workerName}</h4>
-                    <p className="text-slate-500 text-sm mb-8">{order.serviceName}</p>
+                    <h4 className="text-lg font-bold text-slate-900">{order.seller?.name}</h4>
+                    <p className="text-slate-500 text-sm mb-8">{order.gig?.title}</p>
 
                     <div className="flex gap-2 mb-8">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -45,8 +45,8 @@ const RateModal = ({ isOpen, onClose, onSubmit, order }) => {
                                 <Star
                                     size={32}
                                     className={`${star <= (hoveredStar || rating)
-                                            ? 'text-yellow-400 fill-yellow-400'
-                                            : 'text-slate-200 fill-slate-50'
+                                        ? 'text-yellow-400 fill-yellow-400'
+                                        : 'text-slate-200 fill-slate-50'
                                         } transition-colors`}
                                 />
                             </button>

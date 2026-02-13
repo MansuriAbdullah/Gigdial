@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 
 const orderSchema = mongoose.Schema({
-    user: {
+    buyer: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User',
+    },
+    seller: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
@@ -11,10 +16,14 @@ const orderSchema = mongoose.Schema({
         required: true,
         ref: 'Gig',
     },
-    seller: { // Store redundant seller info for easier query
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User',
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    deliveryTime: { type: Number, required: true },
+    status: {
+        type: String,
+        enum: ['pending', 'active', 'completed', 'cancelled', 'in-progress'],
+        default: 'pending'
     },
     paymentMethod: {
         type: String,
@@ -26,16 +35,6 @@ const orderSchema = mongoose.Schema({
         update_time: { type: String },
         email_address: { type: String },
     },
-    taxPrice: {
-        type: Number,
-        required: true,
-        default: 0.0,
-    },
-    totalPrice: {
-        type: Number,
-        required: true,
-        default: 0.0,
-    },
     isPaid: {
         type: Boolean,
         required: true,
@@ -43,6 +42,18 @@ const orderSchema = mongoose.Schema({
     },
     paidAt: {
         type: Date,
+    },
+    isReviewed: {
+        type: Boolean,
+        default: false
+    },
+    rating: {
+        type: Number,
+        default: 0
+    },
+    review: {
+        type: String,
+        default: ''
     },
     isDelivered: {
         type: Boolean,
@@ -52,6 +63,16 @@ const orderSchema = mongoose.Schema({
     deliveredAt: {
         type: Date,
     },
+    completionOtp: {
+        type: String,
+    },
+    completionOtpExpires: {
+        type: Date,
+    },
+    notes: {
+        type: String,
+        default: ''
+    }
 }, {
     timestamps: true,
 });

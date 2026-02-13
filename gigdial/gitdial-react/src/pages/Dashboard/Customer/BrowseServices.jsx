@@ -79,10 +79,13 @@ const BrowseServices = () => {
                         'Authorization': `Bearer ${userInfo.token}`
                     },
                     body: JSON.stringify({
-                        gigId: service._id,
-                        sellerId: service.user._id,
-                        totalPrice: service.price,
-                        paymentMethod: 'wallet' // Defaulting to wallet for now
+                        gig: service._id,
+                        seller: service.user._id,
+                        title: service.title,
+                        description: service.description,
+                        price: service.price,
+                        deliveryTime: service.deliveryTime,
+                        paymentMethod: 'wallet'
                     })
                 });
 

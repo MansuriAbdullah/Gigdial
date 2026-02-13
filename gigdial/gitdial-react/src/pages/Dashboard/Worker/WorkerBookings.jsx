@@ -10,7 +10,7 @@ const WorkerBookings = () => {
 
     const fetchBookings = async () => {
         try {
-            const response = await fetch('/api/orders/seller-orders', {
+            const response = await fetch('/api/orders/seller', {
                 headers: {
                     'Authorization': `Bearer ${userInfo?.token}`
                 }
@@ -57,7 +57,7 @@ const WorkerBookings = () => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'in_progress': return 'bg-blue-50 text-blue-700 border-blue-200';
+            case 'in-progress': return 'bg-blue-50 text-blue-700 border-blue-200';
             case 'pending': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
             case 'completed': return 'bg-green-50 text-green-700 border-green-200';
             case 'cancelled': return 'bg-red-50 text-red-700 border-red-200';
@@ -67,7 +67,7 @@ const WorkerBookings = () => {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'in_progress': return <CheckCircle size={14} />;
+            case 'in-progress': return <CheckCircle size={14} />;
             case 'pending': return <AlertCircle size={14} />;
             case 'completed': return <CheckCircle size={14} />;
             case 'cancelled': return <XCircle size={14} />;
@@ -77,15 +77,122 @@ const WorkerBookings = () => {
 
     const displayedBookings = bookings.filter(booking => {
         if (filter === 'All') return true;
-        if (filter === 'Confirmed') return booking.status === 'in_progress';
+        if (filter === 'Confirmed') return booking.status === 'in-progress';
         if (filter === 'Pending') return booking.status === 'pending';
         if (filter === 'Completed') return booking.status === 'completed';
         if (filter === 'Cancelled') return booking.status === 'cancelled';
         return booking.status === filter.toLowerCase();
     });
 
+    const [otpModalOpen, setOtpModalOpen] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [otpInput, setOtpInput] = useState('');
+    const [otpLoading, setOtpLoading] = useState(false);
+
+    const handleRequestCompletion = async (orderId) => {
+        if (!window.confirm("Are you sure you want to complete this job? This will send an OTP to the customer.")) return;
+
+        setOtpLoading(true);
+        try {
+            const res = await fetch(`/api/orders/${orderId}/otp`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userInfo?.token}`
+                }
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                // Open Modal
+                setSelectedOrderId(orderId);
+                setOtpModalOpen(true);
+                setOtpInput('');
+                // Show OTP for testing
+                alert(`OTP sent to customer! (Test OTP: ${data.testOtp})`);
+            } else {
+                const data = await res.json();
+                alert(data.message || "Failed to send OTP");
+            }
+        } catch (error) {
+            console.error("Error sending OTP:", error);
+            alert("Error sending OTP");
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async () => {
+        if (!otpInput || otpInput.length < 6) {
+            alert("Please enter a valid 6-digit OTP");
+            return;
+        }
+
+        setOtpLoading(true);
+        try {
+            const res = await fetch(`/api/orders/${selectedOrderId}/complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userInfo?.token}`
+                },
+                body: JSON.stringify({ otp: otpInput })
+            });
+
+            if (res.ok) {
+                alert("Service Completed Successfully!");
+                setOtpModalOpen(false);
+                fetchBookings(); // Refresh list
+            } else {
+                const data = await res.json();
+                alert(data.message || "Invalid OTP or Expired");
+            }
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            alert("Error verifying OTP");
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 relative">
+            {/* OTP Modal */}
+            {otpModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in fade-in zoom-in duration-200">
+                        <h3 className="text-xl font-bold text-slate-900 mb-2">Verify Completion</h3>
+                        <p className="text-slate-500 text-sm mb-4">
+                            Ask the customer for the OTP sent to their mobile number to complete this service.
+                        </p>
+
+                        <input
+                            type="text"
+                            value={otpInput}
+                            onChange={(e) => setOtpInput(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+                            placeholder="Enter 6-digit OTP"
+                            className="w-full text-center text-2xl font-bold tracking-widest py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all mb-6"
+                            autoFocus
+                        />
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setOtpModalOpen(false)}
+                                className="flex-1 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleVerifyOtp}
+                                disabled={otpLoading}
+                                className="flex-1 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors shadow-lg shadow-green-500/20 disabled:opacity-70"
+                            >
+                                {otpLoading ? 'Verifying...' : 'Complete Job'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">My Bookings</h1>
@@ -120,23 +227,23 @@ const WorkerBookings = () => {
                                             <h3 className="font-bold text-lg text-slate-900 mb-1">{booking.gig?.title || 'Service'}</h3>
                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(booking.status)}`}>
                                                 {getStatusIcon(booking.status)}
-                                                {booking.status.replace('_', ' ').toUpperCase()}
+                                                {booking.status.replace('-', ' ').toUpperCase()}
                                             </span>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-sm text-slate-500">Amount</p>
-                                            <p className="text-xl font-bold text-slate-900">₹{booking.totalAmount}</p>
+                                            <p className="text-xl font-bold text-slate-900">₹{booking.price || booking.totalAmount || 0}</p>
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div className="flex items-center gap-2 text-slate-600">
                                             <User size={16} className="text-slate-400" />
-                                            <span className="text-sm font-medium">{booking.user?.name || 'Customer'}</span>
+                                            <span className="text-sm font-medium">{booking.buyer?.name || 'Customer'}</span>
                                         </div>
                                         <div className="flex items-center gap-2 text-slate-600">
                                             <Phone size={16} className="text-slate-400" />
-                                            <span className="text-sm font-medium">{booking.user?.phone || 'N/A'}</span>
+                                            <span className="text-sm font-medium">{booking.buyer?.phone || 'N/A'}</span>
                                         </div>
                                         <div className="flex items-center gap-2 text-slate-600">
                                             <Calendar size={16} className="text-slate-400" />
@@ -144,7 +251,7 @@ const WorkerBookings = () => {
                                         </div>
                                         <div className="flex items-center gap-2 text-slate-600 md:col-span-2">
                                             <MapPin size={16} className="text-slate-400" />
-                                            <span className="text-sm font-medium">{booking.user?.city || 'Location N/A'}</span>
+                                            <span className="text-sm font-medium">{booking.buyer?.city || 'Location N/A'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -153,10 +260,10 @@ const WorkerBookings = () => {
                                     {booking.status === 'pending' && (
                                         <>
                                             <button
-                                                onClick={() => updateStatus(booking._id, 'in_progress')}
+                                                onClick={() => updateStatus(booking._id, 'in-progress')}
                                                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-bold whitespace-nowrap"
                                             >
-                                                Accept
+                                                Accept Order
                                             </button>
                                             <button
                                                 onClick={() => updateStatus(booking._id, 'cancelled')}
@@ -166,12 +273,13 @@ const WorkerBookings = () => {
                                             </button>
                                         </>
                                     )}
-                                    {booking.status === 'in_progress' && (
+                                    {(booking.status === 'in-progress' || booking.status === 'active') && (
                                         <button
-                                            onClick={() => updateStatus(booking._id, 'completed')}
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-bold whitespace-nowrap"
+                                            onClick={() => handleRequestCompletion(booking._id)}
+                                            disabled={otpLoading}
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-bold whitespace-nowrap shadow-md hover:shadow-lg shadow-blue-500/20"
                                         >
-                                            Mark Complete
+                                            Complete Job
                                         </button>
                                     )}
                                     <button className="px-4 py-2 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors text-sm font-bold whitespace-nowrap">

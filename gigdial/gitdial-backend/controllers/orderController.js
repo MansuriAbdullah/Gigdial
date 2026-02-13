@@ -15,7 +15,9 @@ const createOrder = async (req, res) => {
             title,
             description,
             price,
-            deliveryTime
+            deliveryTime,
+            paymentMethod,
+            notes
         } = req.body;
 
         const order = await Order.create({
@@ -26,7 +28,9 @@ const createOrder = async (req, res) => {
             description,
             price,
             deliveryTime,
-            status: 'pending'
+            paymentMethod,
+            notes: notes || '',
+            status: 'in-progress' // Set status to in-progress directly
         });
 
         // Create notification for seller
@@ -72,6 +76,7 @@ const getMyOrders = async (req, res) => {
     try {
         const orders = await Order.find({ buyer: req.user._id })
             .populate('seller', 'name profileImage rating')
+            .populate('gig', 'title')
             .sort({ createdAt: -1 });
         res.json(orders);
     } catch (error) {
@@ -257,6 +262,120 @@ const getOrders = async (req, res) => {
     }
 };
 
+// @desc    Request Completion OTP
+// @route   POST /api/orders/:id/otp
+// @access  Private (Worker)
+const requestCompletionOtp = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            res.status(404);
+            throw new Error('Order not found');
+        }
+
+        // Only seller can request completion
+        if (order.seller.toString() !== req.user._id.toString()) {
+            res.status(401);
+            throw new Error('Not authorized');
+        }
+
+        // Generate 6 digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+        order.completionOtp = otp;
+        order.completionOtpExpires = otpExpires;
+        await order.save();
+
+        // Send OTP to buyer via Notification (Simulating SMS)
+        await Notification.create({
+            user: order.buyer,
+            type: 'system',
+            title: 'Provide OTP to Completing Service',
+            message: `The worker has requested to complete the service. Please share this OTP with them: ${otp}`,
+            relatedOrder: order._id
+        });
+
+        // In a real app, send SMS here using Twilio/SNS
+        // sendSms(buyer.phone, `Your OTP is ${otp}`);
+
+        res.json({
+            message: 'OTP sent to customer notification center',
+            testOtp: otp // Included for testing purposes since SMS is not active
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Complete Order with OTP
+// @route   POST /api/orders/:id/complete
+// @access  Private (Worker)
+const completeOrderWithOtp = async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            res.status(404);
+            throw new Error('Order not found');
+        }
+
+        if (order.seller.toString() !== req.user._id.toString()) {
+            res.status(401);
+            throw new Error('Not authorized');
+        }
+
+        if (order.completionOtp !== otp) {
+            res.status(400);
+            throw new Error('Invalid OTP');
+        }
+
+        if (order.completionOtpExpires < Date.now()) {
+            res.status(400);
+            throw new Error('OTP has expired');
+        }
+
+        // Mark as completed
+        order.status = 'completed';
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+        order.completionOtp = undefined;
+        order.completionOtpExpires = undefined;
+
+        // Update Wallet
+        const sellerWallet = await Wallet.findOne({ user: order.seller });
+        if (sellerWallet) {
+            sellerWallet.balance += order.price;
+            sellerWallet.transactions.push({
+                type: 'credit',
+                amount: order.price,
+                description: `Payment for order: ${order.title}`,
+                order: order._id,
+                status: 'completed'
+            });
+            await sellerWallet.save();
+        }
+
+        // Notify Buyer
+        await Notification.create({
+            user: order.buyer,
+            type: 'order',
+            title: 'Order Completed',
+            message: `Your order "${order.title}" has been successfully completed by the worker. Please rate your experience!`,
+            relatedOrder: order._id,
+            link: `/customer-dashboard/orders/${order._id}`
+        });
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     createOrder,
     getOrderById,
@@ -265,5 +384,7 @@ export {
     updateOrderStatus,
     cancelOrder,
     submitReview,
-    getOrders
+    getOrders,
+    requestCompletionOtp,
+    completeOrderWithOtp
 };

@@ -193,6 +193,12 @@ const WorkerServices = () => {
                                 <p className="text-xs text-slate-500 mb-2 line-clamp-2">{service.description}</p>
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg">{service.category}</span>
+                                    <span className={`px-2 py-1 text-xs font-bold rounded-lg ${service.status === 'active' ? 'bg-green-50 text-green-700' :
+                                            service.status === 'rejected' ? 'bg-red-50 text-red-700' :
+                                                'bg-yellow-50 text-yellow-700'
+                                        }`}>
+                                        {service.status ? service.status.charAt(0).toUpperCase() + service.status.slice(1) : 'Pending'}
+                                    </span>
                                     <div className="flex items-center gap-1 text-slate-600">
                                         <DollarSign size={14} />
                                         <span className="text-sm font-bold">{service.price}</span>

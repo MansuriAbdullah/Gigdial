@@ -10,7 +10,7 @@ const WorkerLeads = () => {
 
     const fetchLeads = async () => {
         try {
-            const response = await fetch('/api/orders/seller-orders', {
+            const response = await fetch('/api/orders/seller', {
                 headers: {
                     'Authorization': `Bearer ${userInfo?.token}`
                 }

@@ -67,7 +67,8 @@ const AdminDashboard = () => {
         totalCustomers: 0,
         activeBookings: 0,
         totalRevenue: 0,
-        recentActivities: []
+        recentActivities: [],
+        monthlyRevenue: Array(12).fill(0)
     });
     const [loading, setLoading] = useState(true);
 
@@ -91,7 +92,7 @@ const AdminDashboard = () => {
                     })),
                     ...data.recentOrders.map(o => ({
                         type: 'money',
-                        title: `New Booking by ${o.user?.name || 'User'}`,
+                        title: `New Booking by ${o.buyer?.name || 'User'}`,
                         time: new Date(o.createdAt),
                         id: o._id
                     }))
@@ -99,10 +100,12 @@ const AdminDashboard = () => {
 
                 setStats({
                     totalWorkers: data.totalWorkers,
-                    totalCustomers: data.totalCustomers,
+                    totalCustomers: data.totalCustomers, // Add totalCustomers back
+                    totalUsers: data.totalUsers,
                     activeBookings: data.activeBookings,
                     totalRevenue: data.totalRevenue,
-                    recentActivities: activities
+                    recentActivities: activities,
+                    monthlyRevenue: data.monthlyRevenue || Array(12).fill(0)
                 });
                 setLoading(false);
             } catch (error) {
@@ -115,6 +118,9 @@ const AdminDashboard = () => {
             fetchStats();
         }
     }, [user]);
+
+    // Calculate max revenue for chart scaling
+    const maxRevenue = Math.max(...stats.monthlyRevenue, 1); // Avoid division by zero
 
     if (loading) {
         return (
@@ -228,25 +234,28 @@ const AdminDashboard = () => {
 
                     {/* CSS-only Bar Chart Visualization */}
                     <div className="flex-1 flex items-end justify-between gap-2 h-64 w-full box-border px-4 pb-2">
-                        {[35, 55, 40, 70, 50, 85, 60, 75, 55, 90, 65, 80].map((h, i) => (
-                            <div key={i} className="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
-                                <motion.div
-                                    initial={{ height: 0 }}
-                                    whileInView={{ height: `${h}%` }}
-                                    transition={{ duration: 1, ease: "easeOut", delay: i * 0.05 }}
-                                    className="w-full max-w-[40px] bg-slate-100 rounded-t-xl relative overflow-hidden group-hover:bg-blue-50 transition-colors"
-                                >
-                                    <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-600 to-indigo-500 opacity-80 h-full rounded-t-xl group-hover:opacity-100 transition-opacity" />
-                                    {/* Tooltip */}
-                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                                        ₹{h * 150}
-                                    </div>
-                                </motion.div>
-                                <span className="text-xs font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
-                                    {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}
-                                </span>
-                            </div>
-                        ))}
+                        {stats.monthlyRevenue.map((rev, i) => {
+                            const heightPercentage = (rev / maxRevenue) * 100;
+                            return (
+                                <div key={i} className="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+                                    <motion.div
+                                        initial={{ height: 0 }}
+                                        whileInView={{ height: `${heightPercentage}%` }}
+                                        transition={{ duration: 1, ease: "easeOut", delay: i * 0.05 }}
+                                        className="w-full max-w-[40px] bg-slate-100 rounded-t-xl relative overflow-hidden group-hover:bg-blue-50 transition-colors"
+                                    >
+                                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-600 to-indigo-500 opacity-80 h-full rounded-t-xl group-hover:opacity-100 transition-opacity" />
+                                        {/* Tooltip */}
+                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                            ₹{rev.toLocaleString()}
+                                        </div>
+                                    </motion.div>
+                                    <span className="text-xs font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
+                                        {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}
+                                    </span>
+                                </div>
+                            )
+                        })}
                     </div>
                 </motion.div>
 

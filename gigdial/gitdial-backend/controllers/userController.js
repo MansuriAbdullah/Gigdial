@@ -45,7 +45,7 @@ const authUser = async (req, res) => {
 // @access  Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, phone, city, address, skills, role } = req.body;
+        const { name, email, password, phone, city, address, skills, role, category, experience, serviceDescription } = req.body;
 
         const userExists = await User.findOne({ email });
 
@@ -62,6 +62,9 @@ const registerUser = async (req, res) => {
             city,
             address,
             skills: role === 'worker' ? skills : undefined,
+            category: role === 'worker' ? category : undefined,
+            experience: role === 'worker' ? experience : 0,
+            serviceDescription: role === 'worker' ? serviceDescription : undefined,
             role: role || 'customer',
             isProvider: role === 'worker',
             profileImage: req.files?.profileImage?.[0]?.path,
@@ -229,12 +232,16 @@ const getWorkerDashboardStats = async (req, res) => {
         });
         const responseRate = totalOrders > 0 ? ((acceptedOrders / totalOrders) * 100).toFixed(1) : 0;
 
-        // 4. Rating
+        // 4. Rating (Use the rating from User model which is updated on review submission)
         const user = await User.findById(userId);
         const rating = user.rating || 0;
 
-        // 5. Recent Orders/Opportunities
-        const opportunities = await Order.find({ seller: userId })
+        // Fetch Wallet Balance
+        const wallet = await Wallet.findOne({ user: userId });
+        const walletBalance = wallet ? wallet.balance : 0;
+
+        // 5. Recent Orders/Opportunities (Only pending)
+        const opportunities = await Order.find({ seller: userId, status: 'pending' })
             .populate('buyer', 'name profileImage city')
             .sort({ createdAt: -1 })
             .limit(5);
@@ -256,6 +263,7 @@ const getWorkerDashboardStats = async (req, res) => {
             activeLeads,
             responseRate: parseFloat(responseRate),
             rating,
+            walletBalance,
             opportunities: opportunities.map(o => ({
                 id: o._id,
                 name: o.buyer?.name || 'Unknown',
@@ -266,6 +274,7 @@ const getWorkerDashboardStats = async (req, res) => {
                 time: o.createdAt
             })),
             leaderboard: leaderboard.map((w, idx) => ({
+                id: w._id,
                 rank: idx + 1,
                 name: w.name,
                 rating: w.rating,
@@ -611,14 +620,39 @@ const getAdminStats = async (req, res) => {
     try {
         const totalUsers = await User.countDocuments();
         const totalWorkers = await User.countDocuments({ role: 'worker' });
-        const totalCustomers = await User.countDocuments({ role: 'customer' });
+        // Count accurately based on 'customer' role, including users who are NOT workers and NOT admins
+        const totalCustomers = await User.countDocuments({ role: { $nin: ['worker', 'admin'] } });
 
-        const orders = await Order.find();
-        const activeBookings = orders.filter(o => !o.isDelivered).length;
-        const totalRevenue = orders.reduce((acc, order) => acc + (order.isPaid ? order.totalPrice : 0), 0);
+        // Active bookings: pending, active, or in-progress
+        // Ensure status strings match Order model exactly
+        const activeBookings = await Order.countDocuments({
+            status: { $regex: /pending|active|in-progress/i }
+        });
+
+        // Total Revenue (JS Calcs for safety)
+        // Only count IsPaid: true orders
+        const paidOrders = await Order.find({ isPaid: true }).select('price createdAt');
+        const totalRevenue = paidOrders.reduce((acc, order) => acc + (order.price || 0), 0);
+
+        // Monthly Revenue for current year
+        const currentYear = new Date().getFullYear();
+        const monthlyRevenue = Array(12).fill(0);
+
+        paidOrders.forEach(order => {
+            const orderDate = new Date(order.createdAt);
+            if (orderDate.getFullYear() === currentYear) {
+                const month = orderDate.getMonth(); // 0-11
+                if (month >= 0 && month < 12) {
+                    monthlyRevenue[month] += (order.price || 0);
+                }
+            }
+        });
 
         const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5);
-        const recentOrders = await Order.find().populate('user', 'name').sort({ createdAt: -1 }).limit(5);
+        const recentOrders = await Order.find()
+            .populate('buyer', 'name')
+            .sort({ createdAt: -1 })
+            .limit(5);
 
         res.json({
             totalUsers,
@@ -627,11 +661,29 @@ const getAdminStats = async (req, res) => {
             activeBookings,
             totalRevenue,
             recentUsers,
-            recentOrders
+            recentOrders,
+            monthlyRevenue
         });
     } catch (error) {
+        console.error("Error in getAdminStats:", error);
         res.status(500).json({ message: error.message });
     }
+};
+
+// @desc    Get user favourites
+// @route   GET /api/users/favourites
+// @access  Private
+const getFavourites = async (req, res) => {
+    // Stub: return empty array for now or implement if User model has favourites
+    res.json([]);
+};
+
+// @desc    Get worker categories
+// @route   GET /api/users/worker-categories
+// @access  Public
+const getWorkerCategories = async (req, res) => {
+    // Stub: return common categories
+    res.json(['Cleaning', 'Plumbing', 'Electrical', 'Carpentry', 'Painting', 'Appliance Repair']);
 };
 
 export {
@@ -655,5 +707,7 @@ export {
     deleteAddress,
     getWallet,
     addMoneyToWallet,
-    getAdminStats
+    getAdminStats,
+    getFavourites,
+    getWorkerCategories
 };

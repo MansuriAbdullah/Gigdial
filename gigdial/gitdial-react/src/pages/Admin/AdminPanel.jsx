@@ -12,6 +12,8 @@ import ServiceApprovals from './ServiceApprovals';
 import Disputes from './Disputes';
 import AdminSettings from './AdminSettings';
 
+import ManageWithdrawals from './ManageWithdrawals';
+
 const AdminPanel = () => {
     return (
         <DashboardLayout role="admin">
@@ -20,6 +22,7 @@ const AdminPanel = () => {
                 <Route path="workers" element={<ManageWorkers />} />
                 <Route path="customers" element={<ManageCustomers />} />
                 <Route path="bookings" element={<AdminBookings />} />
+                <Route path="withdrawals" element={<ManageWithdrawals />} />
                 <Route path="disputes" element={<Disputes />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="services" element={<ServiceApprovals />} />

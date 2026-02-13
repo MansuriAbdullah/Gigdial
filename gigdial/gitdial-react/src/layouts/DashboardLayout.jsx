@@ -75,6 +75,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
         { icon: Briefcase, label: t('manageWorkers'), path: '/admin/workers' },
         { icon: Users, label: t('manageCustomers'), path: '/admin/customers' },
         { icon: Calendar, label: t('bookings'), path: '/admin/bookings' },
+        { icon: DollarSign, label: 'Withdrawals', path: '/admin/withdrawals' },
         { icon: Scale, label: t('disputes'), path: '/admin/disputes' },
         { icon: BarChart2, label: t('analytics'), path: '/admin/analytics' },
         { icon: CheckSquare, label: t('services'), path: '/admin/services' },

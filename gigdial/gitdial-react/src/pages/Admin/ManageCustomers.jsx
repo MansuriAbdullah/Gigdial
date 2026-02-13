@@ -21,8 +21,8 @@ const ManageCustomers = () => {
                 const data = await response.json();
 
                 if (Array.isArray(data)) {
-                    // Filter only customers
-                    const customerList = data.filter(u => u.role === 'customer' && !u.isProvider);
+                    // Filter only customers (users who are NOT workers and NOT admins)
+                    const customerList = data.filter(u => u.role === 'customer' || (!u.role && !u.isProvider));
                     setCustomers(customerList);
                 }
                 setLoading(false);
@@ -39,8 +39,6 @@ const ManageCustomers = () => {
 
     const filteredCustomers = customers.filter(c => {
         if (filter === 'All') return true;
-        // Mock status logic since backend doesn't have status field for customers yet
-        // In real app, check c.isSuspended or similar
         return true;
     });
 
@@ -84,55 +82,56 @@ const ManageCustomers = () => {
                                     <th className="px-8 py-5 font-bold text-slate-600 text-sm uppercase tracking-wider">Customer Details</th>
                                     <th className="px-6 py-5 font-bold text-slate-600 text-sm uppercase tracking-wider">Status</th>
                                     <th className="px-6 py-5 font-bold text-slate-600 text-sm uppercase tracking-wider">Joined Date</th>
-                                    <th className="px-6 py-5 font-bold text-slate-600 text-sm uppercase tracking-wider">Last Active</th>
                                     <th className="px-8 py-5 font-bold text-slate-600 text-sm uppercase tracking-wider text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 <AnimatePresence>
-                                    {filteredCustomers.map((user, index) => (
-                                        <motion.tr
-                                            key={user._id}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: index * 0.05 }}
-                                            className="hover:bg-blue-50/30 transition-colors group"
-                                        >
-                                            <td className="px-8 py-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 font-bold text-lg shadow-inner">
-                                                        {user.name.charAt(0)}
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-bold text-slate-900 text-base">{user.name}</div>
-                                                        <div className="text-sm text-slate-500 font-medium flex items-center gap-1">
-                                                            <Mail size={12} /> {user.email}
+                                    {filteredCustomers.length > 0 ? (
+                                        filteredCustomers.map((user, index) => (
+                                            <motion.tr
+                                                key={user._id}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: index * 0.05 }}
+                                                className="hover:bg-blue-50/30 transition-colors group"
+                                            >
+                                                <td className="px-8 py-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 font-bold text-lg shadow-inner">
+                                                            {user.name.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-bold text-slate-900 text-base">{user.name}</div>
+                                                            <div className="text-sm text-slate-500 font-medium flex items-center gap-1">
+                                                                <Mail size={12} /> {user.email}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm">
-                                                    <CheckCircle size={14} className="mt-0.5" /> Active
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
-                                                    <Calendar size={16} className="text-slate-400" />
-                                                    {new Date(user.createdAt).toLocaleDateString()}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-slate-500 text-sm font-medium">
-                                                {/* Using updatedAt as proxy for Last Active */}
-                                                {new Date(user.updatedAt).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-8 py-4 text-right">
-                                                <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                                    <MoreVertical size={18} />
-                                                </button>
-                                            </td>
-                                        </motion.tr>
-                                    ))}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm">
+                                                        <CheckCircle size={14} className="mt-0.5" /> Active
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
+                                                        <Calendar size={16} className="text-slate-400" />
+                                                        {new Date(user.createdAt).toLocaleDateString()}
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-4 text-right">
+                                                    <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                                        <MoreVertical size={18} />
+                                                    </button>
+                                                </td>
+                                            </motion.tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4" className="text-center py-10 text-slate-500">No customers found. All users are currently workers or admins.</td>
+                                        </tr>
+                                    )}
                                 </AnimatePresence>
                             </tbody>
                         </table>

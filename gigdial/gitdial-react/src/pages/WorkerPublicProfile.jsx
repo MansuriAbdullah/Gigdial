@@ -1,41 +1,222 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
     MapPin, Star, Briefcase, Calendar, CheckCircle,
-    User, Mail, Phone, Shield, ArrowLeft, Heart, MessageSquare
+    User, Mail, Phone, Shield, ArrowLeft, Heart, MessageSquare,
+    Clock, Award, Zap, TrendingUp, X, Send
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
+
+const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, gigId }) => (
+    <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        whileHover={{ scale: 1.03, y: -8 }}
+        viewport={{ once: true }}
+        onClick={() => onBook(gigId)}
+        className="relative flex-shrink-0 w-full bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-md hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 group cursor-pointer"
+    >
+        {/* Premium badge for high ratings */}
+        {parseFloat(rating) >= 4.8 && (
+            <div className="absolute top-4 left-4 z-20 bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
+                <Award className="w-3 h-3" />
+                <span>Premium</span>
+            </div>
+        )}
+
+        <div className="h-48 overflow-hidden relative">
+            <img
+                src={image}
+                alt={title}
+                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
+            />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60"></div>
+
+            {/* Category tag */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full border border-white/20">
+                {category}
+            </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-5">
+            <div className="flex justify-between items-start mb-3">
+                <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                    {title}
+                </h3>
+            </div>
+
+            {/* Stats */}
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center bg-blue-50 px-3 py-1.5 rounded-lg">
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        <span className="ml-1.5 font-bold text-slate-800">{rating}</span>
+                        <span className="text-xs text-slate-500 ml-1">/ 5.0</span>
+                    </div>
+                </div>
+
+                <div className="flex items-center text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                    <Clock className="w-3 h-3 mr-1" />
+                    <span>2h avg.</span>
+                </div>
+            </div>
+
+            {/* Price and CTA */}
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div>
+                    <div className="text-xs text-slate-500">Starting from</div>
+                    <div className="text-xl font-bold text-slate-900">
+                        ₹{price}
+                        <span className="text-sm text-slate-500 font-normal ml-1">/session</span>
+                    </div>
+                </div>
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onBook(gigId);
+                    }}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg"
+                >
+                    Book Now
+                </motion.button>
+            </div>
+        </div>
+    </motion.div>
+);
 
 const WorkerPublicProfile = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useAuth();
     const [worker, setWorker] = useState(null);
+    const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isFavorite, setIsFavorite] = useState(false);
+
+    // Modal state
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
+    const [phoneNumber, setPhoneNumber] = useState(location.state?.prefilledPhoneNumber || '');
+    const [sending, setSending] = useState(false);
 
     useEffect(() => {
-        fetchWorkerDetails();
+        const fetchData = async () => {
+            try {
+                // Fetch Worker Details
+                const workerRes = await fetch(`/api/users/workers/${id}`);
+                if (workerRes.ok) {
+                    const workerData = await workerRes.json();
+                    setWorker(workerData);
+                } else {
+                    console.error('Failed to fetch worker');
+                }
+
+                // Fetch Worker Services (Gigs)
+                const gigsRes = await fetch(`/api/gigs/worker/${id}`);
+                if (gigsRes.ok) {
+                    const gigsData = await gigsRes.json();
+                    setServices(gigsData);
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, [id]);
 
-    const fetchWorkerDetails = async () => {
-        try {
-            const response = await fetch(`/api/users/workers/${id}`);
-            if (response.ok) {
-                const data = await response.json();
-                setWorker(data);
-                // Check if favorite logic here if needed, or separate call
-            } else {
-                console.error('Failed to fetch worker');
+    // Check for pending booking intent after login
+    useEffect(() => {
+        if (user && location.state?.bookingGigId && services.length > 0) {
+            const gigId = location.state.bookingGigId;
+            const service = services.find(s => s._id === gigId);
+
+            if (service) {
+                setSelectedService(service);
+                setModalOpen(true);
+                // Clean up state to prevent reopening on refresh (optional but good UX)
+                navigate(location.pathname, { replace: true, state: {} });
             }
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            setLoading(false);
         }
-    };
+    }, [user, location.state, services, navigate, location.pathname]);
 
     const handleBack = () => {
         navigate(-1);
     };
+
+    const handleBookService = (gigId) => {
+        // Robust check for user login
+        const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+
+        if (!user || (user && !user._id) || !userInfo) {
+            toast.error('Please login first to book a service');
+
+            // Redirect to login with state to return and open modal
+            navigate('/login', {
+                state: {
+                    from: location,
+                    bookingGigId: gigId
+                }
+            });
+            return;
+        }
+
+        const service = services.find(s => s._id === gigId);
+        if (service) {
+            setSelectedService(service);
+            setModalOpen(true);
+        }
+    };
+
+    const handleSubmitContact = async (e) => {
+        e.preventDefault();
+        if (!phoneNumber.trim()) {
+            toast.error("Please enter your phone number");
+            return;
+        }
+
+        setSending(true);
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const token = userInfo?.token;
+
+            if (!token) {
+                throw new Error("Authentication error");
+            }
+
+            await fetch('/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    recipientId: worker._id,
+                    content: `Hello, I'm interested in your service "${selectedService.title}". My contact number is: ${phoneNumber}. Please get back to me.`
+                })
+            });
+
+            toast.success("Message sent successfully!");
+            setModalOpen(false);
+            setPhoneNumber('');
+
+        } catch (error) {
+            console.error("Failed to send message", error);
+            toast.error("Failed to send message. Please try again.");
+        } finally {
+            setSending(false);
+        }
+    };
+
 
     if (loading) {
         return (
@@ -115,7 +296,19 @@ const WorkerPublicProfile = () => {
                                     <Heart size={20} />
                                 </button>
                                 <button
-                                    onClick={() => navigate(`/customer-dashboard/messages?workerId=${worker._id}`)}
+                                    onClick={() => {
+                                        const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+                                        if (!user || (user && !user._id) || !userInfo) {
+                                            toast.error('Please login to contact the worker');
+                                            navigate('/login', {
+                                                state: {
+                                                    from: location
+                                                }
+                                            });
+                                        } else {
+                                            navigate(`/customer-dashboard/messages?workerId=${worker._id}`);
+                                        }
+                                    }}
                                     className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 flex items-center gap-2">
                                     <MessageSquare size={18} />
                                     Contact
@@ -154,9 +347,34 @@ const WorkerPublicProfile = () => {
                             </p>
                         </div>
 
+                        {/* Services Grid (Gigs) */}
+                        {services.length > 0 && (
+                            <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+                                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                    <Zap className="text-blue-600" size={20} />
+                                    Offered Services
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {services.map((service) => (
+                                        <ServiceCard
+                                            key={service._id}
+                                            gigId={service._id}
+                                            title={service.title}
+                                            rating={service.rating?.toString() || '0'}
+                                            image={service.image || service.coverImage || 'https://images.unsplash.com/photo-1581578731117-104f8a3d46a8?auto=format&fit=crop&w=600&q=80'}
+                                            category={service.category}
+                                            price={service.price}
+                                            bookings={service.salesCount || 0}
+                                            onBook={handleBookService}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Skills */}
                         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
-                            <h3 className="text-xl font-bold text-slate-900 mb-6">Skills & Services</h3>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6">Skills</h3>
                             <div className="flex flex-wrap gap-2">
                                 {worker.skills?.map((skill, idx) => (
                                     <span key={idx} className="px-4 py-2 bg-blue-50 text-blue-700 rounded-xl font-bold text-sm">
@@ -263,9 +481,19 @@ const WorkerPublicProfile = () => {
                         </div>
 
                         {/* Contact Info */}
-                        <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+                        <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 relative overflow-hidden group">
+                            {!user && (
+                                <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-sm flex items-center justify-center transition-all duration-300">
+                                    <button
+                                        onClick={() => navigate('/login', { state: { from: location } })}
+                                        className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-colors transform hover:scale-105"
+                                    >
+                                        Log in to view details
+                                    </button>
+                                </div>
+                            )}
                             <h3 className="text-lg font-bold text-slate-900 mb-4">Contact Info</h3>
-                            <div className="space-y-4">
+                            <div className={`space-y-4 ${!user ? 'blur-sm select-none' : ''}`}>
                                 <div className="flex items-center gap-3 text-slate-600">
                                     <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
                                         <Mail size={18} />
@@ -289,6 +517,61 @@ const WorkerPublicProfile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Book Service Modal */}
+            <AnimatePresence>
+                {modalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+                        >
+                            <button
+                                onClick={() => setModalOpen(false)}
+                                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                            >
+                                <X size={24} />
+                            </button>
+
+                            <div className="text-center mb-6">
+                                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Phone className="text-blue-600 w-8 h-8" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-slate-900">Book {selectedService?.title}</h3>
+                                <p className="text-slate-500 mt-2">Enter your number to contact {worker.name}.</p>
+                            </div>
+
+                            <form onSubmit={handleSubmitContact} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                                    <input
+                                        type="tel"
+                                        required
+                                        placeholder="+91 9876543210"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={sending}
+                                    className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    {sending ? 'Sending...' : (
+                                        <>
+                                            <Send size={18} /> Send Message
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

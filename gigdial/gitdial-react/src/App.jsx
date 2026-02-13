@@ -79,6 +79,8 @@ function AnimatedRoutes() {
   );
 }
 
+import { Toaster } from 'react-hot-toast';
+
 function App() {
   return (
     <AuthProvider>
@@ -86,6 +88,7 @@ function App() {
         <Router>
           <AnimatedRoutes />
           <WhatsAppWidget />
+          <Toaster position="top-right" reverseOrder={false} />
         </Router>
       </LanguageProvider>
     </AuthProvider>

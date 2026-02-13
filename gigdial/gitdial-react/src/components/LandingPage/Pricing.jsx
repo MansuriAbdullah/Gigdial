@@ -7,7 +7,7 @@ const Pricing = () => {
         {
             id: 'monthly',
             title: "Pro Monthly",
-            price: "599",
+            price: "499",
             period: "/month",
             description: "Short-term flexibility",
             features: [
@@ -25,12 +25,12 @@ const Pricing = () => {
         {
             id: 'yearly',
             title: "Pro Yearly",
-            price: "5999",
+            price: "4999",
             period: "/year",
             description: "Best value solution",
             features: [
                 "Everything in Monthly",
-                "Save ₹1200 (2 Months Free)",
+                "Save ₹989 (2 Months Free)",
                 "Premium Profile Badge",
                 "Top-tier Search Ranking",
                 "Dedicated Account Manager",
@@ -75,8 +75,8 @@ const Pricing = () => {
                             viewport={{ once: true }}
                             transition={{ duration: 0.4, delay: index * 0.1 }}
                             className={`relative rounded-3xl p-6 transition-all duration-300 group ${plan.highlight
-                                    ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-900/20 scale-105 z-10 border border-blue-500'
-                                    : 'bg-white text-slate-900 border border-slate-200 shadow-lg hover:border-blue-200 hover:shadow-xl'
+                                ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-900/20 scale-105 z-10 border border-blue-500'
+                                : 'bg-white text-slate-900 border border-slate-200 shadow-lg hover:border-blue-200 hover:shadow-xl'
                                 }`}
                         >
                             {plan.badge && (
@@ -89,8 +89,8 @@ const Pricing = () => {
 
                             <div className="flex items-center gap-4 mb-6">
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-md transition-transform group-hover:scale-105 ${plan.highlight
-                                        ? 'bg-white/10 text-white border border-white/10'
-                                        : 'bg-blue-50 text-blue-600'
+                                    ? 'bg-white/10 text-white border border-white/10'
+                                    : 'bg-blue-50 text-blue-600'
                                     }`}>
                                     <plan.icon size={24} strokeWidth={2} />
                                 </div>
@@ -117,8 +117,8 @@ const Pricing = () => {
                                 {plan.features.map((feature, i) => (
                                     <li key={i} className="flex items-start gap-3">
                                         <div className={`mt-0.5 rounded-full p-0.5 flex-shrink-0 ${plan.highlight
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-emerald-100 text-emerald-600'
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-emerald-100 text-emerald-600'
                                             }`}>
                                             <Check size={12} strokeWidth={3} />
                                         </div>
@@ -130,8 +130,8 @@ const Pricing = () => {
                             </ul>
 
                             <button className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all transform active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${plan.highlight
-                                    ? 'bg-white text-blue-700 hover:bg-blue-50 shadow-black/10'
-                                    : 'bg-slate-900 text-white hover:bg-slate-800 shadow-slate-900/20'
+                                ? 'bg-white text-blue-700 hover:bg-blue-50 shadow-black/10'
+                                : 'bg-slate-900 text-white hover:bg-slate-800 shadow-slate-900/20'
                                 }`}>
                                 {plan.highlight && <Gem size={14} />}
                                 {plan.buttonText}

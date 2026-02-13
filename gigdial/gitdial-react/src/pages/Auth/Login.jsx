@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Star, Shield, Clock, Loader2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
@@ -10,6 +10,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
     const { login } = useAuth();
 
     const handleChange = (e) => {
@@ -38,9 +39,18 @@ const Login = () => {
             // Use context login
             login(data);
 
-            // Redirect based on user role from DB (overrides toggle if mismatched, 
-            // or we could enforce toggle match. Let's just trust DB role for redirection)
-            if (data.isAdmin) {
+            // Redirect based on user role or previous location
+            const state = location.state;
+            const fromLocation = state?.from;
+
+            if (fromLocation) {
+                const path = typeof fromLocation === 'string'
+                    ? fromLocation
+                    : (fromLocation.pathname + (fromLocation.search || ''));
+
+                const { from, ...returnState } = state;
+                navigate(path, { state: returnState });
+            } else if (data.isAdmin) {
                 navigate('/admin');
             } else if (data.isProvider) { // Assuming backend returns isProvider
                 navigate('/worker-dashboard');

@@ -118,8 +118,8 @@ const ServiceHistory = () => {
 
     const filteredBookings = bookings.filter(booking => {
         const matchesFilter = filter === 'all' || booking.status === filter;
-        const matchesSearch = booking.serviceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            booking.workerName?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = booking.gig?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            booking.seller?.name?.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesFilter && matchesSearch;
     });
 
@@ -180,13 +180,13 @@ const ServiceHistory = () => {
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div className="flex items-start gap-4 flex-1">
                                     <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-2xl font-bold text-blue-600">
-                                        {booking.workerName?.charAt(0) || 'W'}
+                                        {booking.seller?.name?.charAt(0) || 'W'}
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex items-start justify-between mb-2">
                                             <div>
-                                                <h3 className="font-bold text-lg text-slate-900">{booking.serviceName}</h3>
-                                                <p className="text-sm text-slate-600">{booking.workerName}</p>
+                                                <h3 className="font-bold text-lg text-slate-900">{booking.gig?.title}</h3>
+                                                <p className="text-sm text-slate-600">{booking.seller?.name}</p>
                                             </div>
                                             <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(booking.status)}`}>
                                                 {getStatusIcon(booking.status)}
@@ -196,7 +196,7 @@ const ServiceHistory = () => {
                                         <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
                                             <span className="flex items-center gap-1">
                                                 <Calendar size={14} />
-                                                {new Date(booking.date).toLocaleDateString('en-IN', {
+                                                {new Date(booking.createdAt).toLocaleDateString('en-IN', {
                                                     day: 'numeric',
                                                     month: 'short',
                                                     year: 'numeric'
@@ -204,15 +204,15 @@ const ServiceHistory = () => {
                                             </span>
                                             <span className="flex items-center gap-1">
                                                 <Clock size={14} />
-                                                {booking.time}
+                                                {new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
-                                            <span className="font-bold text-slate-900">₹{booking.amount}</span>
+                                            <span className="font-bold text-slate-900">₹{booking.price}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex gap-2">
-                                    {booking.status === 'completed' && !booking.rated && (
+                                    {booking.status === 'completed' && !booking.isReviewed && (
                                         <button
                                             onClick={() => handleRateClick(booking)}
                                             className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 font-bold rounded-xl hover:bg-yellow-500 transition-colors"
@@ -231,7 +231,7 @@ const ServiceHistory = () => {
                                 </div>
                             </div>
 
-                            {booking.status === 'completed' && booking.rating && (
+                            {booking.status === 'completed' && booking.isReviewed && (
                                 <div className="mt-4 pt-4 border-t border-slate-100">
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-sm font-medium text-slate-600">Your Rating:</span>
@@ -283,7 +283,7 @@ const ServiceHistory = () => {
                     <div className="bg-purple-50 p-4 rounded-xl border border-purple-100">
                         <p className="text-sm text-purple-600 font-medium mb-1">Total Spent</p>
                         <p className="text-2xl font-bold text-purple-900">
-                            ₹{bookings.reduce((sum, b) => sum + (b.amount || 0), 0)}
+                            ₹{bookings.reduce((sum, b) => sum + (b.price || 0), 0)}
                         </p>
                     </div>
                 </div>

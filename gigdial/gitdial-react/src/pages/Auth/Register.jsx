@@ -43,7 +43,10 @@ const Register = () => {
         confirmPassword: '',
         phone: '',
         city: '',
-        address: ''
+        address: '',
+        category: '',
+        experience: '',
+        serviceDescription: ''
     });
     const [files, setFiles] = useState({
         profileImage: null,
@@ -114,8 +117,13 @@ const Register = () => {
     };
 
     const handleRegister = async () => {
-        if (selectedSkills.length === 0) {
-            setError("Please select at least one skill");
+        if (!formData.category || !formData.serviceDescription) {
+            setError("Please fill in the Service Category and Description");
+            return;
+        }
+
+        if (!files.aadhaarCard && !files.panCard) {
+            setError("Please upload at least one ID proof (Aadhaar or PAN)");
             return;
         }
 
@@ -133,6 +141,9 @@ const Register = () => {
             data.append('isProvider', 'true');
             data.append('role', 'worker');
             data.append('skills', JSON.stringify(selectedSkills));
+            data.append('category', formData.category);
+            data.append('experience', formData.experience);
+            data.append('serviceDescription', formData.serviceDescription);
 
             if (files.profileImage) data.append('profileImage', files.profileImage);
             if (files.aadhaarCard) data.append('aadhaarCard', files.aadhaarCard);
@@ -371,21 +382,75 @@ const Register = () => {
                                             <p className="text-slate-500 mt-1">Showcase your skills and verify your identity.</p>
                                         </div>
 
-                                        <div className="space-y-4">
-                                            <label className="text-sm font-semibold text-slate-700 ml-1">Select Your Skills</label>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                                {skillsList.map((skill) => (
-                                                    <div
-                                                        key={skill}
-                                                        onClick={() => toggleSkill(skill)}
-                                                        className={`cursor-pointer px-4 py-3 rounded-xl border transition-all duration-200 flex items-center gap-2 ${selectedSkills.includes(skill) ? 'bg-primary/5 border-primary text-primary shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-primary/50'}`}
-                                                    >
-                                                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${selectedSkills.includes(skill) ? 'bg-primary border-primary' : 'border-slate-300'}`}>
-                                                            {selectedSkills.includes(skill) && <Check size={12} className="text-white" />}
-                                                        </div>
-                                                        <span className="text-sm font-medium">{skill}</span>
+                                        <div className="space-y-6">
+                                            {/* Service Category & Experience */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-2 group">
+                                                    <label className="text-sm font-semibold text-slate-700 ml-1">Primary Service Category</label>
+                                                    <div className="relative">
+                                                        <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+                                                        <input
+                                                            type="text"
+                                                            name="category"
+                                                            value={formData.category}
+                                                            onChange={handleChange}
+                                                            list="skills-list"
+                                                            placeholder="Select Service Category"
+                                                            className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                                        />
+                                                        <datalist id="skills-list">
+                                                            {skillsList.map((skill) => (
+                                                                <option key={skill} value={skill} />
+                                                            ))}
+                                                        </datalist>
                                                     </div>
-                                                ))}
+                                                </div>
+
+                                                <div className="space-y-2 group">
+                                                    <label className="text-sm font-semibold text-slate-700 ml-1">Years of Experience</label>
+                                                    <div className="relative">
+                                                        <Award className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+                                                        <input
+                                                            type="number"
+                                                            name="experience"
+                                                            value={formData.experience}
+                                                            onChange={handleChange}
+                                                            placeholder="e.g. 5"
+                                                            min="0"
+                                                            className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Service Description */}
+                                            <div className="space-y-2 group">
+                                                <label className="text-sm font-semibold text-slate-700 ml-1">Service Details (Description)</label>
+                                                <textarea
+                                                    name="serviceDescription"
+                                                    value={formData.serviceDescription}
+                                                    onChange={handleChange}
+                                                    rows="3"
+                                                    placeholder="Describe your services, specialities, and what makes you unique..."
+                                                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"
+                                                ></textarea>
+                                            </div>
+
+                                            {/* Additional Skills (Optional) */}
+                                            <div className="space-y-3">
+                                                <label className="text-sm font-semibold text-slate-700 ml-1">Additional Skills (Optional)</label>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {skillsList.map((skill) => (
+                                                        <div
+                                                            key={skill}
+                                                            onClick={() => toggleSkill(skill)}
+                                                            className={`cursor-pointer px-3 py-2 rounded-lg border text-sm transition-all duration-200 flex items-center gap-2 ${selectedSkills.includes(skill) ? 'bg-primary/5 border-primary text-primary' : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-primary/50'}`}
+                                                        >
+                                                            {selectedSkills.includes(skill) && <Check size={12} />}
+                                                            {skill}
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
 

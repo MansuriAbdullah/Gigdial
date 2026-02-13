@@ -20,7 +20,9 @@ import {
     deleteAddress,
     getWallet,
     addMoneyToWallet,
-    getAdminStats
+    getAdminStats,
+    getFavourites,
+    getWorkerCategories
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -29,6 +31,7 @@ import upload from '../middleware/uploadMiddleware.js';
 const router = express.Router();
 
 // Public routes
+router.get('/worker-categories', getWorkerCategories);
 router.post('/', upload.fields([
     { name: 'profileImage', maxCount: 1 },
     { name: 'aadhaarCard', maxCount: 1 },
@@ -40,6 +43,7 @@ router.get('/workers', getWorkers);
 router.get('/workers/:id', getWorkerById);
 
 // Protected routes
+router.get('/favourites', protect, getFavourites);
 router.route('/profile')
     .get(protect, getUserProfile)
     .put(protect, updateUserProfile);

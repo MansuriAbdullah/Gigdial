@@ -68,8 +68,8 @@ const BrowseWorkers = () => {
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}
                                 className={`px-4 py-2 rounded-lg font-medium transition-all ${selectedCategory === category
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                                        : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
                                     }`}
                             >
                                 {category}
@@ -98,7 +98,7 @@ const BrowseWorkers = () => {
                             <div
                                 key={worker._id}
                                 className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
-                                onClick={() => navigate(`/worker/${worker._id}`)}
+                                onClick={() => navigate(`/workers/${worker._id}`)}
                             >
                                 {/* Profile Image */}
                                 <div className="relative h-48 bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden">

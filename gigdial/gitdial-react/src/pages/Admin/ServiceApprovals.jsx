@@ -13,9 +13,12 @@ const ServiceApprovals = () => {
     useEffect(() => {
         const fetchGigs = async () => {
             try {
-                // Public endpoint fetches all, we filter client side for now unless we add admin endpoint
-                // Or better, use public endpoint and filter.
-                const { data } = await axios.get('/api/gigs');
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${user?.token}`,
+                    },
+                };
+                const { data } = await axios.get('/api/gigs/admin/all', config);
                 setServices(data);
                 setLoading(false);
             } catch (error) {
@@ -96,8 +99,8 @@ const ServiceApprovals = () => {
                                     </div>
                                     {service.status && (
                                         <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow-sm ${service.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                service.status === 'active' ? 'bg-green-100 text-green-700' :
-                                                    'bg-red-100 text-red-700'
+                                            service.status === 'active' ? 'bg-green-100 text-green-700' :
+                                                'bg-red-100 text-red-700'
                                             }`}>
                                             {service.status}
                                         </div>

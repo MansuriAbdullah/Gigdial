@@ -38,6 +38,18 @@ const userSchema = mongoose.Schema({
         type: String,
         required: false,
     },
+    serviceDescription: {
+        type: String,
+        required: false,
+    },
+    experience: {
+        type: Number,
+        default: 0
+    },
+    category: {
+        type: String,
+        required: false
+    },
     profileImage: {
         type: String,
         required: false,
