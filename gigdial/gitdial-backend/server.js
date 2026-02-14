@@ -40,6 +40,7 @@ import cityRoutes from './routes/cityRoutes.js';
 import disputeRoutes from './routes/disputeRoutes.js';
 import contentRoutes from './routes/contentRoutes.js';
 import withdrawalRoutes from './routes/withdrawalRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 // Routes
 app.use('/api/users', userRoutes);
@@ -50,6 +51,7 @@ app.use('/api/cities', cityRoutes);
 app.use('/api/disputes', disputeRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');
