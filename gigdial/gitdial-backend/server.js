@@ -31,7 +31,6 @@ app.use(cors({
     credentials: true
 }));
 
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 import userRoutes from './routes/userRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';

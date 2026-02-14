@@ -1,35 +1,26 @@
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../config/cloudinary.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, uploadsDir);
-    },
-    filename(req, file, cb) {
-        cb(
-            null,
-            `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-        );
+// Configure Cloudinary storage
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'gigdial-uploads', // Folder name in Cloudinary
+        allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
+        resource_type: 'auto', // Automatically detect resource type
+        public_id: (req, file) => {
+            // Generate unique filename
+            return `${file.fieldname}-${Date.now()}`;
+        },
     },
 });
 
 function checkFileType(file, cb) {
     const filetypes = /jpg|jpeg|png|pdf/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 
-    if (extname && mimetype) {
+    if (mimetype) {
         return cb(null, true);
     } else {
         cb(new Error('Images and PDFs only!'));
@@ -40,6 +31,9 @@ const upload = multer({
     storage,
     fileFilter: function (req, file, cb) {
         checkFileType(file, cb);
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
     },
 });
 
