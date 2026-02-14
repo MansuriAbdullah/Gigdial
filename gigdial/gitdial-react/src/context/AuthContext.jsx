@@ -27,7 +27,8 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('userInfo');
         setUser(null);
-        // Optional: Call backend logout endpoint to clear cookie
+        // Redirect to home page
+        window.location.href = '/';
     };
 
     const value = {

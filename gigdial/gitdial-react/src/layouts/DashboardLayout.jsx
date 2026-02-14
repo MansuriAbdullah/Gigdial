@@ -145,8 +145,12 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
                             <h4 className="text-sm font-bold text-dark-surface truncate">{user?.name || 'Guest'}</h4>
                             <p className="text-xs text-slate-500 truncate capitalize">{user?.isAdmin ? 'Administrator' : (user?.isProvider ? 'Service Provider' : 'Customer')}</p>
                         </div>
-                        <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition-colors p-1.5 hover:bg-white rounded-lg">
-                            <LogOut size={18} />
+                        <button
+                            onClick={handleLogout}
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50 transition-all p-2 rounded-lg group"
+                            title="Logout"
+                        >
+                            <LogOut size={18} className="group-hover:scale-110 transition-transform" />
                         </button>
                     </div>
                 </div>
@@ -212,9 +216,21 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
                                 )}
                             </AnimatePresence>
                         </div>
+
+                        {/* Notification Bell */}
                         <button className="relative p-2.5 rounded-xl bg-white border border-slate-100 text-slate-500 hover:text-primary hover:border-primary/30 transition-all shadow-sm">
                             <Bell size={20} />
                             <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                        </button>
+
+                        {/* Logout Button */}
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl bg-red-50 border border-red-100 text-red-600 hover:bg-red-100 hover:border-red-200 transition-all shadow-sm font-medium group"
+                            title="Logout"
+                        >
+                            <LogOut size={18} className="group-hover:scale-110 transition-transform" />
+                            <span className="hidden sm:inline text-sm font-bold">Logout</span>
                         </button>
                     </div>
                 </header>
