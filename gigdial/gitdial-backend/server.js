@@ -41,6 +41,8 @@ import disputeRoutes from './routes/disputeRoutes.js';
 import contentRoutes from './routes/contentRoutes.js';
 import withdrawalRoutes from './routes/withdrawalRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import subscriptionRoutes from './routes/subscriptionRoutes.js';
+import leadRoutes from './routes/leadRoutes.js';
 
 // Routes
 app.use('/api/users', userRoutes);
@@ -52,6 +54,8 @@ app.use('/api/disputes', disputeRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/leads', leadRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');

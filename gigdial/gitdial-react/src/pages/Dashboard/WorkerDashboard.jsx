@@ -9,6 +9,7 @@ import WorkerBookings from './Worker/WorkerBookings';
 import WorkerEarnings from './Worker/WorkerEarnings';
 import WorkerSettings from './Worker/WorkerSettings';
 import WorkerMessages from './Worker/WorkerMessages';
+import WorkerPackages from './Worker/WorkerPackages';
 
 const WorkerDashboard = () => {
     return (
@@ -16,6 +17,7 @@ const WorkerDashboard = () => {
             <Routes>
                 <Route index element={<WorkerOverview />} />
                 <Route path="leads" element={<WorkerLeads />} />
+                <Route path="packages" element={<WorkerPackages />} />
                 <Route path="services" element={<WorkerServices />} />
                 <Route path="bookings" element={<WorkerBookings />} />
                 <Route path="messages" element={<WorkerMessages />} />

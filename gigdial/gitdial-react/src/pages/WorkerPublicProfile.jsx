@@ -110,9 +110,27 @@ const WorkerPublicProfile = () => {
             try {
                 // Fetch Worker Details
                 const workerRes = await fetch(`/api/users/workers/${id}`);
+                let workerData = null;
                 if (workerRes.ok) {
-                    const workerData = await workerRes.json();
+                    workerData = await workerRes.json();
                     setWorker(workerData);
+
+                    // Record Lead View if user is logged in
+                    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+                    if (userInfo && userInfo._id && workerData && workerData._id !== userInfo._id) {
+                        try {
+                            await fetch('/api/leads/record', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${userInfo.token}`
+                                },
+                                body: JSON.stringify({ workerId: workerData._id })
+                            });
+                        } catch (err) {
+                            console.error("Failed to record lead", err);
+                        }
+                    }
                 } else {
                     console.error('Failed to fetch worker');
                 }

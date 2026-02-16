@@ -674,8 +674,48 @@ const getAdminStats = async (req, res) => {
 // @route   GET /api/users/favourites
 // @access  Private
 const getFavourites = async (req, res) => {
-    // Stub: return empty array for now or implement if User model has favourites
-    res.json([]);
+    try {
+        const user = await User.findById(req.user._id).populate({
+            path: 'favorites',
+            populate: { path: 'user', select: 'name rating profileImage' } // Populate worker info inside the gig
+        });
+
+        if (user) {
+            res.json(user.favorites || []);
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Toggle favorite gig
+// @route   POST /api/users/favorites/:id
+// @access  Private
+const toggleFavorite = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const gigId = req.params.id;
+
+        if (user) {
+            if (user.favorites.includes(gigId)) {
+                user.favorites = user.favorites.filter(id => id.toString() !== gigId);
+                await user.save();
+                res.json({ message: 'Removed from favorites', favorites: user.favorites });
+            } else {
+                user.favorites.push(gigId);
+                await user.save();
+                res.json({ message: 'Added to favorites', favorites: user.favorites });
+            }
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 // @desc    Get worker categories
@@ -709,5 +749,6 @@ export {
     addMoneyToWallet,
     getAdminStats,
     getFavourites,
+    toggleFavorite,
     getWorkerCategories
 };

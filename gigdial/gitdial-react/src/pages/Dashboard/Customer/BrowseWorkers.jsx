@@ -128,7 +128,7 @@ const BrowseWorkers = () => {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">Browse Workers</h1>
+                <h1 className="text-2xl font-bold text-slate-900">Find Workers</h1>
                 <p className="text-slate-500 mt-1">Find skilled professionals for your needs</p>
             </div>
 

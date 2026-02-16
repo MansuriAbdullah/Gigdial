@@ -1,4 +1,8 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
+
 import Hero from '../components/LandingPage/Hero';
 import Stats from '../components/LandingPage/Stats';
 import Categories from '../components/LandingPage/Categories';
@@ -8,7 +12,7 @@ import HowItWorks from '../components/LandingPage/HowItWorks';
 import Pricing from '../components/LandingPage/Pricing';
 import LiveDemoSection from '../components/LandingPage/LiveDemoSection';
 import AppShowcase from '../components/LandingPage/AppShowcase';
-import { motion } from 'framer-motion';
+import SEO from '../components/Shared/SEO';
 
 // Page transition variants
 const pageVariants = {
@@ -17,9 +21,18 @@ const pageVariants = {
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
 };
 
-import SEO from '../components/Shared/SEO';
-
 const LandingPage = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            if (user.role === 'worker') navigate('/worker-dashboard', { replace: true });
+            else if (user.role === 'customer') navigate('/customer-dashboard', { replace: true });
+            else if (user.role === 'admin') navigate('/admin', { replace: true });
+        }
+    }, [user, navigate]);
+
     return (
         <motion.div
             className="landing-page-wrapper bg-white"

@@ -22,6 +22,7 @@ import {
     addMoneyToWallet,
     getAdminStats,
     getFavourites,
+    toggleFavorite,
     getWorkerCategories
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
@@ -44,6 +45,7 @@ router.get('/workers/:id', getWorkerById);
 
 // Protected routes
 router.get('/favourites', protect, getFavourites);
+router.post('/favourites/:id', protect, toggleFavorite);
 router.route('/profile')
     .get(protect, getUserProfile)
     .put(protect, updateUserProfile);

@@ -30,7 +30,7 @@ const createOrder = async (req, res) => {
             deliveryTime,
             paymentMethod,
             notes: notes || '',
-            status: 'in-progress' // Set status to in-progress directly
+            status: 'pending'
         });
 
         // Create notification for seller

@@ -29,6 +29,7 @@ const translations = {
 
         // Navigation
         findServices: "Find Services",
+        findWorkers: "Find Workers",
         joinAsPro: "Join as Pro",
         howItWorks: "How it Works",
         login: "Log In",
@@ -159,6 +160,7 @@ const translations = {
         admin: "एडमिन",
         guest: "मेहमान",
         findServices: "Service खोजें",
+        findWorkers: "Worker खोजें",
         joinAsPro: "Worker बनें",
         howItWorks: "यह कैसे काम करता है",
         login: "लॉग इन करें",
@@ -283,6 +285,7 @@ const translations = {
         admin: "એડમિન",
         guest: "મહેમાન",
         findServices: "સેવાઓ શોધો",
+        findWorkers: "કામદારો શોધો",
         joinAsPro: "પ્રો તરીકે જોડાઓ",
         howItWorks: "તે કેવી રીતે કામ કરે છે",
         login: "લોગ ઇન કરો",

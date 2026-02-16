@@ -33,7 +33,7 @@ const Favourites = () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
             const response = await fetch(`/api/users/favourites/${workerId}`, {
-                method: 'DELETE',
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${userInfo?.token}`
                 }
@@ -68,81 +68,80 @@ const Favourites = () => {
 
             {favourites.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {favourites.map((worker) => (
+                    {favourites.map((service) => (
                         <motion.div
-                            key={worker._id}
+                            key={service._id}
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden group"
+                            className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden group cursor-pointer"
+                            onClick={() => navigate(`/services/${service._id}`)}
                         >
-                            {/* Worker Image */}
-                            <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100">
-                                {worker.profileImage ? (
+                            {/* Service Image */}
+                            <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
+                                {service.images && service.images[0] ? (
                                     <img
-                                        src={`http://localhost:5000/${worker.profileImage.replace(/\\/g, '/')}`}
-                                        alt={worker.name}
-                                        className="w-full h-full object-cover"
+                                        src={`http://localhost:5000/${service.images[0].replace(/\\/g, '/')}`}
+                                        alt={service.title}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-6xl font-bold text-blue-600">
-                                        {worker.name.charAt(0)}
+                                        {service.title?.charAt(0)}
                                     </div>
                                 )}
-                                <button
-                                    onClick={() => handleRemoveFavourite(worker._id)}
-                                    className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-red-50 transition-colors group"
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveFavourite(service._id);
+                                    }}
+                                    className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-red-50 transition-colors z-10"
                                 >
-                                    <Heart size={20} className="text-red-500 fill-red-500 group-hover:scale-110 transition-transform" />
-                                </button>
+                                    <Heart size={20} className="text-red-500 fill-red-500" />
+                                </div>
                             </div>
 
-                            {/* Worker Info */}
+                            {/* Service Info */}
                             <div className="p-5">
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
-                                        <h3 className="font-bold text-lg text-slate-900">{worker.name}</h3>
-                                        <p className="text-sm text-slate-600">{worker.skills?.[0] || 'Service Provider'}</p>
+                                        <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{service.title}</h3>
+                                        <p className="text-sm text-slate-600">{service.category || 'Service'}</p>
                                     </div>
-                                    {worker.rating && (
-                                        <div className="flex items-center gap-1 px-2 py-1 bg-yellow-50 rounded-lg border border-yellow-100">
-                                            <Star size={14} className="text-yellow-500 fill-yellow-500" />
-                                            <span className="text-sm font-bold text-yellow-700">{worker.rating}</span>
-                                        </div>
-                                    )}
+                                    <div className="flex flex-col items-end">
+                                        <span className="font-bold text-lg text-slate-900">₹{service.price}</span>
+                                        {service.user?.rating && (
+                                            <div className="flex items-center gap-1 text-xs font-bold text-yellow-600 bg-yellow-50 px-1.5 py-0.5 rounded">
+                                                <Star size={10} className="fill-yellow-600" />
+                                                {service.user.rating}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
-                                {worker.location && (
-                                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-                                        <MapPin size={14} />
-                                        <span>{worker.location}</span>
+                                <div className="flex items-center gap-2 mb-4 p-2 bg-slate-50 rounded-lg">
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600 overflow-hidden">
+                                        {service.user?.profileImage ? (
+                                            <img src={`http://localhost:5000/${service.user.profileImage.replace(/\\/g, '/')}`} alt={service.user.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            service.user?.name?.charAt(0) || 'W'
+                                        )}
                                     </div>
-                                )}
-
-                                {/* Stats */}
-                                <div className="grid grid-cols-2 gap-3 mb-4 p-3 bg-slate-50 rounded-xl">
-                                    <div>
-                                        <p className="text-xs text-slate-500">Completed</p>
-                                        <p className="text-lg font-bold text-slate-900">{worker.completedJobs || 0}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-slate-500">Experience</p>
-                                        <p className="text-lg font-bold text-slate-900">{worker.experience || 0}+ yrs</p>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-bold text-slate-900">{service.user?.name || 'Provider'}</p>
                                     </div>
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="grid grid-cols-3 gap-2">
-                                    <button
-                                        onClick={() => handleBookNow(worker._id)}
-                                        className="col-span-2 flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors"
-                                    >
-                                        <Calendar size={16} />
-                                        Book Now
-                                    </button>
-                                    <button className="flex items-center justify-center p-2.5 bg-green-50 text-green-600 font-bold rounded-xl hover:bg-green-100 transition-colors">
-                                        <Phone size={18} />
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/services/${service._id}`);
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors"
+                                >
+                                    <Calendar size={16} />
+                                    Book Now
+                                </button>
                             </div>
                         </motion.div>
                     ))}

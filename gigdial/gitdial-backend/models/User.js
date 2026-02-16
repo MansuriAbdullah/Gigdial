@@ -72,6 +72,10 @@ const userSchema = mongoose.Schema({
             default: false
         }
     }],
+    favorites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Gig'
+    }],
     isProvider: {
         type: Boolean,
         default: false,
@@ -94,6 +98,23 @@ const userSchema = mongoose.Schema({
     isApproved: {
         type: Boolean,
         default: false
+    },
+    subscription: {
+        plan: {
+            type: String,
+            enum: ['monthly', 'yearly', 'none'],
+            default: 'none'
+        },
+        startDate: {
+            type: Date
+        },
+        endDate: {
+            type: Date
+        },
+        isActive: {
+            type: Boolean,
+            default: false
+        }
     }
 }, {
     timestamps: true,

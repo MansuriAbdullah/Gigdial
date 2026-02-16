@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import ScrollToTop from './components/Shared/ScrollToTop';
 import WhatsAppWidget from './components/Common/WhatsAppWidget';
+import ProtectedRoute from './components/Shared/ProtectedRoute';
 
 // Lazy Load Pages
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
@@ -69,9 +70,15 @@ function AnimatedRoutes() {
             <Route path="/register/customer" element={<CustomerRegister />} />
 
             {/* Dashboard Routes (Custom Layout) */}
-            <Route path="/worker-dashboard/*" element={<WorkerDashboard />} />
-            <Route path="/customer-dashboard/*" element={<CustomerDashboard />} />
-            <Route path="/admin/*" element={<AdminPanel />} />
+            <Route element={<ProtectedRoute allowedRoles={['worker']} />}>
+              <Route path="/worker-dashboard/*" element={<WorkerDashboard />} />
+            </Route>
+            <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
+              <Route path="/customer-dashboard/*" element={<CustomerDashboard />} />
+            </Route>
+            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+              <Route path="/admin/*" element={<AdminPanel />} />
+            </Route>
           </Routes>
         </Suspense>
       </AnimatePresence>

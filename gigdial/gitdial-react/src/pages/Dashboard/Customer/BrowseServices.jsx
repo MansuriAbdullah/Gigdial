@@ -10,11 +10,69 @@ const BrowseServices = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const [favorites, setFavorites] = useState([]);
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
     useEffect(() => {
         fetchServices();
         fetchCategories();
+        if (userInfo) {
+            fetchFavorites();
+        }
     }, []);
+
+    const fetchFavorites = async () => {
+        try {
+            const response = await fetch('/api/users/favourites', {
+                headers: {
+                    'Authorization': `Bearer ${userInfo?.token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setFavorites(data.map(fav => fav._id));
+            }
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
+        }
+    };
+
+    const handleWorkerClick = (e, workerId) => {
+        e.stopPropagation();
+        if (workerId) {
+            navigate(`/workers/${workerId}`);
+        }
+    };
+
+    const handleToggleFavorite = async (e, serviceId) => {
+        e.stopPropagation();
+        if (!userInfo) {
+            alert('Please login to add favorites');
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/users/favourites/${serviceId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userInfo.token}`
+                }
+            });
+
+            if (response.ok) {
+                if (favorites.includes(serviceId)) {
+                    setFavorites(prev => prev.filter(id => id !== serviceId));
+                } else {
+                    setFavorites(prev => [...prev, serviceId]);
+                }
+            } else {
+                console.error('Failed to toggle favorite');
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+        }
+    };
 
     const fetchServices = async () => {
         try {
@@ -114,7 +172,7 @@ const BrowseServices = () => {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">Browse Services</h1>
+                <h1 className="text-2xl font-bold text-slate-900">Find Services</h1>
                 <p className="text-slate-500 mt-1">Find the perfect service for your needs</p>
             </div>
 
@@ -179,8 +237,14 @@ const BrowseServices = () => {
                                         {service.title?.charAt(0)}
                                     </div>
                                 )}
-                                <div className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-red-50 transition-colors">
-                                    <Heart size={18} className="text-slate-400 hover:text-red-500 transition-colors" />
+                                <div
+                                    onClick={(e) => handleToggleFavorite(e, service._id)}
+                                    className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-red-50 transition-colors z-10 cursor-pointer"
+                                >
+                                    <Heart
+                                        size={18}
+                                        className={`${favorites.includes(service._id) ? 'text-red-500 fill-red-500' : 'text-slate-400 hover:text-red-500'} transition-colors`}
+                                    />
                                 </div>
                                 {service.discount && (
                                     <div className="absolute top-3 left-3 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
@@ -203,7 +267,10 @@ const BrowseServices = () => {
                                 </div>
 
                                 {/* Worker Info */}
-                                <div className="flex items-center gap-2 mb-3">
+                                <div
+                                    className="flex items-center gap-2 mb-3 cursor-pointer hover:bg-slate-50 p-2 -mx-2 rounded-lg transition-colors"
+                                    onClick={(e) => handleWorkerClick(e, service.user?._id)}
+                                >
                                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600">
                                         {service.user?.name?.charAt(0) || 'W'}
                                     </div>

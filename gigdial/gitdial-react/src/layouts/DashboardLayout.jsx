@@ -50,6 +50,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
 
     const workerLinks = [
         { icon: LayoutDashboard, label: t('overview'), path: '/worker-dashboard' },
+        { icon: Gift, label: 'Packages', path: '/worker-dashboard/packages' },
         { icon: Briefcase, label: t('jobRequests'), path: '/worker-dashboard/leads' },
         { icon: Wrench, label: t('myServices'), path: '/worker-dashboard/services' },
         { icon: MessageSquare, label: t('messages'), path: '/worker-dashboard/messages' },
@@ -61,8 +62,8 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
 
     const customerLinks = [
         { icon: LayoutDashboard, label: t('dashboard'), path: '/customer-dashboard' },
-        { icon: Search, label: t('browseServices'), path: '/customer-dashboard/browse-services' },
-        { icon: Users, label: 'Browse Workers', path: '/customer-dashboard/browse-workers' },
+        { icon: Search, label: t('findServices'), path: '/customer-dashboard/browse-services' },
+        { icon: Users, label: t('findWorkers'), path: '/customer-dashboard/browse-workers' },
         { icon: Calendar, label: t('serviceHistory'), path: '/customer-dashboard/service-history' },
         { icon: Heart, label: t('favorites'), path: '/customer-dashboard/favourites' },
         { icon: CreditCard, label: t('wallet'), path: '/customer-dashboard/wallet' },
