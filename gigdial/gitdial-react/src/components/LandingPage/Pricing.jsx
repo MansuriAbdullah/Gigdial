@@ -9,38 +9,19 @@ const Pricing = () => {
             title: "Pro Monthly",
             price: "499",
             period: "/month",
-            description: "Short-term flexibility",
+            description: "Full access to priority leads",
             features: [
                 "Priority Listing",
-                "Unlimited Bids",
+                "Unlimited Leads Access",
                 "Verified Badge",
                 "Direct WhatsApp Access",
-                "Standard Support"
-            ],
-            highlight: false,
-            color: "white",
-            buttonText: "Get Started",
-            icon: Zap
-        },
-        {
-            id: 'yearly',
-            title: "Pro Yearly",
-            price: "4999",
-            period: "/year",
-            description: "Best value solution",
-            features: [
-                "Everything in Monthly",
-                "Save ₹989 (2 Months Free)",
-                "Premium Profile Badge",
-                "Top-tier Search Ranking",
-                "Dedicated Account Manager",
-                "Early Access to New Features"
+                "Refund if no leads in 1 month"
             ],
             highlight: true,
             color: "blue",
-            buttonText: "Get Yearly & Save",
-            icon: Crown,
-            badge: "BEST VALUE"
+            buttonText: "Join as Worker",
+            icon: Zap,
+            badge: "POPULAR"
         }
     ];
 
@@ -59,14 +40,14 @@ const Pricing = () => {
                     transition={{ duration: 0.5 }}
                 >
                     <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">
-                        Invest in Your Career
+                        Simple & Transparent Pricing
                     </h2>
                     <p className="text-slate-600 max-w-xl mx-auto text-lg font-medium">
-                        Maximize your earnings with our Pro plans. Verified workers earn <span className="text-blue-600 font-bold">3x more</span>.
+                        Maximize your earnings with our Pro plan. Get leads or get your <span className="text-blue-600 font-bold">money back</span>.
                     </p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto items-center">
+                <div className="flex justify-center">
                     {plans.map((plan, index) => (
                         <motion.div
                             key={plan.id}
@@ -74,7 +55,7 @@ const Pricing = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.4, delay: index * 0.1 }}
-                            className={`relative rounded-3xl p-6 transition-all duration-300 group ${plan.highlight
+                            className={`relative rounded-3xl p-8 transition-all duration-300 group max-w-md w-full ${plan.highlight
                                 ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-900/20 scale-105 z-10 border border-blue-500'
                                 : 'bg-white text-slate-900 border border-slate-200 shadow-lg hover:border-blue-200 hover:shadow-xl'
                                 }`}

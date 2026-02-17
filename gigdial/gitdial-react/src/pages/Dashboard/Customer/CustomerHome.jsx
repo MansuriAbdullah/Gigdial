@@ -4,14 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Plus, Heart, Clock, Headphones, Phone, MessageSquare,
     XCircle, Calendar, Star, Wallet, MapPin, Search,
-    ChevronRight, CreditCard, RefreshCw, AlertTriangle, Briefcase
+    ChevronRight, CreditCard, RefreshCw, AlertTriangle, Briefcase, User
 } from 'lucide-react';
 
 const CustomerHome = () => {
     const navigate = useNavigate();
     const [filter, setFilter] = useState('active');
     const [bookings, setBookings] = useState([]);
-    const [walletBalance, setWalletBalance] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -38,25 +37,10 @@ const CustomerHome = () => {
                 setBookings([]);
             }
 
-            // Fetch wallet balance
-            try {
-                const walletRes = await fetch('/api/users/wallet', {
-                    headers: { 'Authorization': `Bearer ${userInfo?.token}` }
-                });
-                if (walletRes.ok) {
-                    const walletData = await walletRes.json();
-                    setWalletBalance(walletData.balance || 0);
-                } else {
-                    setWalletBalance(0);
-                }
-            } catch (err) {
-                console.error('Error fetching wallet:', err);
-                setWalletBalance(0);
-            }
+
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             setBookings([]);
-            setWalletBalance(0);
         } finally {
             setLoading(false);
         }
@@ -104,11 +88,11 @@ const CustomerHome = () => {
                 <div className="flex justify-between items-start mb-4">
                     <div className="flex gap-4 flex-1">
                         <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-xl font-bold text-blue-600">
-                            {booking.workerName?.charAt(0) || 'W'}
+                            {booking.seller?.name?.charAt(0) || 'W'}
                         </div>
                         <div className="flex-1">
-                            <h4 className="font-bold text-slate-900 text-lg">{booking.serviceName}</h4>
-                            <p className="text-slate-500 text-sm font-medium">{booking.workerName}</p>
+                            <h4 className="font-bold text-slate-900 text-lg">{booking.title || booking.gig?.title}</h4>
+                            <p className="text-slate-500 text-sm font-medium">{booking.seller?.name || 'Worker'}</p>
                             <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
                                 <span className="flex items-center gap-1">
                                     <Calendar size={12} />
@@ -134,7 +118,10 @@ const CustomerHome = () => {
                         <button className="flex items-center justify-center gap-1 py-2 rounded-xl bg-green-50 text-green-700 font-bold text-xs hover:bg-green-100 transition-colors">
                             <Phone size={14} /> Call
                         </button>
-                        <button className="flex items-center justify-center gap-1 py-2 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs hover:bg-blue-100 transition-colors">
+                        <button
+                            onClick={() => navigate(`/customer-dashboard/messages?workerId=${booking.seller?._id || booking.seller}`)}
+                            className="flex items-center justify-center gap-1 py-2 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs hover:bg-blue-100 transition-colors"
+                        >
                             <MessageSquare size={14} /> Chat
                         </button>
                         <button className="flex items-center justify-center gap-1 py-2 rounded-xl bg-red-50 text-red-600 font-bold text-xs hover:bg-red-100 transition-colors">
@@ -203,36 +190,7 @@ const CustomerHome = () => {
         );
     };
 
-    const WalletCard = () => (
-        <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-5 md:p-6 text-white shadow-xl shadow-indigo-200 mb-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-            <div className="relative z-10">
-                <div className="flex justify-between items-start mb-6 md:mb-8">
-                    <div>
-                        <p className="text-indigo-100 font-medium mb-1">Wallet Balance</p>
-                        <h3 className="text-3xl font-bold">₹{walletBalance.toFixed(2)}</h3>
-                    </div>
-                    <div className="p-2 bg-white/20 backdrop-blur-md rounded-lg">
-                        <Wallet size={24} />
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                    <button
-                        onClick={() => navigate('/customer-dashboard/wallet')}
-                        className="flex items-center justify-center bg-white text-indigo-600 py-3 rounded-xl font-bold text-sm hover:bg-indigo-50 transition-colors shadow-lg shadow-black/10"
-                    >
-                        Add Money
-                    </button>
-                    <button
-                        onClick={() => navigate('/customer-dashboard/wallet')}
-                        className="flex items-center justify-center bg-indigo-500/50 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-500/70 transition-colors border border-indigo-400/30"
-                    >
-                        History
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+
 
     if (loading) {
         return (
@@ -269,6 +227,12 @@ const CustomerHome = () => {
                     label="Support"
                     color="text-green-600 bg-green-600"
                     onClick={() => navigate('/contact')}
+                />
+                <QuickAction
+                    icon={User}
+                    label="My Profile"
+                    color="text-indigo-600 bg-indigo-600"
+                    onClick={() => navigate('/customer-dashboard/profile')}
                 />
             </div>
 
@@ -326,7 +290,7 @@ const CustomerHome = () => {
 
                 {/* Right Column: Wallet & Quick Links */}
                 <div className="space-y-6">
-                    <WalletCard />
+
 
                     {/* Quick Links */}
                     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
@@ -334,6 +298,7 @@ const CustomerHome = () => {
                         <div className="space-y-2">
                             {[
                                 { icon: Briefcase, label: 'Browse Services', path: '/customer-dashboard/browse-services' },
+                                { icon: MessageSquare, label: 'Messages', path: '/customer-dashboard/messages' },
                                 { icon: MapPin, label: 'Saved Addresses', path: '/customer-dashboard/addresses' },
                                 { icon: Star, label: 'Refer & Earn', path: '/customer-dashboard/refer-earn' },
                             ].map((link) => (

@@ -12,7 +12,7 @@ const WorkerServices = () => {
         price: '',
         deliveryTime: '',
         description: '',
-        coverImage: ''
+        image: ''
     });
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -56,7 +56,7 @@ const WorkerServices = () => {
             price: service.price,
             deliveryTime: service.deliveryTime,
             description: service.description,
-            coverImage: service.coverImage || ''
+            image: service.image || ''
         });
         setShowAddModal(true);
     };
@@ -80,7 +80,7 @@ const WorkerServices = () => {
                 alert(`Service ${editingId ? 'updated' : 'added'} successfully!`);
                 setShowAddModal(false);
                 setEditingId(null);
-                setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', coverImage: '' });
+                setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', image: '' });
                 fetchServices();
             } else {
                 const error = await response.json();
@@ -129,7 +129,7 @@ const WorkerServices = () => {
             const data = await response.json();
 
             if (response.ok) {
-                setFormData({ ...formData, coverImage: data.image });
+                setFormData({ ...formData, image: data.image });
             } else {
                 alert(data.message || 'Image upload failed');
             }
@@ -163,7 +163,7 @@ const WorkerServices = () => {
                 <button
                     onClick={() => {
                         setEditingId(null);
-                        setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', coverImage: '' });
+                        setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', image: '' });
                         setShowAddModal(true);
                     }}
                     className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all font-bold"
@@ -182,8 +182,8 @@ const WorkerServices = () => {
                     {services.map((service) => (
                         <div key={service._id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-lg transition-all group">
                             <div className="relative h-48 overflow-hidden bg-slate-100">
-                                {service.coverImage ? (
-                                    <img src={service.coverImage} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                                {service.image ? (
+                                    <img src={service.image} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                                 ) : (
                                     <div className="flex items-center justify-center h-full text-slate-400">No Image</div>
                                 )}
@@ -194,8 +194,8 @@ const WorkerServices = () => {
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg">{service.category}</span>
                                     <span className={`px-2 py-1 text-xs font-bold rounded-lg ${service.status === 'active' ? 'bg-green-50 text-green-700' :
-                                            service.status === 'rejected' ? 'bg-red-50 text-red-700' :
-                                                'bg-yellow-50 text-yellow-700'
+                                        service.status === 'rejected' ? 'bg-red-50 text-red-700' :
+                                            'bg-yellow-50 text-yellow-700'
                                         }`}>
                                         {service.status ? service.status.charAt(0).toUpperCase() + service.status.slice(1) : 'Pending'}
                                     </span>
@@ -270,10 +270,10 @@ const WorkerServices = () => {
                                         className="w-full px-4 py-2 border rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                     />
                                     {uploading && <span className="text-sm text-blue-600 animate-pulse font-medium">Uploading...</span>}
-                                    {formData.coverImage && (
+                                    {formData.image && (
                                         <div className="mt-2 h-20 w-32 rounded-lg overflow-hidden border border-slate-200 shadow-sm relative group">
-                                            <img src={formData.coverImage} alt="Preview" className="w-full h-full object-cover" />
-                                            <button type="button" onClick={() => setFormData({ ...formData, coverImage: '' })} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                            <button type="button" onClick={() => setFormData({ ...formData, image: '' })} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <Trash2 size={12} />
                                             </button>
                                         </div>

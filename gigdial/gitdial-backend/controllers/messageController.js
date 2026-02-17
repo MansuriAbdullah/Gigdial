@@ -6,7 +6,7 @@ import User from '../models/User.js';
 // @access  Private
 const sendMessage = async (req, res) => {
     try {
-        const { recipientId, content } = req.body;
+        const { recipientId, content, image } = req.body;
         const senderId = req.user._id.toString();
         const conversationId = [senderId, recipientId].sort().join('_');
 
@@ -14,7 +14,8 @@ const sendMessage = async (req, res) => {
             conversationId,
             sender: senderId,
             recipient: recipientId,
-            content
+            content,
+            image
         });
 
         res.status(201).json(message);

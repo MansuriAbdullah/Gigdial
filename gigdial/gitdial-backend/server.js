@@ -61,6 +61,9 @@ app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
+// Static folder for uploads
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
 // Error handling middleware (basic)
 app.use((err, req, res, next) => {
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;

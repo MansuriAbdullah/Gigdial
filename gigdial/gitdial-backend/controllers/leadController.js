@@ -52,7 +52,7 @@ const getWorkerLeads = asyncHandler(async (req, res) => {
     // Check subscription
     if (!user.subscription || !user.subscription.isActive) {
         // Return empty or error? Or specific message.
-        // User asked "monthly or yearly package... purchase karne ke baad usko lead ani chaheyie"
+        // User asked for 499 package... purchase karne ke baad usko lead ani chaheyie"
         // So if no package, no leads.
         return res.status(403).json({
             message: 'Subscription required to view leads',

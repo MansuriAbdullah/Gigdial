@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, Star, MapPin, TrendingUp, Heart, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { getFullImagePath } from '../../../utils/imagePath';
 
 const BrowseServices = () => {
     const [services, setServices] = useState([]);
@@ -226,9 +227,9 @@ const BrowseServices = () => {
                         >
                             {/* Service Image */}
                             <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
-                                {service.images && service.images[0] ? (
+                                {service.image || (service.images && service.images[0]) ? (
                                     <img
-                                        src={`http://localhost:5000/${service.images[0].replace(/\\/g, '/')}`}
+                                        src={getFullImagePath(service.image || service.images[0])}
                                         alt={service.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                     />

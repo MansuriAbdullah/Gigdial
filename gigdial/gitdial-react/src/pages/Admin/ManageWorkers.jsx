@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, MoreVertical, Shield, ShieldAlert, CheckCircle, XCircle, Briefcase, Clock, FileText, Loader, Eye, ExternalLink, ChevronDown, Check, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getFullImagePath } from '../../utils/imagePath';
 
 const ManageWorkers = () => {
     const [workers, setWorkers] = useState([]);
@@ -147,8 +148,8 @@ const ManageWorkers = () => {
                                 key={status}
                                 onClick={() => setFilter(status)}
                                 className={`px-4 py-2 text-sm font-bold rounded-lg transition-all duration-300 ${filter === status
-                                        ? 'bg-slate-800 text-white shadow-md transform scale-105'
-                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                                    ? 'bg-slate-800 text-white shadow-md transform scale-105'
+                                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
                                     }`}
                             >
                                 {status}
@@ -203,7 +204,7 @@ const ManageWorkers = () => {
                                                     <div className="relative">
                                                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20 overflow-hidden">
                                                             {worker.profileImage ? (
-                                                                <img src={'http://localhost:5000/' + worker.profileImage.replace(/\\/g, '/')} alt="profile" className="w-full h-full object-cover" />
+                                                                <img src={getFullImagePath(worker.profileImage)} alt="profile" className="w-full h-full object-cover" />
                                                             ) : (
                                                                 worker.name.charAt(0)
                                                             )}
@@ -257,8 +258,8 @@ const ManageWorkers = () => {
                                                     <button
                                                         onClick={() => handleAction(worker._id, 'approve')}
                                                         className={`p-2 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-bold shadow-sm ${worker.kycStatus === 'approved'
-                                                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50'
-                                                                : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 hover:shadow-emerald-500/20 hover:shadow-lg hover:-translate-y-0.5'
+                                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50'
+                                                            : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 hover:shadow-emerald-500/20 hover:shadow-lg hover:-translate-y-0.5'
                                                             }`}
                                                         disabled={worker.kycStatus === 'approved'}
                                                         title="Approve Worker"
@@ -273,8 +274,8 @@ const ManageWorkers = () => {
                                                     <button
                                                         onClick={() => handleAction(worker._id, 'reject')}
                                                         className={`p-2 rounded-xl transition-all duration-300 flex items-center gap-2 text-xs font-bold shadow-sm ${worker.kycStatus === 'rejected'
-                                                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50'
-                                                                : 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 hover:shadow-rose-500/20 hover:shadow-lg hover:-translate-y-0.5'
+                                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50'
+                                                            : 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 hover:shadow-rose-500/20 hover:shadow-lg hover:-translate-y-0.5'
                                                             }`}
                                                         disabled={worker.kycStatus === 'rejected'}
                                                         title="Reject Worker"
@@ -343,12 +344,12 @@ const ManageWorkers = () => {
                                             {selectedWorker.aadhaarCard ? (
                                                 <>
                                                     <img
-                                                        src={'http://localhost:5000/' + selectedWorker.aadhaarCard.replace(/\\/g, '/')}
+                                                        src={getFullImagePath(selectedWorker.aadhaarCard)}
                                                         alt="Aadhaar"
                                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                     />
                                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <a href={'http://localhost:5000/' + selectedWorker.aadhaarCard.replace(/\\/g, '/')} target="_blank" rel="noreferrer" className="bg-white text-slate-900 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all">
+                                                        <a href={getFullImagePath(selectedWorker.aadhaarCard)} target="_blank" rel="noreferrer" className="bg-white text-slate-900 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all">
                                                             <Eye size={16} /> View Full
                                                         </a>
                                                     </div>
@@ -373,12 +374,12 @@ const ManageWorkers = () => {
                                             {selectedWorker.panCard ? (
                                                 <>
                                                     <img
-                                                        src={'http://localhost:5000/' + selectedWorker.panCard.replace(/\\/g, '/')}
+                                                        src={getFullImagePath(selectedWorker.panCard)}
                                                         alt="PAN"
                                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                     />
                                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <a href={'http://localhost:5000/' + selectedWorker.panCard.replace(/\\/g, '/')} target="_blank" rel="noreferrer" className="bg-white text-slate-900 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all">
+                                                        <a href={getFullImagePath(selectedWorker.panCard)} target="_blank" rel="noreferrer" className="bg-white text-slate-900 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all">
                                                             <Eye size={16} /> View Full
                                                         </a>
                                                     </div>

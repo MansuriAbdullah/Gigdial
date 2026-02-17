@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Briefcase, Filter, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getFullImagePath } from '../utils/imagePath';
 
 const BrowseWorkers = () => {
     const [workers, setWorkers] = useState([]);
@@ -104,7 +105,7 @@ const BrowseWorkers = () => {
                                 <div className="relative h-48 bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden">
                                     {worker.profileImage ? (
                                         <img
-                                            src={`http://localhost:5000/${worker.profileImage.replace(/\\/g, '/')}`}
+                                            src={getFullImagePath(worker.profileImage)}
                                             alt={worker.name}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                         />

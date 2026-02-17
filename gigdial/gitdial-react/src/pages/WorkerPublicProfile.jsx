@@ -9,6 +9,8 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
+import { getFullImagePath } from '../utils/imagePath';
+
 const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, gigId }) => (
     <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -28,7 +30,7 @@ const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, 
 
         <div className="h-48 overflow-hidden relative">
             <img
-                src={image}
+                src={getFullImagePath(image)}
                 alt={title}
                 className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
             />
@@ -278,7 +280,7 @@ const WorkerPublicProfile = () => {
                         <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[6px] border-white shadow-lg overflow-hidden bg-white">
                             {worker.profileImage ? (
                                 <img
-                                    src={`http://localhost:5000/${worker.profileImage.replace(/\\/g, '/')}`}
+                                    src={getFullImagePath(worker.profileImage)}
                                     alt={worker.name}
                                     className="w-full h-full object-cover"
                                 />
@@ -410,7 +412,7 @@ const WorkerPublicProfile = () => {
                                     {worker.portfolio.map((item) => (
                                         <div key={item._id} className="group relative rounded-xl overflow-hidden aspect-video">
                                             <img
-                                                src={`http://localhost:5000/${item.images[0]?.replace(/\\/g, '/')}`}
+                                                src={getFullImagePath(item.images[0])}
                                                 alt={item.title}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                             />
@@ -439,7 +441,7 @@ const WorkerPublicProfile = () => {
                                                 <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0">
                                                     {review.reviewer?.profileImage ? (
                                                         <img
-                                                            src={`http://localhost:5000/${review.reviewer.profileImage.replace(/\\/g, '/')}`}
+                                                            src={getFullImagePath(review.reviewer.profileImage)}
                                                             alt={review.reviewer.name}
                                                             className="w-full h-full object-cover"
                                                         />

@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
+import { getFullImagePath } from '../utils/imagePath';
+
 const SidebarItem = ({ icon: Icon, label, path, active, onClick }) => (
     <Link to={path} onClick={onClick}>
         <div className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${active ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'text-slate-500 hover:bg-slate-50 hover:text-primary'}`}>
@@ -66,8 +68,9 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
         { icon: Users, label: t('findWorkers'), path: '/customer-dashboard/browse-workers' },
         { icon: Calendar, label: t('serviceHistory'), path: '/customer-dashboard/service-history' },
         { icon: Heart, label: t('favorites'), path: '/customer-dashboard/favourites' },
-        { icon: CreditCard, label: t('wallet'), path: '/customer-dashboard/wallet' },
+        { icon: MessageSquare, label: t('messages'), path: '/customer-dashboard/messages' },
         { icon: MapPin, label: t('savedAddresses'), path: '/customer-dashboard/addresses' },
+        { icon: User, label: t('profile'), path: '/customer-dashboard/profile' },
         { icon: Gift, label: t('referEarn'), path: '/customer-dashboard/refer-earn' },
     ];
 
@@ -77,6 +80,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
         { icon: Users, label: t('manageCustomers'), path: '/admin/customers' },
         { icon: Calendar, label: t('bookings'), path: '/admin/bookings' },
         { icon: DollarSign, label: 'Withdrawals', path: '/admin/withdrawals' },
+        { icon: Repeat, label: 'Refunds', path: '/admin/refunds' },
         { icon: Scale, label: t('disputes'), path: '/admin/disputes' },
         { icon: BarChart2, label: t('analytics'), path: '/admin/analytics' },
         { icon: CheckSquare, label: t('services'), path: '/admin/services' },
@@ -138,7 +142,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
                 <div className="p-4 border-t border-slate-50 shrink-0">
                     <div className={`flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 ${!isSidebarOpen && 'lg:justify-center'}`}>
                         <img
-                            src={user?.profileImage || "https://i.pravatar.cc/150?img=11"}
+                            src={getFullImagePath(user?.profileImage) || "https://i.pravatar.cc/150?img=11"}
                             className="w-10 h-10 rounded-full border-2 border-white shadow-sm shrink-0 object-cover"
                             alt="User"
                         />

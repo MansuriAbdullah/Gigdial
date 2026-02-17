@@ -102,7 +102,7 @@ const userSchema = mongoose.Schema({
     subscription: {
         plan: {
             type: String,
-            enum: ['monthly', 'yearly', 'none'],
+            enum: ['monthly', 'none'],
             default: 'none'
         },
         startDate: {
@@ -114,6 +114,20 @@ const userSchema = mongoose.Schema({
         isActive: {
             type: Boolean,
             default: false
+        },
+        refundStatus: {
+            type: String,
+            enum: ['none', 'pending', 'processed', 'rejected'],
+            default: 'none'
+        },
+        refundRequestedAt: {
+            type: Date
+        },
+        refundProcessedAt: {
+            type: Date
+        },
+        refundReason: {
+            type: String
         }
     },
     rating: {

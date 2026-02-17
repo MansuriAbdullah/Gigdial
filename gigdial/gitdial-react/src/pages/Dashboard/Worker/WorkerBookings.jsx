@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, Phone, CheckCircle, XCircle, AlertCircle, Filter } from 'lucide-react';
+import {
+    Calendar, Clock, MapPin, User, Phone, CheckCircle,
+    XCircle, AlertCircle, Filter, ChevronRight, Star,
+    MoreVertical, ArrowUpRight, CheckSquare, MessageCircle
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { getFullImagePath } from '../../../utils/imagePath';
 
 const WorkerBookings = () => {
     const [filter, setFilter] = useState('All');
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [otpModalOpen, setOtpModalOpen] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [otpInput, setOtpInput] = useState('');
+    const [otpLoading, setOtpLoading] = useState(false);
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
@@ -45,7 +55,6 @@ const WorkerBookings = () => {
             });
 
             if (response.ok) {
-                alert(`Order updated to ${status}`);
                 fetchBookings();
             } else {
                 alert('Failed to update status');
@@ -55,43 +64,7 @@ const WorkerBookings = () => {
         }
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'in-progress': return 'bg-blue-50 text-blue-700 border-blue-200';
-            case 'pending': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-            case 'completed': return 'bg-green-50 text-green-700 border-green-200';
-            case 'cancelled': return 'bg-red-50 text-red-700 border-red-200';
-            default: return 'bg-slate-50 text-slate-700 border-slate-200';
-        }
-    };
-
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'in-progress': return <CheckCircle size={14} />;
-            case 'pending': return <AlertCircle size={14} />;
-            case 'completed': return <CheckCircle size={14} />;
-            case 'cancelled': return <XCircle size={14} />;
-            default: return null;
-        }
-    };
-
-    const displayedBookings = bookings.filter(booking => {
-        if (filter === 'All') return true;
-        if (filter === 'Confirmed') return booking.status === 'in-progress';
-        if (filter === 'Pending') return booking.status === 'pending';
-        if (filter === 'Completed') return booking.status === 'completed';
-        if (filter === 'Cancelled') return booking.status === 'cancelled';
-        return booking.status === filter.toLowerCase();
-    });
-
-    const [otpModalOpen, setOtpModalOpen] = useState(false);
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
-    const [otpInput, setOtpInput] = useState('');
-    const [otpLoading, setOtpLoading] = useState(false);
-
     const handleRequestCompletion = async (orderId) => {
-        if (!window.confirm("Are you sure you want to complete this job? This will send an OTP to the customer.")) return;
-
         setOtpLoading(true);
         try {
             const res = await fetch(`/api/orders/${orderId}/otp`, {
@@ -102,13 +75,9 @@ const WorkerBookings = () => {
             });
 
             if (res.ok) {
-                const data = await res.json();
-                // Open Modal
                 setSelectedOrderId(orderId);
                 setOtpModalOpen(true);
                 setOtpInput('');
-                // Show OTP for testing
-                alert(`OTP sent to customer! (Test OTP: ${data.testOtp})`);
             } else {
                 const data = await res.json();
                 alert(data.message || "Failed to send OTP");
@@ -122,11 +91,7 @@ const WorkerBookings = () => {
     };
 
     const handleVerifyOtp = async () => {
-        if (!otpInput || otpInput.length < 6) {
-            alert("Please enter a valid 6-digit OTP");
-            return;
-        }
-
+        if (!otpInput || otpInput.length < 6) return;
         setOtpLoading(true);
         try {
             const res = await fetch(`/api/orders/${selectedOrderId}/complete`, {
@@ -139,9 +104,8 @@ const WorkerBookings = () => {
             });
 
             if (res.ok) {
-                alert("Service Completed Successfully!");
                 setOtpModalOpen(false);
-                fetchBookings(); // Refresh list
+                fetchBookings();
             } else {
                 const data = await res.json();
                 alert(data.message || "Invalid OTP or Expired");
@@ -154,56 +118,41 @@ const WorkerBookings = () => {
         }
     };
 
+    const getStatusStyles = (status) => {
+        switch (status) {
+            case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+            case 'cancelled': return 'bg-rose-50 text-rose-600 border-rose-100';
+            case 'pending': return 'bg-amber-50 text-amber-600 border-amber-100';
+            case 'in-progress':
+            case 'active': return 'bg-blue-50 text-blue-600 border-blue-100';
+            case 'requested': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+            default: return 'bg-slate-50 text-slate-600 border-slate-100';
+        }
+    };
+
+    const filteredBookings = bookings.filter(booking => {
+        if (filter === 'All') return true;
+        if (filter === 'Pending') return booking.status === 'pending' || booking.status === 'requested';
+        if (filter === 'Active') return booking.status === 'in-progress' || booking.status === 'active';
+        return booking.status === filter.toLowerCase();
+    });
+
     return (
-        <div className="space-y-6 relative">
-            {/* OTP Modal */}
-            {otpModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in fade-in zoom-in duration-200">
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">Verify Completion</h3>
-                        <p className="text-slate-500 text-sm mb-4">
-                            Ask the customer for the OTP sent to their mobile number to complete this service.
-                        </p>
-
-                        <input
-                            type="text"
-                            value={otpInput}
-                            onChange={(e) => setOtpInput(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
-                            placeholder="Enter 6-digit OTP"
-                            className="w-full text-center text-2xl font-bold tracking-widest py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all mb-6"
-                            autoFocus
-                        />
-
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setOtpModalOpen(false)}
-                                className="flex-1 py-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleVerifyOtp}
-                                disabled={otpLoading}
-                                className="flex-1 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors shadow-lg shadow-green-500/20 disabled:opacity-70"
-                            >
-                                {otpLoading ? 'Verifying...' : 'Complete Job'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-8 pb-20">
+            {/* Header section */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">My Bookings</h1>
-                    <p className="text-slate-500">Manage your upcoming and past bookings</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Booking Management</h1>
+                    <p className="text-slate-500 font-medium mt-1">Review and manage your service appointments</p>
                 </div>
-                <div className="flex bg-slate-100 rounded-lg p-1">
-                    {['All', 'Pending', 'Confirmed', 'Completed', 'Cancelled'].map(status => (
+                <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
+                    {['All', 'Pending', 'Active', 'Completed', 'Cancelled'].map(status => (
                         <button
                             key={status}
                             onClick={() => setFilter(status)}
-                            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${filter === status ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                            className={`px-5 py-2.5 text-sm font-bold rounded-xl transition-all whitespace-nowrap ${filter === status
+                                ? 'bg-slate-900 text-white shadow-lg'
+                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                                 }`}
                         >
                             {status}
@@ -213,84 +162,195 @@ const WorkerBookings = () => {
             </div>
 
             {loading ? (
-                <div className="text-center py-10">Loading bookings...</div>
-            ) : displayedBookings.length === 0 ? (
-                <div className="text-center py-10 text-slate-500">No bookings found.</div>
-            ) : (
-                <div className="grid gap-4">
-                    {displayedBookings.map((booking) => (
-                        <div key={booking._id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                <div className="flex-1 space-y-3">
-                                    <div className="flex items-start justify-between">
-                                        <div>
-                                            <h3 className="font-bold text-lg text-slate-900 mb-1">{booking.gig?.title || 'Service'}</h3>
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(booking.status)}`}>
-                                                {getStatusIcon(booking.status)}
-                                                {booking.status.replace('-', ' ').toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-sm text-slate-500">Amount</p>
-                                            <p className="text-xl font-bold text-slate-900">₹{booking.price || booking.totalAmount || 0}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        <div className="flex items-center gap-2 text-slate-600">
-                                            <User size={16} className="text-slate-400" />
-                                            <span className="text-sm font-medium">{booking.buyer?.name || 'Customer'}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-slate-600">
-                                            <Phone size={16} className="text-slate-400" />
-                                            <span className="text-sm font-medium">{booking.buyer?.phone || 'N/A'}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-slate-600">
-                                            <Calendar size={16} className="text-slate-400" />
-                                            <span className="text-sm font-medium">{new Date(booking.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-slate-600 md:col-span-2">
-                                            <MapPin size={16} className="text-slate-400" />
-                                            <span className="text-sm font-medium">{booking.buyer?.city || 'Location N/A'}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex md:flex-col gap-2">
-                                    {booking.status === 'pending' && (
-                                        <>
-                                            <button
-                                                onClick={() => updateStatus(booking._id, 'in-progress')}
-                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-bold whitespace-nowrap"
-                                            >
-                                                Accept Order
-                                            </button>
-                                            <button
-                                                onClick={() => updateStatus(booking._id, 'cancelled')}
-                                                className="px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-bold whitespace-nowrap"
-                                            >
-                                                Decline
-                                            </button>
-                                        </>
-                                    )}
-                                    {(booking.status === 'in-progress' || booking.status === 'active') && (
-                                        <button
-                                            onClick={() => handleRequestCompletion(booking._id)}
-                                            disabled={otpLoading}
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-bold whitespace-nowrap shadow-md hover:shadow-lg shadow-blue-500/20"
-                                        >
-                                            Complete Job
-                                        </button>
-                                    )}
-                                    <button className="px-4 py-2 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors text-sm font-bold whitespace-nowrap">
-                                        View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] border border-slate-100 shadow-sm">
+                    <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Loading Bookings...</p>
                 </div>
+            ) : filteredBookings.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] border border-slate-100 shadow-sm text-center">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+                        <Calendar size={32} className="text-slate-200" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800 mb-2">No bookings found</h3>
+                    <p className="text-slate-500 max-w-xs mx-auto">It looks like you don't have any {filter.toLowerCase()} bookings at the moment.</p>
+                </div>
+            ) : (
+                <motion.div layout className="grid gap-6">
+                    <AnimatePresence>
+                        {filteredBookings.map((booking, idx) => (
+                            <motion.div
+                                key={booking._id}
+                                layout
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="group relative bg-white rounded-[2rem] border border-slate-100 p-6 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300"
+                            >
+                                <div className="flex flex-col lg:flex-row gap-8">
+                                    {/* Left Side: Order Info */}
+                                    <div className="flex-1 flex flex-col sm:flex-row gap-6">
+                                        <div className="relative">
+                                            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-white shadow-inner flex items-center justify-center text-blue-600 font-black text-2xl">
+                                                {booking.buyer?.name?.charAt(0) || 'C'}
+                                            </div>
+                                            <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-white border-4 border-white shadow-sm flex items-center justify-center overflow-hidden">
+                                                <img
+                                                    src={booking.buyer?.profileImage ? getFullImagePath(booking.buyer.profileImage) : "https://i.pravatar.cc/150?img=11"}
+                                                    className="w-full h-full object-cover"
+                                                    alt=""
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-1 space-y-4">
+                                            <div>
+                                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">{booking.title || booking.gig?.title || 'Professional Service'}</h3>
+                                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusStyles(booking.status)}`}>
+                                                        {booking.status.replace('-', ' ')}
+                                                    </span>
+                                                </div>
+                                                <div className="flex flex-wrap items-center gap-4 text-slate-500 text-sm font-semibold">
+                                                    <span className="flex items-center gap-1.5"><User size={14} className="text-blue-500" /> {booking.buyer?.name || 'Customer'}</span>
+                                                    <span className="flex items-center gap-1.5"><MapPin size={14} className="text-rose-500" /> {booking.buyer?.city || 'Location N/A'}</span>
+                                                    <span className="flex items-center gap-1.5"><Calendar size={14} className="text-amber-500" /> {new Date(booking.date || booking.createdAt).toLocaleDateString()}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Extra details row */}
+                                            <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-50">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Payment</span>
+                                                    <span className="text-sm font-bold text-slate-700 capitalize">{booking.paymentMethod || 'On Request'}</span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Time Slot</span>
+                                                    <span className="text-sm font-bold text-slate-700">{booking.time || 'Flexible'}</span>
+                                                </div>
+                                                {booking.isReviewed && (
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Rating Given</span>
+                                                        <div className="flex items-center gap-1">
+                                                            <span className="text-sm font-bold text-amber-500">{booking.rating}</span>
+                                                            <Star size={12} className="fill-amber-500 text-amber-500" />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Middle: Amount */}
+                                    <div className="lg:w-px h-auto lg:h-32 bg-slate-100 self-center hidden lg:block"></div>
+
+                                    <div className="flex flex-col justify-center text-center lg:text-right px-4">
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Service Fee</p>
+                                        <h4 className="text-3xl font-black text-slate-900 leading-none">₹{booking.price || 0}</h4>
+                                        <p className="text-[10px] font-bold text-emerald-600 mt-2 flex items-center lg:justify-end gap-1 uppercase">
+                                            <Clock size={10} /> {booking.status === 'completed' ? 'Earned' : 'Pending'}
+                                        </p>
+                                    </div>
+
+                                    {/* Right Side: Actions */}
+                                    <div className="flex flex-col justify-center gap-3">
+                                        {booking.status === 'pending' || booking.status === 'requested' ? (
+                                            <>
+                                                <button
+                                                    onClick={() => updateStatus(booking._id, 'in-progress')}
+                                                    className="w-full lg:w-40 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                                >
+                                                    <CheckSquare size={16} /> Accept
+                                                </button>
+                                                <button
+                                                    onClick={() => updateStatus(booking._id, 'cancelled')}
+                                                    className="w-full lg:w-40 py-3 bg-rose-50 text-rose-600 border border-rose-100 rounded-xl font-bold text-sm hover:bg-rose-100 transition-all active:scale-95"
+                                                >
+                                                    Decline
+                                                </button>
+                                            </>
+                                        ) : (booking.status === 'in-progress' || booking.status === 'active') ? (
+                                            <button
+                                                onClick={() => handleRequestCompletion(booking._id)}
+                                                className="w-full lg:w-40 py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                            >
+                                                <ArrowUpRight size={16} /> Complete Job
+                                            </button>
+                                        ) : null}
+
+                                        <button
+                                            onClick={() => window.location.href = `/worker-dashboard/messages?customerId=${booking.buyer?._id}`}
+                                            className="w-full lg:w-40 py-3 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                        >
+                                            <MessageCircle size={16} /> Message
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {booking.review && (
+                                    <div className="mt-6 pt-4 border-t border-slate-50 italic text-slate-500 text-sm bg-slate-50/50 p-4 rounded-xl">
+                                        "{booking.review}"
+                                    </div>
+                                )}
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
             )}
+
+            {/* OTP Modal */}
+            <AnimatePresence>
+                {otpModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setOtpModalOpen(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="bg-white rounded-[2.5rem] p-8 w-full max-w-sm shadow-2xl relative z-10 border border-white"
+                        >
+                            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                                <CheckSquare size={32} strokeWidth={2.5} />
+                            </div>
+
+                            <h3 className="text-2xl font-black text-slate-900 text-center mb-2 tracking-tight">Final Verification</h3>
+                            <p className="text-slate-500 text-sm text-center mb-8 font-medium italic">
+                                Please enter the verification code provided by the customer to finalize this job.
+                            </p>
+
+                            <input
+                                type="text"
+                                value={otpInput}
+                                onChange={(e) => setOtpInput(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+                                placeholder="······"
+                                className="w-full text-center text-4xl font-black tracking-[0.75rem] py-5 border-2 border-slate-100 bg-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all mb-8 placeholder:text-slate-200"
+                                autoFocus
+                            />
+
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={handleVerifyOtp}
+                                    disabled={otpLoading || otpInput.length < 6}
+                                    className="w-full py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+                                >
+                                    {otpLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : "Complete Appointment"}
+                                </button>
+                                <button
+                                    onClick={() => setOtpModalOpen(false)}
+                                    className="w-full py-3 text-slate-400 font-bold hover:text-slate-600 rounded-xl transition-colors text-sm"
+                                >
+                                    Go Back
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

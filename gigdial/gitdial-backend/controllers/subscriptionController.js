@@ -5,11 +5,11 @@ import User from '../models/User.js';
 // @route   POST /api/subscription/purchase
 // @access  Private (Worker only)
 const purchaseSubscription = asyncHandler(async (req, res) => {
-    const { plan } = req.body; // 'monthly' or 'yearly'
+    const { plan } = req.body; // 'monthly'
 
-    if (!['monthly', 'yearly'].includes(plan)) {
+    if (plan !== 'monthly') {
         res.status(400);
-        throw new Error('Invalid plan selection');
+        throw new Error('Invalid plan selection. Only monthly plans are available.');
     }
 
     const user = await User.findById(req.user._id);
@@ -20,9 +20,7 @@ const purchaseSubscription = asyncHandler(async (req, res) => {
     }
 
     // In a real app, you would integrate payment gateway here.
-    // For now, we simulate success.
-
-    let durationInDays = plan === 'monthly' ? 30 : 365;
+    let durationInDays = 30;
     const startDate = new Date();
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + durationInDays);
@@ -31,7 +29,8 @@ const purchaseSubscription = asyncHandler(async (req, res) => {
         plan,
         startDate,
         endDate,
-        isActive: true
+        isActive: true,
+        refundStatus: 'none'
     };
 
     const updatedUser = await user.save();
@@ -41,12 +40,87 @@ const purchaseSubscription = asyncHandler(async (req, res) => {
         name: updatedUser.name,
         email: updatedUser.email,
         subscription: updatedUser.subscription,
-        token: req.user.token // Assuming token is handled by middleware but we don't need to re-issue usually, just return success
+        token: req.user.token
     });
 });
 
+// @desc    Request Refund for Subscription
+// @route   POST /api/subscriptions/refund
+// @access  Private (Worker only)
+const requestRefund = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    if (!user.subscription || !user.subscription.isActive) {
+        res.status(400);
+        throw new Error('No active subscription found to refund');
+    }
+
+    if (user.subscription.refundStatus === 'pending') {
+        res.status(400);
+        throw new Error('Refund request already in progress');
+    }
+
+    user.subscription.refundStatus = 'pending';
+    user.subscription.refundRequestedAt = new Date();
+
+    await user.save();
+
+    res.json({ message: 'Refund request submitted to admin', subscription: user.subscription });
+});
+
+// @desc    Get All Refund Requests
+// @route   GET /api/subscriptions/refunds
+// @access  Private (Admin only)
+const getAllRefundRequests = asyncHandler(async (req, res) => {
+    const usersWithRefunds = await User.find({ 'subscription.refundStatus': 'pending' })
+        .select('name email phone subscription');
+
+    res.json(usersWithRefunds);
+});
+
+// @desc    Admin Update Refund Status
+// @route   PUT /api/subscriptions/refund/:userId
+// @access  Private (Admin only)
+const updateRefundStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body; // 'processed' or 'rejected'
+    const { userId } = req.params;
+
+    if (!['processed', 'rejected'].includes(status)) {
+        res.status(400);
+        throw new Error('Invalid status. Use "processed" or "rejected".');
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    if (user.subscription.refundStatus !== 'pending') {
+        res.status(400);
+        throw new Error('No pending refund request found for this user');
+    }
+
+    user.subscription.refundStatus = status;
+    user.subscription.refundProcessedAt = new Date();
+
+    if (status === 'processed') {
+        user.subscription.isActive = false; // Deactivate plan on successful refund
+    }
+
+    await user.save();
+
+    res.json({ message: `Refund ${status} successfully`, subscription: user.subscription });
+});
+
 // @desc    Get Current Subscription Status
-// @route   GET /api/subscription/status
+// @route   GET /api/subscriptions/status
 // @access  Private
 const getSubscriptionStatus = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
@@ -65,4 +139,10 @@ const getSubscriptionStatus = asyncHandler(async (req, res) => {
     res.json(user.subscription || { plan: 'none', isActive: false });
 });
 
-export { purchaseSubscription, getSubscriptionStatus };
+export {
+    purchaseSubscription,
+    getSubscriptionStatus,
+    requestRefund,
+    getAllRefundRequests,
+    updateRefundStatus
+};

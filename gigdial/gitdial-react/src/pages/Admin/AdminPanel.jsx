@@ -13,6 +13,7 @@ import Disputes from './Disputes';
 import AdminSettings from './AdminSettings';
 
 import ManageWithdrawals from './ManageWithdrawals';
+import ManageRefunds from './ManageRefunds';
 
 const AdminPanel = () => {
     return (
@@ -23,6 +24,7 @@ const AdminPanel = () => {
                 <Route path="customers" element={<ManageCustomers />} />
                 <Route path="bookings" element={<AdminBookings />} />
                 <Route path="withdrawals" element={<ManageWithdrawals />} />
+                <Route path="refunds" element={<ManageRefunds />} />
                 <Route path="disputes" element={<Disputes />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="services" element={<ServiceApprovals />} />

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, MapPin, ShieldCheck, Check, Clock, Calendar, ArrowLeft, ArrowRight, Heart, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getFullImagePath } from '../../utils/imagePath';
 
 const ServiceDetail = () => {
     const { id } = useParams();
@@ -89,13 +90,11 @@ const ServiceDetail = () => {
                     transition={{ duration: 10 }}
                     className="absolute inset-0"
                 >
-                    {service.images && service.images[0] ? (
+                    {service.image || (service.images && service.images[0]) ? (
                         <img
-                            src={service.images[0].startsWith('http') ? service.images[0] : `http://localhost:5000/${service.images[0].replace(/\\/g, '/')}`}
+                            src={getFullImagePath(service.image || service.images[0])}
                             alt={service.title}
                             className="w-full h-full object-cover opacity-60"
-                            crossOrigin="anonymous"
-                            referrerPolicy="no-referrer"
                         />
                     ) : (
                         <div className="w-full h-full bg-slate-800 opacity-60"></div>
@@ -194,11 +193,9 @@ const ServiceDetail = () => {
                                 <div className="relative">
                                     {service.user?.profileImage ? (
                                         <img
-                                            src={service.user.profileImage.startsWith('http') ? service.user.profileImage : `http://localhost:5000/${service.user.profileImage.replace(/\\/g, '/')}`}
+                                            src={getFullImagePath(service.user.profileImage)}
                                             className="w-20 h-20 rounded-2xl object-cover shadow-md"
                                             alt="Provider"
-                                            crossOrigin="anonymous"
-                                            referrerPolicy="no-referrer"
                                         />
                                     ) : (
                                         <div className="w-20 h-20 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600">

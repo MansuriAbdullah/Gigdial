@@ -79,7 +79,7 @@ const createGig = async (req, res) => {
             price: req.body.price || 0,
             deliveryTime: req.body.deliveryTime || 3,
             revisions: req.body.revisions || 1,
-            image: req.body.image || '/images/sample.jpg',
+            image: req.body.image || req.body.coverImage || '',
         });
 
         const createdGig = await gig.save();
@@ -109,7 +109,7 @@ const updateGig = async (req, res) => {
             gig.price = req.body.price || gig.price;
             gig.deliveryTime = req.body.deliveryTime || gig.deliveryTime;
             gig.revisions = req.body.revisions || gig.revisions;
-            gig.image = req.body.image || gig.image;
+            gig.image = req.body.image || req.body.coverImage || gig.image;
 
             const updatedGig = await gig.save();
             res.json(updatedGig);

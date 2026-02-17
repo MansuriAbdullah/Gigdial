@@ -57,6 +57,33 @@ const WorkerPackages = () => {
         }
     };
 
+    const handleRefund = async () => {
+        if (!window.confirm("Are you sure you want to request a refund? You will only be eligible if you haven't received any leads in the last 1 month. Your request will be sent to admin for approval.")) return;
+
+        setLoading(true);
+        try {
+            const response = await fetch('/api/subscriptions/refund', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userInfo?.token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success('Refund request submitted to admin');
+                checkSubscription();
+            } else {
+                toast.error(data.message || 'Refund request failed');
+            }
+        } catch (error) {
+            toast.error('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const packages = [
         {
             id: 'monthly',
@@ -67,45 +94,62 @@ const WorkerPackages = () => {
                 'Unlimited Profile Views',
                 'See User Leads',
                 'Priority Listing',
-                'Verified Badge'
-            ],
-            recommended: false,
-            color: 'blue'
-        },
-        {
-            id: 'yearly',
-            name: 'Yearly Elite',
-            price: '₹4999',
-            period: '/year',
-            features: [
-                'All Monthly Features',
-                '2 Months Free',
-                'Premium Support',
-                'Gold Badge'
+                'Verified Badge',
+                'Refund if no leads in 1 month'
             ],
             recommended: true,
-            color: 'purple'
+            color: 'blue'
         }
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 text-slate-900">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Subscription Packages</h1>
+                    <h1 className="text-2xl font-bold">Subscription Packages</h1>
                     <p className="text-slate-500">Upgrade your profile to get more leads and visibility</p>
                 </div>
                 {currentPlan?.isActive && (
+                    <div className="flex flex-col items-end gap-2">
+                        <div className="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center gap-2">
+                            <Check size={18} />
+                            <span className="font-medium">
+                                Active Plan: {currentPlan.plan.toUpperCase()} (Expires: {new Date(currentPlan.endDate).toLocaleDateString()})
+                            </span>
+                        </div>
+
+                        {currentPlan.refundStatus === 'none' ? (
+                            <button
+                                onClick={handleRefund}
+                                disabled={loading}
+                                className="text-xs font-bold text-red-600 hover:text-red-700 underline underline-offset-4"
+                            >
+                                Request Refund (Conditions apply)
+                            </button>
+                        ) : (
+                            <div className="flex flex-col items-end">
+                                <span className={`text-sm font-bold px-3 py-1 rounded-full ${currentPlan.refundStatus === 'pending' ? 'bg-orange-100 text-orange-700' :
+                                        currentPlan.refundStatus === 'processed' ? 'bg-green-100 text-green-700' :
+                                            'bg-red-100 text-red-700'
+                                    }`}>
+                                    Refund {currentPlan.refundStatus === 'pending' ? 'in Progress' : currentPlan.refundStatus === 'processed' ? 'Successful' : 'Rejected'}
+                                </span>
+                                {currentPlan.refundStatus === 'pending' && (
+                                    <p className="text-[10px] text-slate-400 mt-1 italic">Waiting for admin approval</p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+                {!currentPlan?.isActive && currentPlan?.refundStatus === 'processed' && (
                     <div className="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center gap-2">
                         <Check size={18} />
-                        <span className="font-medium">
-                            Active Plan: {currentPlan.plan.toUpperCase()} (Expires: {new Date(currentPlan.endDate).toLocaleDateString()})
-                        </span>
+                        <span className="font-medium">Refund Successful - Subscription Ended</span>
                     </div>
                 )}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-8">
+            <div className="grid md:grid-cols-1 gap-6 max-w-md mx-auto mt-8">
                 {packages.map((pkg) => {
                     const isCurrent = currentPlan?.isActive && currentPlan.plan === pkg.id;
 
@@ -113,12 +157,12 @@ const WorkerPackages = () => {
                         <div
                             key={pkg.id}
                             className={`relative bg-white rounded-2xl p-8 border-2 transition-all hover:shadow-xl ${isCurrent ? 'border-green-500 ring-2 ring-green-100' :
-                                pkg.recommended ? 'border-purple-500 shadow-md' : 'border-slate-200'
+                                pkg.recommended ? 'border-blue-500 shadow-md' : 'border-slate-200'
                                 }`}
                         >
                             {pkg.recommended && !isCurrent && (
-                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-purple-600 text-white text-sm font-bold rounded-full shadow-sm">
-                                    Best Value
+                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-600 text-white text-sm font-bold rounded-full shadow-sm">
+                                    Recommended
                                 </div>
                             )}
 
@@ -148,7 +192,7 @@ const WorkerPackages = () => {
                                 className={`w-full py-3 px-6 rounded-xl font-bold transition-all ${isCurrent
                                     ? 'bg-green-100 text-green-700 cursor-default'
                                     : pkg.recommended
-                                        ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg shadow-purple-200'
+                                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200'
                                         : 'bg-slate-900 text-white hover:bg-slate-800'
                                     }`}
                             >
@@ -157,6 +201,20 @@ const WorkerPackages = () => {
                         </div>
                     );
                 })}
+            </div>
+
+            {/* Refund Policy Note */}
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl mt-8">
+                <div className="flex gap-3">
+                    <Shield className="text-blue-600 flex-shrink-0" size={20} />
+                    <div>
+                        <h4 className="font-bold text-blue-900 mb-1">Refund Policy</h4>
+                        <p className="text-blue-800 text-sm leading-relaxed">
+                            Agar 1 mahenetak koi lead nahi aye to 499 refund milega. Request admin ke pass jayegi aur approve hone par refund successful hoga. <br />
+                            <span className="font-semibold italic text-blue-900">Policy: If no leads are received within 1 month, you are eligible for a refund. Request goes to admin for approval.</span>
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mt-12">
@@ -178,8 +236,8 @@ const WorkerPackages = () => {
                     <div className="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Shield size={24} />
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-2">Premium Support</h3>
-                    <p className="text-slate-500 text-sm">Get priority support for any issues or questions.</p>
+                    <h3 className="font-bold text-slate-900 mb-2">Zero Lead Refund</h3>
+                    <p className="text-slate-500 text-sm">Get money back if no leads received for a month (Admin approved).</p>
                 </div>
             </div>
         </div>

@@ -5,13 +5,13 @@ import DashboardLayout from '../../layouts/DashboardLayout';
 // Import all customer pages
 import CustomerHome from './Customer/CustomerHome';
 import SavedAddresses from './Customer/SavedAddresses';
-import WalletPage from './Customer/WalletPage';
 import Favourites from './Customer/Favourites';
 import ServiceHistory from './Customer/ServiceHistory';
 import ReferAndEarn from './Customer/ReferAndEarn';
 import BrowseServices from './Customer/BrowseServices';
 import BrowseWorkers from './Customer/BrowseWorkers';
 import CustomerMessages from './Customer/CustomerMessages';
+import CustomerProfile from './Customer/CustomerProfile';
 
 const CustomerDashboard = () => {
     return (
@@ -23,8 +23,8 @@ const CustomerDashboard = () => {
                 <Route path="service-history" element={<ServiceHistory />} />
                 <Route path="favourites" element={<Favourites />} />
                 <Route path="messages" element={<CustomerMessages />} />
-                <Route path="wallet" element={<WalletPage />} />
                 <Route path="addresses" element={<SavedAddresses />} />
+                <Route path="profile" element={<CustomerProfile />} />
                 <Route path="refer-earn" element={<ReferAndEarn />} />
                 <Route path="*" element={<Navigate to="/customer-dashboard" replace />} />
             </Routes>

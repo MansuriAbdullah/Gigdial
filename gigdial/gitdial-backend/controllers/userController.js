@@ -133,10 +133,11 @@ const updateUserProfile = async (req, res) => {
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
         user.phone = req.body.phone || user.phone;
-        user.city = req.body.city || user.city;
-        user.address = req.body.address || user.address;
-        user.bio = req.body.bio || user.bio;
-        user.skills = req.body.skills || user.skills;
+        user.city = req.body.city !== undefined ? req.body.city : user.city;
+        user.address = req.body.address !== undefined ? req.body.address : user.address;
+        user.serviceDescription = req.body.serviceDescription !== undefined ? req.body.serviceDescription : user.serviceDescription;
+        user.skills = req.body.skills !== undefined ? req.body.skills : user.skills;
+        user.profileImage = req.body.profileImage || user.profileImage;
 
         if (req.file) {
             user.profileImage = req.file.path;
@@ -155,6 +156,9 @@ const updateUserProfile = async (req, res) => {
             role: updatedUser.role,
             phone: updatedUser.phone,
             city: updatedUser.city,
+            address: updatedUser.address,
+            serviceDescription: updatedUser.serviceDescription,
+            skills: updatedUser.skills,
             profileImage: updatedUser.profileImage
         });
     } else {
@@ -221,14 +225,14 @@ const getWorkerDashboardStats = async (req, res) => {
         // 2. Active Leads (pending orders)
         const activeLeads = await Order.countDocuments({
             seller: userId,
-            status: 'pending'
+            status: { $in: ['pending', 'requested'] }
         });
 
         // 3. Response Rate (simplified - percentage of accepted vs total orders)
         const totalOrders = await Order.countDocuments({ seller: userId });
         const acceptedOrders = await Order.countDocuments({
             seller: userId,
-            status: { $in: ['in-progress', 'completed'] }
+            status: { $in: ['in-progress', 'active', 'completed', 'approved'] }
         });
         const responseRate = totalOrders > 0 ? ((acceptedOrders / totalOrders) * 100).toFixed(1) : 0;
 
@@ -240,8 +244,11 @@ const getWorkerDashboardStats = async (req, res) => {
         const wallet = await Wallet.findOne({ user: userId });
         const walletBalance = wallet ? wallet.balance : 0;
 
-        // 5. Recent Orders/Opportunities (Only pending)
-        const opportunities = await Order.find({ seller: userId, status: 'pending' })
+        // 5. Recent Orders/Opportunities (pending or requested)
+        const opportunities = await Order.find({
+            seller: userId,
+            status: { $in: ['pending', 'requested'] }
+        })
             .populate('buyer', 'name profileImage city')
             .sort({ createdAt: -1 })
             .limit(5);

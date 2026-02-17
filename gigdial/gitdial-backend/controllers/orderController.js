@@ -92,7 +92,7 @@ const getMyOrders = async (req, res) => {
 const getSellerOrders = async (req, res) => {
     try {
         const orders = await Order.find({ seller: req.user._id })
-            .populate('buyer', 'name profileImage email phone')
+            .populate('buyer', 'name profileImage email phone city')
             .sort({ createdAt: -1 });
         res.json(orders);
     } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Briefcase, MapPin, Clock, DollarSign, Phone, Mail, User, Eye, Lock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getFullImagePath } from '../../../utils/imagePath';
 
 const WorkerLeads = () => {
     const [leads, setLeads] = useState([]);
@@ -351,7 +352,7 @@ const WorkerLeads = () => {
                             <div key={item._id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition-all">
                                 <div className="w-12 h-12 bg-slate-100 rounded-full overflow-hidden flex-shrink-0">
                                     {item.user?.profileImage ? (
-                                        <img src={`http://localhost:5000/${item.user.profileImage.replace(/\\/g, '/')}`} alt={item.user.name} className="w-full h-full object-cover" />
+                                        <img src={getFullImagePath(item.user.profileImage)} alt={item.user.name} className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-slate-400">
                                             <User size={20} />

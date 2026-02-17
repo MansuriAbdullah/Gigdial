@@ -10,6 +10,7 @@ import WorkerEarnings from './Worker/WorkerEarnings';
 import WorkerSettings from './Worker/WorkerSettings';
 import WorkerMessages from './Worker/WorkerMessages';
 import WorkerPackages from './Worker/WorkerPackages';
+import TrainingVideos from './Worker/TrainingVideos';
 
 const WorkerDashboard = () => {
     return (
@@ -24,6 +25,7 @@ const WorkerDashboard = () => {
                 <Route path="earnings" element={<WorkerEarnings />} />
                 <Route path="profile" element={<WorkerProfile />} />
                 <Route path="settings" element={<WorkerSettings />} />
+                <Route path="training" element={<TrainingVideos />} />
                 <Route path="*" element={<Navigate to="" replace />} />
             </Routes>
         </DashboardLayout>

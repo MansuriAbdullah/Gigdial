@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import axios from 'axios';
 import { useLanguage } from '../../../context/LanguageContext';
@@ -60,7 +61,8 @@ const LeadCard = ({ id, name, service, location, distance, price, time, onAccept
                     </div>
                     <div className="flex flex-wrap items-center text-slate-500 text-sm gap-4 font-medium">
                         <span className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-lg"><Briefcase size={14} className="text-blue-500" /> {service}</span>
-                        <span className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-lg"><MapPin size={14} className="text-red-500" /> {distance || 'N/A'}</span>
+                        <span className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-lg"><MapPin size={14} className="text-red-500" /> {location || 'N/A'}</span>
+                        <span className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-lg"><Activity size={14} className="text-amber-500" /> {distance}</span>
                     </div>
                 </div>
             </div>
@@ -117,6 +119,7 @@ const Badge = ({ icon: Icon, label, color, shine }) => (
 const WorkerOverview = () => {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('leads');
     const [isAvailable, setIsAvailable] = useState(true);
     const [stats, setStats] = useState({
@@ -280,7 +283,7 @@ const WorkerOverview = () => {
                 <div className="lg:col-span-2 space-y-8">
                     {/* Main Tabs */}
                     <div className="bg-white p-1.5 rounded-2xl border border-slate-200 flex overflow-x-auto no-scrollbar w-full md:w-auto shadow-sm">
-                        {['leads', 'earnings'].map((tab) => (
+                        {['leads'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -290,7 +293,6 @@ const WorkerOverview = () => {
                                     }`}
                             >
                                 {tab === 'leads' && <span className="flex items-center gap-2"><Briefcase size={16} /> {t('newLeads')}</span>}
-                                {tab === 'earnings' && <span className="flex items-center gap-2"><Banknote size={16} /> {t('payout')}</span>}
                             </button>
                         ))}
                     </div>
@@ -422,10 +424,13 @@ const WorkerOverview = () => {
                                                 <p className="font-bold text-slate-800 text-sm">
                                                     {worker.name} {user?._id === worker.id && '(You)'}
                                                 </p>
-                                                <p className="text-[10px] text-slate-400 font-medium">{worker.rating} Rating</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-[10px] text-slate-400 font-medium flex items-center gap-0.5"><Star size={8} className="fill-yellow-400 text-yellow-400" /> {worker.rating}</p>
+                                                    <p className="text-[10px] text-slate-400 font-medium flex items-center gap-0.5"><MapPin size={8} className="text-slate-300" /> {worker.city || 'N/A'}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                        {worker.earnings && <span className="font-bold text-emerald-600 text-xs bg-emerald-50 px-2 py-1 rounded-md">₹{worker.earnings}</span>}
+                                        {worker.jobs !== undefined && <span className="font-bold text-emerald-600 text-xs bg-emerald-50 px-2 py-1 rounded-md">{worker.jobs} Jobs</span>}
                                     </motion.div>
                                 ))}
                                 {(!stats.leaderboard || stats.leaderboard.length === 0) && (
@@ -481,14 +486,20 @@ const WorkerOverview = () => {
                             <User size={20} className="text-blue-600" /> Quick Actions
                         </h3>
                         <div className="space-y-3">
-                            <button className="w-full flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-200 hover:bg-blue-50 transition-all text-slate-600 hover:text-blue-600 group">
+                            <button
+                                onClick={() => navigate('/worker-dashboard/profile')}
+                                className="w-full flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-200 hover:bg-blue-50 transition-all text-slate-600 hover:text-blue-600 group"
+                            >
                                 <span className="flex items-center gap-3 font-bold text-sm">
                                     <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-blue-500 group-hover:scale-110 transition-transform"><Plus size={16} /></div>
                                     {t('addNewSkill')}
                                 </span>
                                 <ChevronRight size={16} />
                             </button>
-                            <button className="w-full flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-purple-200 hover:bg-purple-50 transition-all text-slate-600 hover:text-purple-600 group">
+                            <button
+                                onClick={() => navigate('/worker-dashboard/training')}
+                                className="w-full flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-purple-200 hover:bg-purple-50 transition-all text-slate-600 hover:text-purple-600 group"
+                            >
                                 <span className="flex items-center gap-3 font-bold text-sm">
                                     <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-purple-500 group-hover:scale-110 transition-transform"><Video size={16} /></div>
                                     {t('trainingVideos')}
@@ -499,7 +510,7 @@ const WorkerOverview = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
