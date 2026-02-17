@@ -8,8 +8,8 @@ import {
     cancelOrder,
     submitReview,
     getOrders,
-    requestCompletionOtp,
-    completeOrderWithOtp
+    initiateOrderCompletion,
+    completeOrder
 } from '../controllers/orderController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -25,7 +25,7 @@ router.route('/:id').get(protect, getOrderById);
 router.route('/:id/status').put(protect, updateOrderStatus);
 router.route('/:id/cancel').put(protect, cancelOrder);
 router.route('/:id/review').post(protect, submitReview);
-router.route('/:id/otp').post(protect, requestCompletionOtp);
-router.route('/:id/complete').post(protect, completeOrderWithOtp);
+router.route('/:id/otp').post(protect, initiateOrderCompletion);
+router.route('/:id/complete').post(protect, completeOrder);
 
 export default router;

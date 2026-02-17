@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Calendar, Star, Download, Filter, Search, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Calendar, Star, Download, Filter, Search, CheckCircle, XCircle, AlertCircle, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import html2canvas from 'html2canvas';
@@ -13,6 +14,7 @@ const ServiceHistory = () => {
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isRateModalOpen, setIsRateModalOpen] = useState(false);
+    const navigate = useNavigate();
     const invoiceRef = useRef(null);
 
     const handleRateClick = (order) => {
@@ -97,7 +99,10 @@ const ServiceHistory = () => {
             case 'cancelled':
                 return <XCircle size={20} className="text-red-600" />;
             case 'active':
+            case 'in-progress':
                 return <Clock size={20} className="text-blue-600" />;
+            case 'requested':
+                return <AlertCircle size={20} className="text-purple-600" />;
             default:
                 return <AlertCircle size={20} className="text-yellow-600" />;
         }
@@ -110,7 +115,10 @@ const ServiceHistory = () => {
             case 'cancelled':
                 return 'bg-red-50 text-red-700 border-red-200';
             case 'active':
+            case 'in-progress':
                 return 'bg-blue-50 text-blue-700 border-blue-200';
+            case 'requested':
+                return 'bg-purple-50 text-purple-700 border-purple-200';
             default:
                 return 'bg-yellow-50 text-yellow-700 border-yellow-200';
         }
@@ -152,7 +160,7 @@ const ServiceHistory = () => {
                     />
                 </div>
                 <div className="flex gap-2">
-                    {['all', 'active', 'completed', 'cancelled'].map((status) => (
+                    {['all', 'requested', 'active', 'completed', 'cancelled'].map((status) => (
                         <button
                             key={status}
                             onClick={() => setFilter(status)}
@@ -190,7 +198,7 @@ const ServiceHistory = () => {
                                             </div>
                                             <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(booking.status)}`}>
                                                 {getStatusIcon(booking.status)}
-                                                {booking.status}
+                                                {booking.status.replace('-', ' ').toUpperCase()}
                                             </span>
                                         </div>
                                         <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
@@ -206,12 +214,27 @@ const ServiceHistory = () => {
                                                 <Clock size={14} />
                                                 {new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
-                                            <span className="font-bold text-slate-900">₹{booking.price}</span>
+                                            <span className="font-bold text-slate-900">{booking.price > 0 ? `₹${booking.price}` : 'Price: TBD'}</span>
                                         </div>
+                                        {booking.completionOtp && (
+                                            <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3 inline-block">
+                                                <p className="text-xs text-green-700 font-medium mb-1">Provide this OTP to worker to complete job:</p>
+                                                <p className="text-xl font-bold text-green-800 tracking-widest">{booking.completionOtp}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
                                 <div className="flex gap-2">
+                                    {(booking.status === 'active' || booking.status === 'pending' || booking.status === 'requested' || booking.status === 'in-progress') && (
+                                        <button
+                                            onClick={() => navigate(`/customer-dashboard/messages?workerId=${booking.seller?._id}`)}
+                                            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 font-bold rounded-xl hover:bg-blue-100 transition-colors"
+                                        >
+                                            <MessageSquare size={16} />
+                                            Message
+                                        </button>
+                                    )}
                                     {booking.status === 'completed' && !booking.isReviewed && (
                                         <button
                                             onClick={() => handleRateClick(booking)}

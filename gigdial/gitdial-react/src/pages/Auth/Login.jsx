@@ -101,7 +101,7 @@ const Login = () => {
 
                     <div className="mb-10 mt-6 lg:mt-0">
                         <Link to="/" className="inline-block mb-8 group">
-                            <img src="/images/gigdial-logo.png" alt="GigDial" className="h-12 w-auto group-hover:scale-105 transition-transform duration-300" />
+                            <img src="/images/gigdial-logo.png" alt="GigDial" className="h-20 w-auto group-hover:scale-105 transition-transform duration-300" />
                         </Link>
                         <h1 className="text-4xl md:text-5xl font-display font-bold text-slate-800 mb-4 tracking-tight">
                             Welcome Back

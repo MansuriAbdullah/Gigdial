@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Briefcase, MapPin, Clock, DollarSign, Phone, Mail, User, Eye, Lock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const WorkerLeads = () => {
     const [leads, setLeads] = useState([]);
@@ -9,6 +9,65 @@ const WorkerLeads = () => {
     const [filter, setFilter] = useState('All');
     const [activeTab, setActiveTab] = useState('jobs'); // 'jobs' | 'visitors'
     const [subscriptionRequired, setSubscriptionRequired] = useState(false);
+    const navigate = useNavigate();
+
+    // OTP Completion States
+    const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+    const [otp, setOtp] = useState('');
+    const [completingOrderId, setCompletingOrderId] = useState(null);
+
+    const handleCompleteOrder = async (orderId, skipConfirm = false) => {
+        if (!skipConfirm && !window.confirm("Are you sure you want to mark this job as completed? This will verify via OTP from customer.")) return;
+
+        try {
+            const res = await fetch(`/api/orders/${orderId}/otp`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${JSON.parse(localStorage.getItem('userInfo'))?.token}`
+                }
+            });
+            if (res.ok) {
+                setCompletingOrderId(orderId);
+                setIsOtpModalOpen(true);
+                alert('OTP sent to customer. Please ask them for the code.');
+            } else {
+                const error = await res.json();
+                alert(`Failed to initiate completion: ${error.message}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong');
+        }
+    };
+
+    const verifyOtpAndComplete = async () => {
+        if (!otp) return;
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        try {
+            const res = await fetch(`/api/orders/${completingOrderId}/complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userInfo?.token}`
+                },
+                body: JSON.stringify({ otp })
+            });
+
+            if (res.ok) {
+                alert('Order completed successfully!');
+                setIsOtpModalOpen(false);
+                setOtp('');
+                setCompletingOrderId(null);
+                fetchLeads(); // Refresh leads
+            } else {
+                const error = await res.json();
+                alert(error.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong');
+        }
+    };
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
@@ -182,7 +241,7 @@ const WorkerLeads = () => {
                                                     </span>
                                                 </div>
                                                 <p className="text-slate-600 text-sm mb-3">
-                                                    Customer: {lead.user?.name}
+                                                    Customer: {lead.buyer?.name}
                                                 </p>
                                             </div>
                                         </div>
@@ -190,7 +249,7 @@ const WorkerLeads = () => {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             <div className="flex items-center gap-2 text-slate-600">
                                                 <MapPin size={16} className="text-slate-400" />
-                                                <span className="text-sm font-medium">{lead.user?.city || 'Location not specified'}</span>
+                                                <span className="text-sm font-medium">{lead.buyer?.city || 'Location not specified'}</span>
                                             </div>
                                             <div className="flex items-center gap-2 text-slate-600">
                                                 <Clock size={16} className="text-slate-400" />
@@ -198,33 +257,40 @@ const WorkerLeads = () => {
                                             </div>
                                             <div className="flex items-center gap-2 text-green-600">
                                                 <DollarSign size={16} />
-                                                <span className="text-sm font-bold">₹{lead.totalAmount}</span>
+                                                <span className="text-sm font-bold">{lead.price > 0 ? `₹${lead.price}` : 'Price: Negotiable'}</span>
                                             </div>
                                         </div>
 
                                         <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
-                                            {lead.user?.phone && (
-                                                <a href={`tel:${lead.user.phone}`} className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
+                                            {lead.buyer?.phone && (
+                                                <a href={`tel:${lead.buyer.phone}`} className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
                                                     <Phone size={14} />
-                                                    {lead.user.phone}
+                                                    {lead.buyer.phone}
                                                 </a>
                                             )}
-                                            {lead.user?.email && (
-                                                <a href={`mailto:${lead.user.email}`} className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium">
+                                            {lead.buyer?.email && (
+                                                <a href={`mailto:${lead.buyer.email}`} className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium">
                                                     <Mail size={14} />
-                                                    {lead.user.email}
+                                                    {lead.buyer.email}
                                                 </a>
                                             )}
                                         </div>
                                     </div>
 
-                                    {lead.status === 'pending' && (
+                                    {(lead.status === 'pending' || lead.status === 'requested') && (
                                         <div className="flex lg:flex-col gap-2 lg:w-40">
+                                            <button
+                                                onClick={() => navigate('/worker-dashboard/messages', { state: { user: lead.buyer } })}
+                                                className="flex-1 lg:flex-none px-4 py-2.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-bold text-sm whitespace-nowrap flex items-center justify-center gap-2"
+                                            >
+                                                <Mail size={16} />
+                                                Message
+                                            </button>
                                             <button
                                                 onClick={() => updateStatus(lead._id, 'in-progress')}
                                                 className="flex-1 lg:flex-none px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-bold text-sm whitespace-nowrap"
                                             >
-                                                Accept
+                                                {lead.status === 'requested' ? 'Approve' : 'Accept'}
                                             </button>
                                             <button
                                                 onClick={() => updateStatus(lead._id, 'cancelled')}
@@ -237,7 +303,7 @@ const WorkerLeads = () => {
                                     {lead.status === 'in-progress' && (
                                         <div className="flex lg:flex-col gap-2 lg:w-40">
                                             <button
-                                                onClick={() => updateStatus(lead._id, 'completed')}
+                                                onClick={() => handleCompleteOrder(lead._id)}
                                                 className="flex-1 lg:flex-none px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold text-sm whitespace-nowrap"
                                             >
                                                 Mark Completed
@@ -317,6 +383,46 @@ const WorkerLeads = () => {
                         ))}
                     </div>
                 )
+            )}
+            {/* OTP Modal */}
+            {isOtpModalOpen && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+                        <h2 className="text-xl font-bold mb-4 text-slate-900">Complete Order</h2>
+                        <p className="text-slate-600 mb-6">An OTP has been sent to the customer. Please enter it below to complete the order.</p>
+                        <input
+                            type="text"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)}
+                            placeholder="000000"
+                            maxLength={6}
+                            className="w-full px-4 py-4 rounded-xl border border-slate-200 mb-2 text-center text-3xl font-bold tracking-[1em] focus:outline-none focus:ring-4 focus:ring-blue-500/20 text-slate-800 placeholder:text-slate-200"
+                        />
+                        <div className="text-center mb-6">
+                            <button
+                                onClick={() => handleCompleteOrder(completingOrderId, true)}
+                                className="text-blue-600 text-sm font-medium hover:underline"
+                            >
+                                Resend OTP
+                            </button>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setIsOtpModalOpen(false)}
+                                className="flex-1 py-3 rounded-xl font-bold text-slate-600 hover:bg-slate-50 border border-slate-200 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={verifyOtpAndComplete}
+                                className="flex-1 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/30"
+                                disabled={otp.length !== 6}
+                            >
+                                Verify & Complete
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

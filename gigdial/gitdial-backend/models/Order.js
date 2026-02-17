@@ -18,16 +18,17 @@ const orderSchema = mongoose.Schema({
     },
     title: { type: String, required: true },
     description: { type: String, required: true },
-    price: { type: Number, required: true },
-    deliveryTime: { type: Number, required: true },
+    price: { type: Number, required: false, default: 0 },
+    deliveryTime: { type: Number, required: false, default: 1 },
     status: {
         type: String,
-        enum: ['pending', 'active', 'completed', 'cancelled', 'in-progress'],
-        default: 'pending'
+        enum: ['pending', 'active', 'completed', 'cancelled', 'in-progress', 'requested', 'approved'],
+        default: 'requested'
     },
     paymentMethod: {
         type: String,
-        required: true,
+        required: false,
+        default: 'request'
     },
     paymentResult: {
         id: { type: String },

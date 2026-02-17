@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Send, MoreVertical, Phone, Video, Image as ImageIcon, Paperclip, Smile } from 'lucide-react';
 
+import { useLocation } from 'react-router-dom';
+
 const WorkerMessages = () => {
     const [activeChat, setActiveChat] = useState(null);
     const [messageInput, setMessageInput] = useState('');
     const [conversations, setConversations] = useState([]);
     const [messages, setMessages] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const location = useLocation();
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
+    // Initialize chat from navigation state if available
+    useEffect(() => {
+        if (location.state?.user) {
+            setActiveChat(location.state.user);
+            // Optionally, we could check if user is in conversations and add if not,
+            // but for now, just setting activeChat allows messaging.
+        }
+    }, [location.state]);
 
     // Fetch conversations/contacts
     useEffect(() => {
@@ -24,6 +36,9 @@ const WorkerMessages = () => {
                 });
                 const data = await res.json();
                 setConversations(data);
+
+                // If we have a user from state, ensure they are in the list or handle visual consistency
+                // For now, let's just leave it, as sending a message will likely refresh the list eventually.
             } catch (error) {
                 console.error(error);
             }

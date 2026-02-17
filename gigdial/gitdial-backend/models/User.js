@@ -115,6 +115,16 @@ const userSchema = mongoose.Schema({
             type: Boolean,
             default: false
         }
+    },
+    rating: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    numReviews: {
+        type: Number,
+        required: false,
+        default: 0
     }
 }, {
     timestamps: true,

@@ -20,27 +20,29 @@ const createOrder = async (req, res) => {
             notes
         } = req.body;
 
+        const status = paymentMethod === 'request' ? 'requested' : 'pending';
+
         const order = await Order.create({
             buyer: req.user._id,
             seller,
             gig,
             title,
             description,
-            price,
-            deliveryTime,
-            paymentMethod,
+            price: price || 0,
+            deliveryTime: deliveryTime || 1,
+            paymentMethod: paymentMethod || 'request',
             notes: notes || '',
-            status: 'pending'
+            status
         });
 
         // Create notification for seller
         await Notification.create({
             user: seller,
             type: 'order',
-            title: 'New Order Received',
-            message: `You have received a new order for ${title}`,
+            title: status === 'requested' ? 'New Service Request' : 'New Order Received',
+            message: status === 'requested' ? `You have received a new service request for ${title}` : `You have received a new order for ${title}`,
             relatedOrder: order._id,
-            link: `/worker-dashboard/orders/${order._id}`
+            link: status === 'requested' ? `/worker-dashboard/leads` : `/worker-dashboard/orders/${order._id}`
         });
 
         res.status(201).json(order);
@@ -98,6 +100,20 @@ const getSellerOrders = async (req, res) => {
     }
 };
 
+// @desc    Get all orders (admin)
+// @route   GET /api/orders
+// @access  Private/Admin
+const getOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({})
+            .populate('buyer', 'id name')
+            .populate('seller', 'id name');
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Update order status
 // @route   PUT /api/orders/:id/status
 // @access  Private
@@ -108,7 +124,7 @@ const updateOrderStatus = async (req, res) => {
         if (order) {
             order.status = req.body.status || order.status;
 
-            // If order is completed, update wallet
+            // If order is completed (via this route - maybe for admin override or simple flow)
             if (req.body.status === 'completed') {
                 const sellerWallet = await Wallet.findOne({ user: order.seller });
                 if (sellerWallet) {
@@ -144,6 +160,101 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+// @desc    Initiate order completion (Generate OTP)
+// @route   POST /api/orders/:id/initiate-completion
+// @access  Private (Worker only)
+const initiateOrderCompletion = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        // Check if user is seller
+        if (order.seller.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        order.completionOtp = otp;
+        order.completionOtpExpires = Date.now() + 10 * 60 * 1000; // 10 mins
+        await order.save();
+
+        // Notify Buyer
+        await Notification.create({
+            user: order.buyer,
+            type: 'order',
+            title: 'Order Completion Request',
+            message: `Worker wants to complete order "${order.title}". Share this OTP with them: ${otp}`,
+            relatedOrder: order._id,
+            link: `/customer-dashboard/orders/${order._id}` // Link to order detail where they might see OTP if needed, or just notification
+        });
+
+        res.json({ message: 'OTP generated and sent to customer' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Complete order with OTP
+// @route   POST /api/orders/:id/complete
+// @access  Private (Worker only)
+const completeOrder = async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        if (order.seller.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        // Allow admin override or specific master OTP if needed, but for now stick to OTP
+        if (order.completionOtp !== otp) {
+            return res.status(400).json({ message: 'Invalid OTP' });
+        }
+
+        if (order.completionOtpExpires < Date.now()) {
+            return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
+        }
+
+        order.status = 'completed';
+        order.completionOtp = undefined;
+        order.completionOtpExpires = undefined;
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+
+        // Wallet logic
+        const sellerWallet = await Wallet.findOne({ user: order.seller });
+        if (sellerWallet) {
+            sellerWallet.balance += (order.price || 0);
+            sellerWallet.transactions.push({
+                type: 'credit',
+                amount: (order.price || 0),
+                description: `Payment for order: ${order.title}`,
+                order: order._id,
+                status: 'completed'
+            });
+            await sellerWallet.save();
+        }
+
+        await order.save();
+
+        // Notify Buyer
+        await Notification.create({
+            user: order.buyer,
+            type: 'order',
+            title: 'Order Completed',
+            message: `Your order "${order.title}" has been completed`,
+            relatedOrder: order._id,
+            link: `/customer-dashboard/orders/${order._id}`
+        });
+
+        res.json(order);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Cancel order
 // @route   PUT /api/orders/:id/cancel
 // @access  Private
@@ -152,7 +263,7 @@ const cancelOrder = async (req, res) => {
         const order = await Order.findById(req.params.id);
 
         if (order) {
-            if (order.status === 'pending') {
+            if (order.status === 'pending' || order.status === 'requested') {
                 order.status = 'cancelled';
                 order.cancelledBy = req.user._id;
                 order.cancellationReason = req.body.reason;
@@ -197,180 +308,38 @@ const submitReview = async (req, res) => {
                 return res.status(400).json({ message: 'Can only review completed orders' });
             }
 
-            if (order.buyer.toString() !== req.user._id.toString()) {
-                return res.status(401).json({ message: 'Not authorized to review this order' });
+            if (order.isReviewed) {
+                return res.status(400).json({ message: 'You already reviewed this order' });
             }
 
-            // Create Review in Review Collection
-            await Review.create({
-                gig: order.gig,
-                order: order._id,
+            const reviewObj = {
                 reviewer: req.user._id,
                 worker: order.seller,
-                rating: rating,
-                comment: review
-            });
+                gig: order.gig,
+                rating: Number(rating),
+                comment: review,
+                order: order._id
+            };
 
-            // Update Worker's Average Rating
-            const worker = await User.findById(order.seller);
-            if (worker) {
-                const reviews = await Review.find({ worker: order.seller });
-                const avgRating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
+            const createdReview = await Review.create(reviewObj);
 
-                worker.rating = avgRating.toFixed(1);
-                worker.numReviews = reviews.length;
-                await worker.save();
-            }
-
-            // Update order
             order.isReviewed = true;
             order.rating = rating;
             order.review = review;
+
             await order.save();
 
-            // Create notification for worker
-            await Notification.create({
-                user: order.seller,
-                type: 'review',
-                title: 'New Review Received',
-                message: `You received a ${rating}-star review`,
-                relatedOrder: order._id,
-                link: `/worker-dashboard/reviews`
-            });
+            // Update seller rating
+            const seller = await User.findById(order.seller);
+            const reviews = await Review.find({ worker: order.seller });
+            seller.rating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
+            seller.numReviews = reviews.length;
+            await seller.save();
 
-            res.status(201).json({ message: 'Review submitted successfully' });
+            res.status(201).json({ message: 'Review added' });
         } else {
             res.status(404).json({ message: 'Order not found' });
         }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// @desc    Get all orders (Admin)
-// @route   GET /api/orders
-// @access  Private/Admin
-const getOrders = async (req, res) => {
-    try {
-        const orders = await Order.find({})
-            .populate('buyer', 'name email')
-            .populate('seller', 'name email')
-            .sort({ createdAt: -1 });
-        res.json(orders);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// @desc    Request Completion OTP
-// @route   POST /api/orders/:id/otp
-// @access  Private (Worker)
-const requestCompletionOtp = async (req, res) => {
-    try {
-        const order = await Order.findById(req.params.id);
-
-        if (!order) {
-            res.status(404);
-            throw new Error('Order not found');
-        }
-
-        // Only seller can request completion
-        if (order.seller.toString() !== req.user._id.toString()) {
-            res.status(401);
-            throw new Error('Not authorized');
-        }
-
-        // Generate 6 digit OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-        order.completionOtp = otp;
-        order.completionOtpExpires = otpExpires;
-        await order.save();
-
-        // Send OTP to buyer via Notification (Simulating SMS)
-        await Notification.create({
-            user: order.buyer,
-            type: 'system',
-            title: 'Provide OTP to Completing Service',
-            message: `The worker has requested to complete the service. Please share this OTP with them: ${otp}`,
-            relatedOrder: order._id
-        });
-
-        // In a real app, send SMS here using Twilio/SNS
-        // sendSms(buyer.phone, `Your OTP is ${otp}`);
-
-        res.json({
-            message: 'OTP sent to customer notification center',
-            testOtp: otp // Included for testing purposes since SMS is not active
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// @desc    Complete Order with OTP
-// @route   POST /api/orders/:id/complete
-// @access  Private (Worker)
-const completeOrderWithOtp = async (req, res) => {
-    try {
-        const { otp } = req.body;
-        const order = await Order.findById(req.params.id);
-
-        if (!order) {
-            res.status(404);
-            throw new Error('Order not found');
-        }
-
-        if (order.seller.toString() !== req.user._id.toString()) {
-            res.status(401);
-            throw new Error('Not authorized');
-        }
-
-        if (order.completionOtp !== otp) {
-            res.status(400);
-            throw new Error('Invalid OTP');
-        }
-
-        if (order.completionOtpExpires < Date.now()) {
-            res.status(400);
-            throw new Error('OTP has expired');
-        }
-
-        // Mark as completed
-        order.status = 'completed';
-        order.isDelivered = true;
-        order.deliveredAt = Date.now();
-        order.completionOtp = undefined;
-        order.completionOtpExpires = undefined;
-
-        // Update Wallet
-        const sellerWallet = await Wallet.findOne({ user: order.seller });
-        if (sellerWallet) {
-            sellerWallet.balance += order.price;
-            sellerWallet.transactions.push({
-                type: 'credit',
-                amount: order.price,
-                description: `Payment for order: ${order.title}`,
-                order: order._id,
-                status: 'completed'
-            });
-            await sellerWallet.save();
-        }
-
-        // Notify Buyer
-        await Notification.create({
-            user: order.buyer,
-            type: 'order',
-            title: 'Order Completed',
-            message: `Your order "${order.title}" has been successfully completed by the worker. Please rate your experience!`,
-            relatedOrder: order._id,
-            link: `/customer-dashboard/orders/${order._id}`
-        });
-
-        const updatedOrder = await order.save();
-        res.json(updatedOrder);
-
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -381,10 +350,10 @@ export {
     getOrderById,
     getMyOrders,
     getSellerOrders,
+    getOrders,
     updateOrderStatus,
     cancelOrder,
     submitReview,
-    getOrders,
-    requestCompletionOtp,
-    completeOrderWithOtp
+    initiateOrderCompletion,
+    completeOrder
 };

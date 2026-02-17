@@ -20,12 +20,15 @@ const updateAdmin = async () => {
 
         if (admin) {
             console.log(`Found admin user: ${admin.email}`);
-            admin.email = 'newadmin@example.com';
-            admin.password = 'newpassword123'; // Pre-save hook will hash this
+            admin.email = 'admin@gigdial.com';
+            admin.password = 'admin123'; // Pre-save hook will hash this
+            admin.isAdmin = true;
+            admin.role = 'admin';
+            admin.isProvider = false;
             await admin.save();
             console.log('Admin credentials updated successfully.');
-            console.log('Email: newadmin@example.com');
-            console.log('Password: newpassword123');
+            console.log('Email: admin@gigdial.com');
+            console.log('Password: admin123');
         } else {
             console.log('No admin user found. Creating one...');
             await User.create({

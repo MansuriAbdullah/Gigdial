@@ -128,7 +128,7 @@ const BrowseServices = () => {
             return;
         }
 
-        if (window.confirm(`Confirm booking for ${service.title} at ₹${service.price}?`)) {
+        if (window.confirm(`Confirm service request for ${service.title}?`)) {
             try {
                 const res = await fetch('/api/orders', {
                     method: 'POST',
@@ -141,17 +141,17 @@ const BrowseServices = () => {
                         seller: service.user._id,
                         title: service.title,
                         description: service.description,
-                        price: service.price,
+                        price: 0,
                         deliveryTime: service.deliveryTime,
-                        paymentMethod: 'wallet'
+                        paymentMethod: 'request'
                     })
                 });
 
                 if (res.ok) {
-                    alert('Service booked successfully! Check your orders.');
+                    alert('Service request sent successfully! Wait for worker approval.');
                 } else {
                     const error = await res.json();
-                    alert(`Booking failed: ${error.message}`);
+                    alert(`Request failed: ${error.message}`);
                 }
             } catch (err) {
                 console.error(err);
@@ -287,15 +287,11 @@ const BrowseServices = () => {
 
                                 {/* Price and CTA */}
                                 <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                                    <div>
-                                        <p className="text-xs text-slate-500">Starting from</p>
-                                        <p className="text-xl font-bold text-slate-900">₹{service.price}</p>
-                                    </div>
                                     <button
                                         onClick={(e) => handleBookService(e, service)}
-                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors group-hover:gap-3"
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors group-hover:gap-3 w-full justify-center"
                                     >
-                                        Book Now
+                                        Request Service
                                         <ChevronRight size={16} />
                                     </button>
                                 </div>
