@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Briefcase, Filter, ChevronDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getFullImagePath } from '../utils/imagePath';
 
 const BrowseWorkers = () => {
@@ -9,17 +9,25 @@ const BrowseWorkers = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const categories = ['All', 'Plumbing', 'Electrical', 'Cleaning', 'Painting', 'Carpentry', 'Driver'];
+    const categories = ['All', 'Driver', 'Plumber', 'Electrician', 'House Help', 'Tutor', 'Fitness', 'Elder Care', 'IT Support', 'Cleaning', 'Beauty', 'Painting', 'Carpentry', 'Repair', 'Creative', 'Appliance Repair'];
 
     useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const categoryQuery = queryParams.get('category');
+        if (categoryQuery && categories.includes(categoryQuery)) {
+            setSelectedCategory(categoryQuery);
+        } else if (!categoryQuery) {
+            setSelectedCategory('All');
+        }
         fetchApprovedWorkers();
-    }, []);
+    }, [location.search]);
 
     const fetchApprovedWorkers = async () => {
         setLoading(true);
         try {
-            const response = await fetch('/api/users/workers/approved');
+            const response = await fetch('/api/users/workers');
             const data = await response.json();
             setWorkers(data);
         } catch (error) {
@@ -32,7 +40,12 @@ const BrowseWorkers = () => {
     const filteredWorkers = workers.filter(worker => {
         const matchesSearch = worker.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             worker.skills?.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
-        const matchesCategory = selectedCategory === 'All' || worker.skills?.includes(selectedCategory);
+
+        const cat = selectedCategory.toLowerCase();
+        const matchesCategory = selectedCategory === 'All' ||
+            (worker.category && worker.category.toLowerCase().includes(cat)) ||
+            worker.skills?.some(skill => skill.toLowerCase().includes(cat));
+
         return matchesSearch && matchesCategory;
     });
 
@@ -107,6 +120,11 @@ const BrowseWorkers = () => {
                                         <img
                                             src={getFullImagePath(worker.profileImage)}
                                             alt={worker.name}
+                                            referrerPolicy="no-referrer"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=random&color=fff`;
+                                            }}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                         />
                                     ) : (

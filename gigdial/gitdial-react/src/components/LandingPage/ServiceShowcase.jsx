@@ -76,24 +76,18 @@ const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, 
         </div>
       </div>
 
-      {/* Price and CTA */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-        <div>
-          <div className="text-xs text-slate-500">Starting from</div>
-          <div className="text-xl font-bold text-slate-900">
-            ₹{price}
-            <span className="text-sm text-slate-500 font-normal ml-1">/session</span>
-          </div>
-        </div>
+      {/* CTA */}
+      <div className="pt-4 border-t border-slate-100">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={(e) => {
             e.stopPropagation();
             onBook({ title, workerId, image });
           }}
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg"
+          className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
         >
+          <Zap className="w-4 h-4" />
           Book Now
         </motion.button>
       </div>
@@ -104,7 +98,7 @@ const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, 
   </motion.div>
 );
 
-const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', onBook }) => {
+const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', onBook, onExplore, category }) => {
   const scrollContainer = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -151,8 +145,8 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', on
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-slate-900">{title}</h2>
         </div>
-        <motion.a
-          href="#"
+        <motion.button
+          onClick={() => onExplore(category)}
           whileHover={{ x: 5 }}
           className="flex items-center text-sm text-blue-600 hover:text-blue-700 font-semibold transition-colors group"
         >
@@ -160,7 +154,7 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', on
           <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
             <ArrowRight className="w-4 h-4" />
           </div>
-        </motion.a>
+        </motion.button>
       </div>
 
       {/* Scroll arrows */}
@@ -246,11 +240,11 @@ const ServiceShowcase = () => {
 
         // Categorize services
         const categories = {
-          digitalServices: ['Tech', 'Development', 'Design', 'Media', 'Marketing', 'Writing'],
+          digitalServices: ['Tech', 'Development', 'Design', 'Media', 'Marketing', 'Writing', 'Technical', 'Support', 'IT Support'],
           wellnessServices: ['Fitness', 'Health', 'Wellness', 'Yoga', 'Mindfulness'],
-          homeServices: ['Cleaning', 'Repair', 'Electric', 'Plumbing', 'Home', 'Maintenance'],
+          homeServices: ['Cleaning', 'Repair', 'Electric', 'Plumbing', 'Home', 'Maintenance', 'Plumber', 'House Help'],
           tutoringServices: ['Education', 'Tutor', 'Language', 'Academics'],
-          creativeServices: ['Art', 'Events', 'Photography', 'Music', 'Creative'],
+          creativeServices: ['Art', 'Events', 'Photography', 'Music', 'Creative', 'Driver', 'Chauffeur'],
           beautyServices: ['Beauty', 'Salon', 'Makeup', 'Bridal', 'Nails', 'Spa']
         };
 
@@ -305,6 +299,10 @@ const ServiceShowcase = () => {
   const handleBookClick = (service) => {
     setSelectedService(service);
     setModalOpen(true);
+  };
+
+  const handleExplore = (category) => {
+    navigate(`/workers?category=${encodeURIComponent(category)}`);
   };
 
   const handleSubmitContact = (e) => {
@@ -365,6 +363,8 @@ const ServiceShowcase = () => {
             icon={Zap}
             color="blue"
             onBook={handleBookClick}
+            onExplore={handleExplore}
+            category="IT Support"
           />
           <ServiceRow
             title="Wellness & Fitness"
@@ -372,6 +372,8 @@ const ServiceShowcase = () => {
             icon={Heart}
             color="red"
             onBook={handleBookClick}
+            onExplore={handleExplore}
+            category="Fitness"
           />
           <ServiceRow
             title="Home Services"
@@ -379,6 +381,8 @@ const ServiceShowcase = () => {
             icon={Sparkles}
             color="green"
             onBook={handleBookClick}
+            onExplore={handleExplore}
+            category="House Help"
           />
           <ServiceRow
             title="Tutoring & Education"
@@ -386,6 +390,8 @@ const ServiceShowcase = () => {
             icon={Award}
             color="purple"
             onBook={handleBookClick}
+            onExplore={handleExplore}
+            category="Tutor"
           />
           <ServiceRow
             title="Events & Creative Services"
@@ -393,6 +399,8 @@ const ServiceShowcase = () => {
             icon={TrendingUp}
             color="orange"
             onBook={handleBookClick}
+            onExplore={handleExplore}
+            category="Creative"
           />
           <ServiceRow
             title="Beauty & Personal Care"
@@ -400,6 +408,8 @@ const ServiceShowcase = () => {
             icon={Star}
             color="lime"
             onBook={handleBookClick}
+            onExplore={handleExplore}
+            category="Beauty"
           />
         </div>
 

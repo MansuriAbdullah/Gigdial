@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Car, Wrench, Zap, Home, GraduationCap, Dumbbell, Heart, Laptop, ChevronRight, Sparkles, Star, Users, Clock } from 'lucide-react';
 
@@ -114,7 +115,12 @@ const cardVariants = {
 
 const Categories = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/workers?category=${encodeURIComponent(categoryName)}`);
+  };
 
   return (
     <section className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
@@ -169,7 +175,8 @@ const Categories = () => {
               whileHover="hover"
               onMouseEnter={() => setHoveredIndex(idx)}
               onMouseLeave={() => setHoveredIndex(null)}
-              className="relative group"
+              onClick={() => handleCategoryClick(cat.name)}
+              className="relative group cursor-pointer"
             >
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-lime-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -218,7 +225,13 @@ const Categories = () => {
                   </div>
                 </div>
 
-                <button className="w-full py-2.5 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCategoryClick(cat.name);
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                >
                   {t('viewWorkers')} <ChevronRight size={16} />
                 </button>
 
@@ -242,7 +255,9 @@ const Categories = () => {
               <h3 className="text-2xl font-bold text-slate-800 mb-2">Can't find what you need?</h3>
               <p className="text-slate-600">We have 50+ more categories waiting for you</p>
             </div>
-            <button className="group relative px-8 py-3 bg-gradient-to-r from-blue-600 to-lime-600 text-white font-semibold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-500/30">
+            <button
+              onClick={() => navigate('/workers')}
+              className="group relative px-8 py-3 bg-gradient-to-r from-blue-600 to-lime-600 text-white font-semibold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-500/30">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-lime-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <span className="relative flex items-center gap-2">
                 Explore All Categories

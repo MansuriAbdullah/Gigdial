@@ -173,8 +173,7 @@ const updateUserProfile = async (req, res) => {
 const getWorkers = async (req, res) => {
     try {
         const workers = await User.find({
-            role: 'worker',
-            isApproved: true
+            role: 'worker'
         }).select('-password');
         res.json(workers);
     } catch (error) {
@@ -729,8 +728,8 @@ const toggleFavorite = async (req, res) => {
 // @route   GET /api/users/worker-categories
 // @access  Public
 const getWorkerCategories = async (req, res) => {
-    // Stub: return common categories
-    res.json(['Cleaning', 'Plumbing', 'Electrical', 'Carpentry', 'Painting', 'Appliance Repair']);
+    // Return all categories including those from landing page
+    res.json(['Driver', 'Plumber', 'Electrician', 'House Help', 'Tutor', 'Fitness', 'Elder Care', 'IT Support', 'Cleaning', 'Electrical', 'Carpentry', 'Painting', 'Appliance Repair']);
 };
 
 export {

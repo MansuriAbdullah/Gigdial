@@ -153,7 +153,7 @@ const Hero = () => {
                                 <span className="relative z-10">Service खोजें</span>
                             </Link>
 
-                            <Link to="/register" className="group px-8 py-4 bg-white/80 backdrop-blur-sm hover:bg-white rounded-full text-slate-800 font-bold border border-slate-200 shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center w-full sm:w-auto text-lg gap-2 relative overflow-hidden">
+                            <Link to="/login" className="group px-8 py-4 bg-white/80 backdrop-blur-sm hover:bg-white rounded-full text-slate-800 font-bold border border-slate-200 shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center w-full sm:w-auto text-lg gap-2 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-tr from-emerald-50 to-teal-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 <Briefcase className="w-5 h-5 text-slate-600 group-hover:text-emerald-600 transition-colors relative z-10" />
                                 <span className="relative z-10 group-hover:text-emerald-700 transition-colors">Worker बनें</span>

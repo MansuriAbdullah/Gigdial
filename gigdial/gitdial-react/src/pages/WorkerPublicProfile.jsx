@@ -282,6 +282,11 @@ const WorkerPublicProfile = () => {
                                 <img
                                     src={getFullImagePath(worker.profileImage)}
                                     alt={worker.name}
+                                    referrerPolicy="no-referrer"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=random&color=fff`;
+                                    }}
                                     className="w-full h-full object-cover"
                                 />
                             ) : (

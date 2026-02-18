@@ -34,14 +34,9 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
                     {/* Brand Section */}
                     <div className="lg:col-span-4 space-y-6">
-                        <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20">
-                                G
-                            </div>
-                            <span className="text-2xl font-bold bg-gradient-to-r from-blue-100 via-white to-blue-100 bg-clip-text text-transparent">
-                                GigDial
-                            </span>
-                        </div>
+                        <Link to="/" className="flex items-center">
+                            <img src="/images/gigdial-logo.png" alt="GigDial Logo" className="h-12 md:h-14 w-auto object-contain" />
+                        </Link>
                         <p className="text-slate-300 text-sm leading-relaxed max-w-sm font-medium">
                             India's leading commission-free marketplace. Empowering connections between verified gig workers and customers with trust and transparency.
                         </p>

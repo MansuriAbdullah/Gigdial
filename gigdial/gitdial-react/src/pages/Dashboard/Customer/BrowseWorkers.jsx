@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Star, MapPin, TrendingUp, Heart, ChevronRight, Briefcase, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getFullImagePath } from '../../../utils/imagePath';
 
 const BrowseWorkers = () => {
     const [workers, setWorkers] = useState([]);
@@ -11,16 +12,22 @@ const BrowseWorkers = () => {
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
     useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const categoryQuery = queryParams.get('category');
+        if (categoryQuery) {
+            setSelectedCategory(categoryQuery);
+        }
         fetchWorkers();
         fetchCategories();
         if (userInfo) {
             fetchFavorites();
         }
-    }, []);
+    }, [location.search]);
 
     const fetchFavorites = async () => {
         try {
@@ -105,7 +112,9 @@ const BrowseWorkers = () => {
     };
 
     const filteredWorkers = Array.isArray(workers) ? workers.filter(worker => {
-        const matchesCategory = selectedCategory === 'all' || worker.skills?.includes(selectedCategory);
+        const matchesCategory = selectedCategory === 'all' ||
+            worker.category === selectedCategory ||
+            worker.skills?.includes(selectedCategory);
         const matchesSearch = worker.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             worker.skills?.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
             worker.bio?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -184,7 +193,7 @@ const BrowseWorkers = () => {
                             <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
                                 {worker.profileImage ? (
                                     <img
-                                        src={`http://localhost:5000/${worker.profileImage.replace(/\\/g, '/')}`}
+                                        src={getFullImagePath(worker.profileImage)}
                                         alt={worker.name}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                     />

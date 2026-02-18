@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,9 +45,9 @@ const Navbar = () => {
                     <nav className="hidden md:flex items-center space-x-4">
                         <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Find Gigs</a>
                         <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Post a Job</a>
-                        <a href="#" className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-sm font-medium text-slate-900 border border-slate-200 transition-all hover:border-blue-300">
+                        <Link to="/login" className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-sm font-medium text-slate-900 border border-slate-200 transition-all hover:border-blue-300">
                             Join as Worker
-                        </a>
+                        </Link>
                     </nav>
 
                     {/* Mobile Menu Button */}
@@ -79,7 +80,7 @@ const Navbar = () => {
 
                     <a href="#" className="block text-slate-300 hover:text-white py-2">Find Gigs</a>
                     <a href="#" className="block text-slate-300 hover:text-white py-2">Post a Job</a>
-                    <a href="#" className="block w-full text-center bg-blue-600 text-white py-2 rounded-lg mt-4">Join as Worker</a>
+                    <Link to="/login" className="block w-full text-center bg-blue-600 text-white py-2 rounded-lg mt-4">Join as Worker</Link>
                 </div>
             )}
         </header>
