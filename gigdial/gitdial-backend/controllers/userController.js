@@ -67,9 +67,15 @@ const registerUser = async (req, res) => {
             serviceDescription: role === 'worker' ? serviceDescription : undefined,
             role: role || 'customer',
             isProvider: role === 'worker',
-            profileImage: req.files?.profileImage?.[0]?.path?.replace(/\\/g, '/'),
-            aadhaarCard: req.files?.aadhaarCard?.[0]?.path?.replace(/\\/g, '/'),
-            panCard: req.files?.panCard?.[0]?.path?.replace(/\\/g, '/')
+            profileImage: req.files?.profileImage?.[0]
+                ? `data:${req.files.profileImage[0].mimetype};base64,${req.files.profileImage[0].buffer.toString('base64')}`
+                : undefined,
+            aadhaarCard: req.files?.aadhaarCard?.[0]
+                ? `data:${req.files.aadhaarCard[0].mimetype};base64,${req.files.aadhaarCard[0].buffer.toString('base64')}`
+                : undefined,
+            panCard: req.files?.panCard?.[0]
+                ? `data:${req.files.panCard[0].mimetype};base64,${req.files.panCard[0].buffer.toString('base64')}`
+                : undefined
         });
 
         if (user) {
@@ -140,7 +146,7 @@ const updateUserProfile = async (req, res) => {
         user.profileImage = req.body.profileImage || user.profileImage;
 
         if (req.file) {
-            user.profileImage = req.file.path.replace(/\\/g, '/');
+            user.profileImage = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
         }
 
         if (req.body.password) {

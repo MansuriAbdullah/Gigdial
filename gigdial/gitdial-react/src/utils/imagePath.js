@@ -1,7 +1,7 @@
 export const getFullImagePath = (path) => {
     if (!path) return '';
     if (typeof path !== 'string') return '';
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('http') || path.startsWith('data:')) return path;
 
     // Remove leading slash or localhost if any (for cleanup of old data)
     let cleanPath = path;
