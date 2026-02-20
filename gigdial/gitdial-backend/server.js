@@ -2,33 +2,11 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import connectDB from './config/db.js';
-
-dotenv.config();
-
-const port = process.env.PORT || 5000;
-
-connectDB();
-
-const app = express();
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
 import path from 'path';
 import { fileURLToPath } from 'url';
+import connectDB from './config/db.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// CORS configuration (adjust origin as needed)
-app.use(cors({
-    origin: true, // Allow all origins in production, or set to your Vercel URL
-    credentials: true
-}));
-
+// Import Routes
 import userRoutes from './routes/userRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
@@ -40,6 +18,27 @@ import withdrawalRoutes from './routes/withdrawalRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+// Connect to Database
+connectDB();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// CORS configuration
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 
 // Routes
 app.get('/api/test', (req, res) => res.json({ message: 'Backend is alive' }));
@@ -62,24 +61,26 @@ app.get('/', (req, res) => {
 
 // Uncaught exceptions logging
 process.on('uncaughtException', (err) => {
-    console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-    console.error(err.name, err.message);
+    console.error('UNCAUGHT EXCEPTION! 💥');
+    console.error(err);
 });
 
 // Static folder for uploads
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
-// Error handling middleware (basic)
+// Error handling middleware
 app.use((err, req, res, next) => {
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-    res.status(statusCode);
-    res.json({
+    res.status(statusCode).json({
         message: err.message,
         stack: process.env.NODE_ENV === 'production' ? null : err.stack,
     });
 });
 
-if (process.env.NODE_ENV !== 'production') {
+const port = process.env.PORT || 5000;
+
+// Only listen if not on Vercel
+if (!process.env.VERCEL) {
     app.listen(port, () => console.log(`Server running on port ${port}`));
 }
 
