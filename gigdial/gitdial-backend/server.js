@@ -27,7 +27,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Connect to Database
-connectDB();
+connectDB().catch(err => {
+    console.error('Failed to connect to MongoDB:', err.message);
+});
 
 // Middleware
 app.use(express.json());
@@ -62,6 +64,11 @@ app.get('/', (req, res) => {
 // Uncaught exceptions logging
 process.on('uncaughtException', (err) => {
     console.error('UNCAUGHT EXCEPTION! 💥');
+    console.error(err);
+});
+
+process.on('unhandledRejection', (err) => {
+    console.error('UNHANDLED REJECTION! 💥');
     console.error(err);
 });
 
