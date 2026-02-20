@@ -11,7 +11,7 @@ const connectDB = async () => {
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
         console.error(`MongoDB Connection Error: ${error.message}`);
-        // Don't exit process in serverless environments
+        // Do NOT call process.exit(1) on Vercel
     }
 };
 

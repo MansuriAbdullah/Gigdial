@@ -36,15 +36,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CORS configuration
+// CORS configuration (Allow all in prod for now to debug)
 app.use(cors({
     origin: true,
     credentials: true
 }));
 
-// Routes
+// Health Check
 app.get('/api/test', (req, res) => res.json({ message: 'Backend is alive' }));
 
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/orders', orderRoutes);

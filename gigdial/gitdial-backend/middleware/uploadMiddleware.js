@@ -1,8 +1,7 @@
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 
-// Configure memory storage (ideal for serverless like Vercel)
+// Configure memory storage (Vercel has no writeable disk space)
 const storage = multer.memoryStorage();
 
 function checkFileType(file, cb) {
