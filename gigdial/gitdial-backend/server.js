@@ -23,14 +23,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ... existing imports ...
-
 // CORS configuration (adjust origin as needed)
 app.use(cors({
-    origin: 'http://localhost:5173', // Vite default port
+    origin: true, // Allow all origins in production, or set to your Vercel URL
     credentials: true
 }));
-
 
 import userRoutes from './routes/userRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';
@@ -74,4 +71,8 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+}
+
+export default app;
