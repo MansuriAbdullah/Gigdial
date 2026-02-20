@@ -42,6 +42,8 @@ import subscriptionRoutes from './routes/subscriptionRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
 
 // Routes
+app.get('/api/test', (req, res) => res.json({ message: 'Backend is alive' }));
+
 app.use('/api/users', userRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/orders', orderRoutes);
@@ -56,6 +58,12 @@ app.use('/api/leads', leadRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');
+});
+
+// Uncaught exceptions logging
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+    console.error(err.name, err.message);
 });
 
 // Static folder for uploads
