@@ -51,12 +51,12 @@ const CustomerHome = () => {
     const QuickAction = ({ icon: Icon, label, color, onClick }) => (
         <button
             onClick={onClick}
-            className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group"
+            className="flex flex-col items-center justify-center p-3 sm:p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group w-full"
         >
-            <div className={`p-3 rounded-xl mb-3 ${color} bg-opacity-10 group-hover:bg-opacity-20 transition-colors`}>
-                <Icon size={24} className={color.replace('bg-', 'text-')} />
+            <div className={`p-2.5 sm:p-3 rounded-xl mb-2 sm:mb-3 ${color} bg-opacity-10 group-hover:bg-opacity-20 transition-colors`}>
+                <Icon size={20} className={color.replace('bg-', 'text-')} />
             </div>
-            <span className="font-bold text-slate-700 text-sm text-center">{label}</span>
+            <span className="font-bold text-slate-700 text-[10px] sm:text-xs md:text-sm text-center line-clamp-1">{label}</span>
         </button>
     );
 
@@ -85,27 +85,27 @@ const CustomerHome = () => {
 
         return (
             <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 shadow-sm mb-4 transition-all hover:shadow-md">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="flex gap-4 flex-1">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-xl font-bold text-blue-600">
+                <div className="flex justify-between items-start gap-3 mb-4">
+                    <div className="flex gap-3 sm:gap-4 flex-1 min-w-0">
+                        <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-sm sm:text-xl font-bold text-blue-600 shrink-0">
                             {booking.seller?.name?.charAt(0) || 'W'}
                         </div>
-                        <div className="flex-1">
-                            <h4 className="font-bold text-slate-900 text-lg">{booking.title || booking.gig?.title}</h4>
-                            <p className="text-slate-500 text-sm font-medium">{booking.seller?.name || 'Worker'}</p>
-                            <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
-                                <span className="flex items-center gap-1">
-                                    <Calendar size={12} />
+                        <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-slate-900 text-sm sm:text-lg truncate">{booking.title || booking.gig?.title}</h4>
+                            <p className="text-slate-500 text-[10px] sm:text-sm font-medium truncate">{booking.seller?.name || 'Worker'}</p>
+                            <div className="flex flex-wrap items-center gap-2 mt-1 text-[10px] sm:text-xs text-slate-400">
+                                <span className="flex items-center gap-1 whitespace-nowrap">
+                                    <Calendar size={10} />
                                     {new Date(booking.date).toLocaleDateString()}
                                 </span>
-                                <span className="flex items-center gap-1">
-                                    <Clock size={12} />
+                                <span className="flex items-center gap-1 whitespace-nowrap">
+                                    <Clock size={10} />
                                     {booking.time}
                                 </span>
                             </div>
                         </div>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${booking.status === 'active' ? 'bg-blue-50 text-blue-600' :
+                    <span className={`px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold capitalize shrink-0 ${booking.status === 'active' ? 'bg-blue-50 text-blue-600' :
                         booking.status === 'completed' ? 'bg-green-50 text-green-600' :
                             'bg-red-50 text-red-600'
                         }`}>
@@ -202,37 +202,37 @@ const CustomerHome = () => {
 
     return (
         <div className="max-w-6xl mx-auto space-y-6 lg:space-y-8 pb-32">
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Quick Actions Grid */}
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
                 <QuickAction
                     icon={Plus}
-                    label="New Booking"
-                    color="text-blue-600 bg-blue-600"
+                    label="Booking"
+                    color="bg-blue-600"
                     onClick={() => navigate('/customer-dashboard/browse-services')}
                 />
                 <QuickAction
                     icon={Heart}
-                    label="My Favourites"
-                    color="text-pink-500 bg-pink-500"
+                    label="Favourites"
+                    color="bg-pink-500"
                     onClick={() => navigate('/customer-dashboard/favourites')}
                 />
                 <QuickAction
                     icon={Clock}
-                    label="Active Bookings"
-                    color="text-orange-500 bg-orange-500"
+                    label="Active"
+                    color="bg-orange-500"
                     onClick={() => setFilter('active')}
+                />
+                <QuickAction
+                    icon={User}
+                    label="Profile"
+                    color="bg-indigo-600"
+                    onClick={() => navigate('/customer-dashboard/profile')}
                 />
                 <QuickAction
                     icon={Headphones}
                     label="Support"
-                    color="text-green-600 bg-green-600"
+                    color="bg-green-600"
                     onClick={() => navigate('/contact')}
-                />
-                <QuickAction
-                    icon={User}
-                    label="My Profile"
-                    color="text-indigo-600 bg-indigo-600"
-                    onClick={() => navigate('/customer-dashboard/profile')}
                 />
             </div>
 
@@ -250,12 +250,12 @@ const CustomerHome = () => {
                     </div>
 
                     {/* Filter Tabs */}
-                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                    <div className="flex gap-2 overflow-x-auto pb-4 px-1 no-scrollbar -mx-1 mask-fade-right">
                         {['active', 'completed', 'cancelled', 'upcoming'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setFilter(tab)}
-                                className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all ${filter === tab
+                                className={`px-5 py-2 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap transition-all ${filter === tab
                                     ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
                                     : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
                                     }`}

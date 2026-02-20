@@ -92,9 +92,9 @@ const AppShowcase = () => {
                     </p>
                 </motion.div>
 
-                <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                <div className="grid lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
                     {/* Left Side - Feature Grid */}
-                    <div className="grid sm:grid-cols-2 gap-5 relative z-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 relative z-10 order-2 lg:order-1">
                         {features.map((feature, index) => (
                             <motion.div
                                 key={feature.id}
@@ -102,9 +102,9 @@ const AppShowcase = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
                                 onClick={() => setActiveFeature(feature.id)}
-                                className={`group p-6 rounded-3xl cursor-pointer border transition-all duration-300 relative overflow-hidden ${activeFeature === feature.id
-                                        ? 'bg-white border-blue-200 shadow-2xl shadow-blue-900/10 scale-105 z-20'
-                                        : 'bg-white/60 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:bg-white'
+                                className={`group p-5 sm:p-6 rounded-2xl sm:rounded-3xl cursor-pointer border transition-all duration-300 relative overflow-hidden ${activeFeature === feature.id
+                                    ? 'bg-white border-blue-200 shadow-xl shadow-blue-900/5 scale-102 sm:scale-105 z-20'
+                                    : 'bg-white/60 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:bg-white'
                                     }`}
                             >
                                 {/* Active Indicator Line */}
@@ -112,31 +112,35 @@ const AppShowcase = () => {
                                     <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${feature.gradient}`}></div>
                                 )}
 
-                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-colors duration-300 ${activeFeature === feature.id
+                                <div className="flex items-center sm:block gap-4">
+                                    <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-colors duration-300 shrink-0 ${activeFeature === feature.id
                                         ? `bg-gradient-to-br ${feature.gradient} text-white shadow-lg`
                                         : 'bg-slate-100 text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600'
-                                    }`}>
-                                    <feature.icon size={26} strokeWidth={2} />
+                                        }`}>
+                                        <feature.icon className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className={`text-base sm:text-xl font-bold mb-1 sm:mb-2 transition-colors ${activeFeature === feature.id ? 'text-slate-900' : 'text-slate-700'
+                                            }`}>
+                                            {feature.title}
+                                        </h3>
+                                        <p className="text-slate-500 text-[10px] sm:text-sm leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">
+                                            {feature.description}
+                                        </p>
+                                    </div>
                                 </div>
-                                <h3 className={`text-xl font-bold mb-2 transition-colors ${activeFeature === feature.id ? 'text-slate-900' : 'text-slate-700'
-                                    }`}>
-                                    {feature.title}
-                                </h3>
-                                <p className="text-slate-500 text-sm leading-relaxed font-medium">
-                                    {feature.description}
-                                </p>
                             </motion.div>
                         ))}
                     </div>
 
                     {/* Right Side - Phone Mockup (Sticky/Interactive) */}
-                    <div className="relative flex justify-center lg:h-[800px] items-start pt-10">
+                    <div className="relative flex justify-center lg:h-[800px] items-start pt-0 lg:pt-10 order-1 lg:order-2">
                         {/* Abstract Background Blobs behind Phone */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-blue-200/20 to-emerald-200/20 blur-3xl -z-10 animate-pulse"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full bg-gradient-to-tr from-blue-200/20 to-emerald-200/20 blur-3xl -z-10 animate-pulse"></div>
 
-                        <div className="sticky top-24 transform perspective-1000">
+                        <div className="lg:sticky lg:top-24 transform perspective-1000 scale-90 sm:scale-100 transition-transform">
                             <motion.div
-                                className="relative w-[340px] h-[680px] bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl shadow-blue-900/30 border-8 border-slate-800 ring-1 ring-white/20"
+                                className="relative w-[280px] h-[560px] sm:w-[340px] sm:h-[680px] bg-slate-900 rounded-[3rem] sm:rounded-[3.5rem] p-2 sm:p-3 shadow-2xl shadow-blue-900/30 border-8 border-slate-800 ring-1 ring-white/20"
                                 initial={{ rotateY: -10, rotateX: 5 }}
                                 whileInView={{ rotateY: -5, rotateX: 0 }}
                                 transition={{ type: "spring", stiffness: 40, damping: 20 }}

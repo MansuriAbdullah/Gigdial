@@ -197,13 +197,13 @@ const Register = () => {
                 <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-secondary/10 blur-[100px] rounded-full mix-blend-multiply animate-float" style={{ animationDelay: '2s' }}></div>
             </div>
 
-            <div className="container max-w-7xl mx-auto relative z-10">
-                <div className="text-center mb-10">
-                    <Link to="/" className="inline-block mb-8 group">
-                        <img src="/images/gigdial-logo.png" alt="GigDial" className="h-12 w-auto mx-auto group-hover:scale-105 transition-transform duration-300" />
+            <div className="container max-w-7xl mx-auto relative z-10 px-0 sm:px-4">
+                <div className="text-center mb-6 lg:mb-10 px-4">
+                    <Link to="/" className="inline-block mb-4 sm:mb-8 group focus:outline-none active:bg-transparent">
+                        <img src="/images/login-logo.png" alt="GigDial" className="h-8 sm:h-12 w-auto mx-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
                     </Link>
-                    <h1 className="text-4xl md:text-5xl font-display font-bold text-slate-800 mb-4">Join as a Professional</h1>
-                    <p className="text-slate-500 text-lg max-w-2xl mx-auto">Start calling your own shots. Earn more with 0% commission and get paid instantly.</p>
+                    <h1 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-slate-800 mb-3 md:mb-4">Join as a Professional</h1>
+                    <p className="text-slate-500 text-sm sm:text-lg max-w-2xl mx-auto">Start calling your own shots. Earn more with 0% commission and get paid instantly.</p>
                 </div>
 
                 <StepIndicator currentStep={step} totalSteps={3} />

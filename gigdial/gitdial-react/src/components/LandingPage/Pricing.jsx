@@ -57,8 +57,8 @@ const Pricing = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.4, delay: index * 0.1 }}
-                            className={`relative rounded-3xl p-8 transition-all duration-300 group max-w-md w-full ${plan.highlight
-                                ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-900/20 scale-105 z-10 border border-blue-500'
+                            className={`relative rounded-[2rem] sm:rounded-3xl p-6 sm:p-8 transition-all duration-300 group max-w-md w-full ${plan.highlight
+                                ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-900/20 md:scale-105 z-10 border border-blue-500'
                                 : 'bg-white text-slate-900 border border-slate-200 shadow-lg hover:border-blue-200 hover:shadow-xl'
                                 }`}
                         >

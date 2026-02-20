@@ -40,7 +40,13 @@ const ServiceHistory = () => {
                 fetchServiceHistory(); // Refresh to show updated rating
             } else {
                 const error = await res.json();
-                alert(error.message);
+                // If it's already reviewed, treat as success on frontend to sync state
+                if (error.message.toLowerCase().includes('already reviewed')) {
+                    setIsRateModalOpen(false);
+                    fetchServiceHistory();
+                } else {
+                    alert(error.message);
+                }
             }
         } catch (err) {
             console.error(err);

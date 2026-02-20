@@ -52,7 +52,7 @@ const Header = () => {
 
                         {/* Logo */}
                         <Link to="/" className="flex-shrink-0 group flex items-center gap-2.5">
-                            <img src="/logo.png" alt="GigDial" className="h-12 md:h-16 lg:h-20 w-auto object-contain group-hover:scale-105 transition-transform" />
+                            <img src="/logo.png" alt="GigDial" className="h-10 sm:h-14 md:h-16 lg:h-20 w-auto object-contain group-hover:scale-105 transition-transform" />
                         </Link>
 
                         {/* Navigation (Desktop) */}
@@ -135,18 +135,18 @@ const Header = () => {
 
                             {/* Mobile Search Btn */}
                             <button
-                                className="md:hidden p-2.5 text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                                className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                                 onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
                             >
-                                <Search size={24} />
+                                <Search size={20} />
                             </button>
 
                             {/* Mobile Menu Btn */}
                             <button
-                                className="lg:hidden p-2.5 text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                                className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                                 onClick={() => setIsMobileMenuOpen(true)}
                             >
-                                <Menu size={24} />
+                                <Menu size={20} />
                             </button>
                         </div>
                     </div>

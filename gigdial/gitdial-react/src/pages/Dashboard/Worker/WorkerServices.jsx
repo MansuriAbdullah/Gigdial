@@ -155,10 +155,10 @@ const WorkerServices = () => {
 
     return (
         <div className="space-y-6 relative">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">My Services</h1>
-                    <p className="text-slate-500">Manage your service offerings</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900">My Services</h1>
+                    <p className="text-sm sm:text-base text-slate-500">Manage your service offerings</p>
                 </div>
                 <button
                     onClick={() => {
@@ -166,9 +166,9 @@ const WorkerServices = () => {
                         setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', image: '' });
                         setShowAddModal(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all font-bold"
+                    className="flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all font-bold text-sm sm:text-base w-full sm:w-auto"
                 >
-                    <Plus size={20} />
+                    <Plus size={18} />
                     Add New Service
                 </button>
             </div>

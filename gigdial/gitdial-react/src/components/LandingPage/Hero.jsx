@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Search, Briefcase, MapPin, CheckCircle, Shield, Zap, CreditCard, Phone, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -34,6 +34,9 @@ const TrustBadge = ({ icon: Icon, title, desc, color = "blue" }) => {
 
 const Hero = () => {
     const { t } = useLanguage();
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCity, setSelectedCity] = useState('');
     const [cities, setCities] = useState([]);
 
     useEffect(() => {
@@ -54,6 +57,15 @@ const Hero = () => {
         };
         fetchCities();
     }, []);
+
+    const handleSearch = (e) => {
+        if (e) e.preventDefault();
+        const params = new URLSearchParams();
+        if (searchQuery) params.append('search', searchQuery);
+        if (selectedCity) params.append('city', selectedCity);
+        navigate(`/services?${params.toString()}`);
+    };
+
     return (
         <div className="relative overflow-hidden bg-white pt-28 pb-16 lg:pt-32 lg:pb-24">
             {/* Background Gradients */}
@@ -83,7 +95,7 @@ const Hero = () => {
                         <motion.h1
                             className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.15]"
                             initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                         >
                             {t('heroTitle')} <br />
@@ -115,10 +127,14 @@ const Hero = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.5 }}
                         >
-                            <div className="bg-white p-2 rounded-2xl shadow-lg border border-slate-200 flex flex-col sm:flex-row gap-2">
-                                <div className="relative min-w-[160px]">
+                            <form onSubmit={handleSearch} className="bg-white p-2 rounded-2xl shadow-lg border border-slate-200 flex flex-col sm:flex-row gap-2">
+                                <div className="relative w-full sm:min-w-[160px] sm:w-auto">
                                     <MapPin className="absolute left-3 top-3.5 text-slate-400" size={18} />
-                                    <select className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 outline-none text-slate-700 font-medium appearance-none cursor-pointer hover:bg-slate-100 transition-colors">
+                                    <select
+                                        value={selectedCity}
+                                        onChange={(e) => setSelectedCity(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 outline-none text-slate-700 font-medium appearance-none cursor-pointer hover:bg-slate-100 transition-colors"
+                                    >
                                         <option value="">Select City</option>
                                         {cities.map((city) => (
                                             <option key={city._id} value={city.name}>
@@ -130,15 +146,17 @@ const Hero = () => {
                                         <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>
                                 </div>
-                                <div className="flex-1 relative">
+                                <div className="flex-1 relative w-full">
                                     <Search className="absolute left-3 top-3.5 text-slate-400" size={18} />
                                     <input
                                         type="text"
                                         placeholder={t('searchServices')}
-                                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 outline-none text-slate-700 placeholder:text-slate-400 font-medium transition-colors"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full pl-10 pr-10 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 outline-none text-slate-700 placeholder:text-slate-400 font-medium transition-colors"
                                     />
                                 </div>
-                            </div>
+                            </form>
                         </motion.div>
 
                         <motion.div
@@ -147,11 +165,11 @@ const Hero = () => {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.6 }}
                         >
-                            <Link to="/services" className="group relative px-8 py-4 bg-slate-900 text-white rounded-full font-bold shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center overflow-hidden w-full sm:w-auto text-lg gap-2 border border-transparent hover:border-slate-700/50">
+                            <button onClick={handleSearch} className="group relative px-8 py-4 bg-slate-900 text-white rounded-full font-bold shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center overflow-hidden w-full sm:w-auto text-lg gap-2 border border-transparent hover:border-slate-700/50">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[length:200%_auto] animate-gradient"></div>
                                 <Search className="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform" />
                                 <span className="relative z-10">Service खोजें</span>
-                            </Link>
+                            </button>
 
                             <Link to="/login" className="group px-8 py-4 bg-white/80 backdrop-blur-sm hover:bg-white rounded-full text-slate-800 font-bold border border-slate-200 shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center w-full sm:w-auto text-lg gap-2 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-tr from-emerald-50 to-teal-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -185,18 +203,18 @@ const Hero = () => {
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     transition={{ delay: 0.6, type: "spring" }}
-                                    className="absolute top-6 left-6 bg-white px-4 py-2 rounded-xl shadow-lg border border-slate-100 flex items-center gap-3 z-20"
+                                    className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-lg border border-slate-100 flex items-center gap-2 sm:gap-3 z-20"
                                 >
                                     <div className="text-left">
-                                        <p className="text-lg font-bold text-slate-900 leading-none">2M+</p>
-                                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Downloads</p>
+                                        <p className="text-sm sm:text-lg font-bold text-slate-900 leading-none">2M+</p>
+                                        <p className="text-[8px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider">Downloads</p>
                                     </div>
-                                    <div className="h-8 w-px bg-slate-200"></div>
+                                    <div className="h-6 sm:h-8 w-px bg-slate-200"></div>
                                     <div className="flex items-center gap-1">
-                                        <span className="text-yellow-400 text-lg">★</span>
+                                        <span className="text-yellow-400 text-sm sm:text-lg">★</span>
                                         <div className="text-left">
-                                            <p className="text-lg font-bold text-slate-900 leading-none">4.5</p>
-                                            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Ratings</p>
+                                            <p className="text-sm sm:text-lg font-bold text-slate-900 leading-none">4.5</p>
+                                            <p className="text-[8px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider">Ratings</p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -208,16 +226,16 @@ const Hero = () => {
                                     initial={{ y: -20, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 1, duration: 0.5 }}
-                                    className="absolute top-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-xl border border-slate-200 shadow-xl shadow-black/5"
+                                    className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-white/90 backdrop-blur-md p-2 sm:p-4 rounded-xl border border-slate-200 shadow-xl shadow-black/5"
                                 >
-                                    <div className="flex -space-x-2 mb-2">
+                                    <div className="flex -space-x-1.5 sm:-space-x-2 mb-1 sm:mb-2">
                                         {[1, 2, 3].map(i => (
-                                            <div key={i} className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white">
+                                            <div key={i} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-200 border-2 border-white">
                                                 <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full rounded-full" />
                                             </div>
                                         ))}
                                     </div>
-                                    <p className="text-xs text-green-600 font-medium">10k+ Verified Workers</p>
+                                    <p className="text-[8px] sm:text-xs text-green-600 font-bold">10k+ Workers</p>
                                 </motion.div>
                             </div>
 
@@ -226,9 +244,9 @@ const Hero = () => {
                                 initial={{ y: 40, opacity: 0, scale: 0.9 }}
                                 animate={{ y: 0, opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.8, type: "spring", stiffness: 100 }}
-                                className="relative sm:absolute bottom-auto sm:bottom-24 sm:-left-16 z-30 pointer-events-auto mt-6 sm:mt-0 mx-auto sm:mx-0 w-max"
+                                className="relative sm:absolute bottom-auto sm:-bottom-10 md:bottom-24 sm:-left-10 md:-left-16 z-30 pointer-events-auto mt-6 sm:mt-0 mx-auto sm:mx-0 w-max"
                             >
-                                <div className="bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] p-5 w-[240px] border border-slate-100 relative overflow-hidden">
+                                <div className="bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] p-4 sm:p-5 w-[220px] sm:w-[240px] border border-slate-100 relative overflow-hidden">
                                     {/* Background Decoration */}
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-50 to-transparent rounded-bl-3xl -z-10"></div>
 

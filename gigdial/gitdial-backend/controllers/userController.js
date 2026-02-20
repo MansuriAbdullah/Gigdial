@@ -67,9 +67,9 @@ const registerUser = async (req, res) => {
             serviceDescription: role === 'worker' ? serviceDescription : undefined,
             role: role || 'customer',
             isProvider: role === 'worker',
-            profileImage: req.files?.profileImage?.[0]?.path,
-            aadhaarCard: req.files?.aadhaarCard?.[0]?.path,
-            panCard: req.files?.panCard?.[0]?.path
+            profileImage: req.files?.profileImage?.[0]?.path?.replace(/\\/g, '/'),
+            aadhaarCard: req.files?.aadhaarCard?.[0]?.path?.replace(/\\/g, '/'),
+            panCard: req.files?.panCard?.[0]?.path?.replace(/\\/g, '/')
         });
 
         if (user) {
@@ -140,7 +140,7 @@ const updateUserProfile = async (req, res) => {
         user.profileImage = req.body.profileImage || user.profileImage;
 
         if (req.file) {
-            user.profileImage = req.file.path;
+            user.profileImage = req.file.path.replace(/\\/g, '/');
         }
 
         if (req.body.password) {

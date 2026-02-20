@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, CheckCircle, XCircle, Clock, MapPin, DollarSign, User, Search, Filter } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -62,18 +62,18 @@ const AdminBookings = () => {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="space-y-8 font-inter">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Bookings & Orders</h1>
-                    <p className="text-slate-500 mt-2">Track and manage all service bookings across the platform.</p>
+                    <h1 className="text-3xl md:text-4xl font-display font-bold text-slate-900 tracking-tight">Bookings & Orders</h1>
+                    <p className="text-slate-500 mt-2 text-base md:text-lg font-medium">Track and manage all service bookings across the platform.</p>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 scrollbar-hide">
                     {['All', 'Pending', 'Completed', 'Cancelled'].map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${filter === f
+                            className={`px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${filter === f
                                 ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
                                 : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
                                 }`}
@@ -84,80 +84,84 @@ const AdminBookings = () => {
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex gap-4">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <div className="bg-white/90 backdrop-blur-xl rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden relative">
+                <div className="p-4 md:p-6 border-b border-slate-100 flex flex-col md:flex-row gap-4">
+                    <div className="relative flex-1 group font-bold">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={20} />
                         <input
                             type="text"
                             placeholder="Search orders, buyers, sellers..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all text-sm font-bold"
                         />
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-bold tracking-wider">
-                            <tr>
-                                <th className="p-4">Order ID</th>
-                                <th className="p-4">Service</th>
-                                <th className="p-4">Buyer</th>
-                                <th className="p-4">Worker</th>
-                                <th className="p-4">Amount</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {loading ? (
-                                <tr><td colSpan="7" className="p-8 text-center text-slate-500">Loading bookings...</td></tr>
-                            ) : filteredOrders.length > 0 ? (
-                                filteredOrders.map((order, idx) => (
-                                    <motion.tr
-                                        key={order._id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        className="hover:bg-slate-50/50 transition-colors group"
-                                    >
-                                        <td className="p-4 font-mono text-xs text-slate-500">#{order._id.slice(-6)}</td>
-                                        <td className="p-4 font-bold text-slate-900">{order.title}</td>
-                                        <td className="p-4">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
-                                                    {order.buyer?.name?.[0] || 'U'}
-                                                </div>
-                                                <span className="text-sm font-medium text-slate-700">{order.buyer?.name || 'Unknown'}</span>
-                                            </div>
-                                        </td>
-                                        <td className="p-4">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
-                                                    {order.seller?.name?.[0] || 'W'}
-                                                </div>
-                                                <span className="text-sm font-medium text-slate-700">{order.seller?.name || 'Unknown'}</span>
-                                            </div>
-                                        </td>
-                                        <td className="p-4 font-bold text-slate-900">₹{order.price}</td>
-                                        <td className="p-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusColor(order.status)}`}>
-                                                {getStatusIcon(order.status)}
-                                                <span className="capitalize">{order.status}</span>
-                                            </span>
-                                        </td>
-                                        <td className="p-4 text-sm text-slate-500">
-                                            {new Date(order.createdAt).toLocaleDateString()}
-                                        </td>
-                                    </motion.tr>
-                                ))
-                            ) : (
-                                <tr><td colSpan="7" className="p-8 text-center text-slate-500">No bookings found</td></tr>
-                            )}
-                        </tbody>
-                    </table>
+                <div className="overflow-x-auto min-h-[400px]">
+                    <div className="inline-block min-w-full align-middle">
+                        <table className="min-w-full text-left font-bold">
+                            <thead className="bg-slate-50/50 text-slate-500 text-[10px] md:text-xs uppercase font-bold tracking-wider">
+                                <tr>
+                                    <th className="px-6 py-4">Order ID</th>
+                                    <th className="px-6 py-4">Service</th>
+                                    <th className="px-6 py-4">Buyer</th>
+                                    <th className="px-6 py-4">Worker</th>
+                                    <th className="px-6 py-4">Amount</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                <AnimatePresence>
+                                    {loading ? (
+                                        <tr><td colSpan="7" className="p-20 text-center text-slate-400 animate-pulse font-medium">Loading bookings...</td></tr>
+                                    ) : filteredOrders.length > 0 ? (
+                                        filteredOrders.map((order, idx) => (
+                                            <motion.tr
+                                                key={order._id}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: idx * 0.05 }}
+                                                className="hover:bg-slate-50/50 transition-colors group"
+                                            >
+                                                <td className="px-6 py-4 font-mono text-[10px] text-slate-400 whitespace-nowrap">#{order._id.slice(-6).toUpperCase()}</td>
+                                                <td className="px-6 py-4 font-bold text-slate-900 text-sm whitespace-nowrap">{order.title}</td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2 font-bold whitespace-nowrap">
+                                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">
+                                                            {order.buyer?.name?.[0] || 'U'}
+                                                        </div>
+                                                        <span className="text-xs font-bold text-slate-700">{order.buyer?.name || 'Unknown'}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2 font-bold whitespace-nowrap">
+                                                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-[10px]">
+                                                            {order.seller?.name?.[0] || 'W'}
+                                                        </div>
+                                                        <span className="text-xs font-bold text-slate-700">{order.seller?.name || 'Unknown'}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 font-bold text-slate-900 text-sm whitespace-nowrap">₹{order.price}</td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap ${getStatusColor(order.status)}`}>
+                                                        {getStatusIcon(order.status)}
+                                                        <span className="capitalize">{order.status}</span>
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-[10px] md:text-sm text-slate-500 whitespace-nowrap">
+                                                    {new Date(order.createdAt).toLocaleDateString()}
+                                                </td>
+                                            </motion.tr>
+                                        ))
+                                    ) : (
+                                        <tr><td colSpan="7" className="p-20 text-center text-slate-500 font-medium font-bold">No bookings found matching your search</td></tr>
+                                    )}
+                                </AnimatePresence>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

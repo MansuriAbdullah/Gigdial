@@ -23,7 +23,7 @@ const AdminPanel = () => {
                 <Route path="workers" element={<ManageWorkers />} />
                 <Route path="customers" element={<ManageCustomers />} />
                 <Route path="bookings" element={<AdminBookings />} />
-                <Route path="withdrawals" element={<ManageWithdrawals />} />
+                {/* <Route path="withdrawals" element={<ManageWithdrawals />} /> */}
                 <Route path="refunds" element={<ManageRefunds />} />
                 <Route path="disputes" element={<Disputes />} />
                 <Route path="analytics" element={<AdminAnalytics />} />

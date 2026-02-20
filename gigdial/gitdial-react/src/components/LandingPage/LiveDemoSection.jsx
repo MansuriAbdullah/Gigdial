@@ -11,7 +11,7 @@ const LiveDemoSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="relative rounded-[2.5rem] bg-[#0F172A] overflow-hidden shadow-2xl shadow-blue-900/20 group"
+                    className="relative rounded-3xl sm:rounded-[2.5rem] bg-[#0F172A] overflow-hidden shadow-2xl shadow-blue-900/20 group"
                 >
                     {/* Dynamic Background Gradients */}
                     <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/30 transition-colors duration-700"></div>
@@ -20,7 +20,7 @@ const LiveDemoSection = () => {
                     {/* Grid Pattern Overlay */}
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 mix-blend-overlay"></div>
 
-                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center p-8 md:p-12 lg:p-16 relative z-10">
+                    <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-8 items-center p-6 sm:p-8 md:p-12 lg:p-16 relative z-10">
                         {/* Left Content */}
                         <div className="space-y-8 text-white relative">
                             {/* Floating Decoration */}
@@ -34,7 +34,7 @@ const LiveDemoSection = () => {
                             </motion.div>
 
                             <div>
-                                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-[1.1] tracking-tight">
+                                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-[1.1] tracking-tight">
                                     See GigDial <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">In Action</span>
                                 </h2>
@@ -58,7 +58,7 @@ const LiveDemoSection = () => {
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="group relative px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-lg shadow-xl shadow-white/5 overflow-hidden flex items-center gap-3"
+                                    className="group relative px-6 py-3.5 sm:px-8 sm:py-4 bg-white text-slate-900 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-xl shadow-white/5 overflow-hidden flex items-center justify-center sm:justify-start gap-3 w-full sm:w-auto"
                                 >
                                     <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-slate-100 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                                     <span className="relative z-10">Book a Demo</span>

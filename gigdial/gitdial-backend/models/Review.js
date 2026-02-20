@@ -28,7 +28,8 @@ const reviewSchema = new mongoose.Schema({
     },
     comment: {
         type: String,
-        required: true
+        required: false,
+        default: ''
     },
     reply: {
         type: String

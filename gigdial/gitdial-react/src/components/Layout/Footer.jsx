@@ -35,7 +35,7 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-4 space-y-6">
                         <Link to="/" className="flex items-center">
-                            <img src="/images/gigdial-logo.png" alt="GigDial Logo" className="h-12 md:h-14 w-auto object-contain" />
+                            <img src="/images/gigdial-logo1.png" alt="GigDial Logo" className="h-12 md:h-14 w-auto object-contain" />
                         </Link>
                         <p className="text-slate-300 text-sm leading-relaxed max-w-sm font-medium">
                             India's leading commission-free marketplace. Empowering connections between verified gig workers and customers with trust and transparency.
@@ -78,13 +78,15 @@ const Footer = () => {
                     {/* Newsletter & Contact */}
                     <div className="lg:col-span-4 space-y-6">
                         <h3 className="font-bold text-lg mb-6 text-white">Stay Updated</h3>
-                        <div className="p-1 bg-slate-900/80 border border-slate-700 rounded-xl flex items-center shadow-inner">
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="flex-1 bg-transparent px-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none font-medium"
-                            />
-                            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/25 flex items-center gap-2 transform hover:-translate-y-0.5">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <div className="flex-1 p-1 bg-slate-900/80 border border-slate-700 rounded-xl flex items-center shadow-inner focus-within:border-blue-500/50 transition-colors">
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="flex-1 bg-transparent px-4 py-2.5 text-sm text-white placeholder-slate-400 focus:outline-none font-medium"
+                                />
+                            </div>
+                            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transform active:scale-95 shrink-0">
                                 Subscribe <ArrowRight size={14} />
                             </button>
                         </div>
@@ -107,16 +109,19 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-semibold text-slate-400">
-                    <p>&copy; {new Date().getFullYear()} GigDial. All rights reserved.</p>
-                    <div className="flex items-center gap-6">
+                <div className="pt-8 border-t border-slate-800/50 flex flex-col items-center gap-6 text-[10px] sm:text-xs font-semibold text-slate-400">
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-3">
                         <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                         <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
                         <Link to="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
                     </div>
-                    <p className="flex items-center gap-1">
-                        Made with <Heart size={12} className="text-red-500 fill-red-500 animate-pulse" /> in India
-                    </p>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
+                        <p className="order-2 sm:order-1 text-slate-500">&copy; {new Date().getFullYear()} GigDial. All rights reserved.</p>
+                        <p className="flex items-center gap-1 order-1 sm:order-2 bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-800">
+                            Made with <Heart size={12} className="text-red-500 fill-red-500 animate-pulse" /> in India
+                        </p>
+                    </div>
                 </div>
             </div>
         </footer>

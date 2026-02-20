@@ -3,6 +3,7 @@ import { useAuth } from '../../../context/AuthContext';
 import {
     User, Mail, Phone, MapPin, FileText, Briefcase, Camera, Save, Loader
 } from 'lucide-react';
+import { getFullImagePath } from '../../../utils/imagePath';
 
 const WorkerProfile = () => {
     const { user, login } = useAuth(); // Assuming login updates the user state or we need a specific 'updateUser' function from context
@@ -132,7 +133,7 @@ const WorkerProfile = () => {
                 <div className="p-8 border-b border-slate-100 bg-slate-50 flex flex-col md:flex-row items-center gap-6">
                     <div className="relative">
                         <img
-                            src={formData.profileImage || "https://i.pravatar.cc/150?img=11"}
+                            src={getFullImagePath(formData.profileImage) || "https://i.pravatar.cc/150?img=11"}
                             alt="Profile"
                             className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md bg-slate-200"
                         />

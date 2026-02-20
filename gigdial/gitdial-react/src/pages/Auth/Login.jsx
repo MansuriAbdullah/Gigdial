@@ -80,33 +80,36 @@ const Login = () => {
                 className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white/80 backdrop-blur-2xl border border-white/60 relative z-10"
             >
                 {/* Left Side - Form */}
-                <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center order-2 lg:order-1 relative">
+                <div className="p-5 md:p-12 lg:p-16 flex flex-col justify-center order-2 lg:order-1 relative">
                     {/* Role Toggle Switch */}
-                    <div className="absolute top-8 right-8 lg:top-12 lg:right-12">
-                        <div className="bg-slate-100/80 p-1 rounded-xl flex shadow-inner">
+                    <div className="flex items-center justify-between gap-4 mb-8 lg:absolute lg:top-12 lg:right-12 lg:mb-0">
+                        <Link to="/" className="inline-block lg:hidden group focus:outline-none active:bg-transparent">
+                            <img src="/images/login-logo.png" alt="GigDial" className="h-8 md:h-10 w-auto mix-blend-multiply select-none" />
+                        </Link>
+                        <div className="bg-slate-100/80 p-1 rounded-xl flex shadow-inner w-fit">
                             <button
                                 onClick={() => setRole('customer')}
-                                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${role === 'customer' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 ${role === 'customer' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 Customer
                             </button>
                             <button
                                 onClick={() => setRole('worker')}
-                                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${role === 'worker' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 ${role === 'worker' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 Worker
                             </button>
                         </div>
                     </div>
 
-                    <div className="mb-10 mt-6 lg:mt-0">
-                        <Link to="/" className="inline-block mb-8 group">
-                            <img src="/images/gigdial-logo.png" alt="GigDial" className="h-20 w-auto group-hover:scale-105 transition-transform duration-300" />
+                    <div className="mb-6 lg:mb-10 lg:mt-0">
+                        <Link to="/" className="hidden lg:inline-block mb-8 group focus:outline-none active:bg-transparent">
+                            <img src="/images/login-logo.png" alt="GigDial" className="h-20 w-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
                         </Link>
-                        <h1 className="text-4xl md:text-5xl font-display font-bold text-slate-800 mb-4 tracking-tight">
+                        <h1 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-slate-800 mb-3 md:mb-4 tracking-tight">
                             Welcome Back
                         </h1>
-                        <p className="text-slate-500 text-lg">
+                        <p className="text-slate-500 text-sm md:text-lg">
                             Sign in to access your {role === 'customer' ? 'customer dashboard' : 'worker account'}.
                         </p>
                     </div>

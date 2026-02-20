@@ -79,7 +79,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
         { icon: Briefcase, label: t('manageWorkers'), path: '/admin/workers' },
         { icon: Users, label: t('manageCustomers'), path: '/admin/customers' },
         { icon: Calendar, label: t('bookings'), path: '/admin/bookings' },
-        { icon: DollarSign, label: 'Withdrawals', path: '/admin/withdrawals' },
+        // { icon: DollarSign, label: 'Withdrawals', path: '/admin/withdrawals' },
         { icon: Repeat, label: 'Refunds', path: '/admin/refunds' },
         { icon: Scale, label: t('disputes'), path: '/admin/disputes' },
         { icon: BarChart2, label: t('analytics'), path: '/admin/analytics' },
@@ -164,25 +164,26 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
                 {/* Top Header */}
-                <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors">
+                <header className="h-16 md:h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2 md:gap-4">
+                        <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-2 -ml-1 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors">
                             <Menu size={20} />
                         </button>
                         <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 focus-within:ring-2 focus-within:ring-primary/20 transition-all w-64 lg:w-96">
                             <Search size={18} className="text-slate-400" />
                             <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none text-sm w-full font-medium text-slate-600 placeholder:text-slate-400" />
                         </div>
+                        <span className="text-lg font-bold text-slate-800 md:hidden">GigDial</span>
                     </div>
 
-                    <div className="flex items-center gap-2 md:gap-4">
+                    <div className="flex items-center gap-2 md:gap-4 font-bold">
                         {/* Mobile Search Icon */}
-                        <button className="md:hidden p-2.5 rounded-xl bg-white border border-slate-100 text-slate-500 hover:text-primary transition-all">
+                        <button className="md:hidden p-2 rounded-xl text-slate-500 hover:text-primary transition-all">
                             <Search size={20} />
                         </button>
 
                         {/* Language Toggle */}
-                        <div className="relative hidden md:block">
+                        <div className="relative hidden sm:block">
                             <button
                                 onClick={() => setLangOpen(!langOpen)}
                                 className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-full transition-all border border-slate-100 bg-white"
@@ -223,7 +224,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
                         </div>
 
                         {/* Notification Bell */}
-                        <button className="relative p-2.5 rounded-xl bg-white border border-slate-100 text-slate-500 hover:text-primary hover:border-primary/30 transition-all shadow-sm">
+                        <button className="relative p-2 rounded-xl text-slate-500 hover:text-primary transition-all">
                             <Bell size={20} />
                             <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                         </button>
@@ -231,11 +232,11 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
                         {/* Logout Button */}
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl bg-red-50 border border-red-100 text-red-600 hover:bg-red-100 hover:border-red-200 transition-all shadow-sm font-medium group"
+                            className="flex items-center gap-2 px-2.5 md:px-4 py-2 rounded-xl bg-red-50 border border-red-100 text-red-600 hover:bg-red-100 transition-all font-bold group"
                             title="Logout"
                         >
                             <LogOut size={18} className="group-hover:scale-110 transition-transform" />
-                            <span className="hidden sm:inline text-sm font-bold">Logout</span>
+                            <span className="hidden md:inline text-xs md:text-sm">Logout</span>
                         </button>
                     </div>
                 </header>

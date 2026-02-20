@@ -302,7 +302,7 @@ const ServiceShowcase = () => {
   };
 
   const handleExplore = (category) => {
-    navigate(`/workers?category=${encodeURIComponent(category)}`);
+    navigate(`/services?category=${encodeURIComponent(category)}`);
   };
 
   const handleSubmitContact = (e) => {

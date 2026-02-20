@@ -119,7 +119,7 @@ const Categories = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const handleCategoryClick = (categoryName) => {
-    navigate(`/workers?category=${encodeURIComponent(categoryName)}`);
+    navigate(`/services?category=${encodeURIComponent(categoryName)}`);
   };
 
   return (
@@ -162,7 +162,7 @@ const Categories = () => {
         </div>
 
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
           variants={container}
           initial="hidden"
           whileInView="show"
@@ -181,7 +181,7 @@ const Categories = () => {
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-lime-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-              <div className="relative p-6 rounded-3xl bg-white border border-slate-200 group-hover:border-lime-500/30 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-lime-500/5 overflow-hidden cursor-pointer">
+              <div className="relative p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200 group-hover:border-lime-500/30 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-lime-500/5 overflow-hidden cursor-pointer h-full flex flex-col">
 
                 {/* Animated background pattern */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -197,31 +197,31 @@ const Categories = () => {
 
                 {/* Icon container with animated gradient */}
                 <motion.div
-                  className={`relative w-16 h-16 rounded-2xl ${cat.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 overflow-hidden`}
+                  className={`relative w-10 h-10 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl ${cat.bg} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 overflow-hidden shrink-0`}
                   whileHover={{ rotate: 5 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                  <cat.icon className={`w-8 h-8 ${cat.color} relative z-10`} />
+                  <cat.icon className={`w-5 h-5 sm:w-8 sm:h-8 ${cat.color} relative z-10`} />
                 </motion.div>
 
                 {/* Category name */}
-                <h3 className="text-xl font-bold text-slate-800 mb-2 relative">
+                <h3 className="text-sm sm:text-xl font-bold text-slate-800 mb-1 sm:mb-2 relative line-clamp-1">
                   {cat.name}
-                  <ChevronRight className="w-5 h-5 text-lime-600 absolute right-0 top-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+                  <ChevronRight className="hidden sm:block w-5 h-5 text-lime-600 absolute right-0 top-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
                 </h3>
 
                 {/* Tagline */}
-                <p className="text-sm text-slate-500 mb-4 font-medium">{cat.tagline}</p>
+                <p className="text-[10px] sm:text-sm text-slate-500 mb-3 sm:mb-4 font-medium line-clamp-1 sm:line-clamp-none">{cat.tagline}</p>
 
                 {/* Stats */}
-                <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-2 mb-2">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm font-medium text-slate-700">{cat.count} Experts</span>
+                <div className="flex items-center justify-between border-t border-slate-100 pt-3 sm:pt-4 mt-auto">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Users className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
+                    <span className="text-[10px] sm:text-sm font-medium text-slate-700">{cat.count}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm text-slate-600">24/7</span>
+                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
+                    <span className="text-[10px] sm:text-sm text-slate-600">24/7</span>
                   </div>
                 </div>
 
@@ -230,7 +230,7 @@ const Categories = () => {
                     e.stopPropagation();
                     handleCategoryClick(cat.name);
                   }}
-                  className="w-full py-2.5 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                  className="hidden sm:flex w-full py-2.5 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 items-center justify-center gap-2 mt-4"
                 >
                   {t('viewWorkers')} <ChevronRight size={16} />
                 </button>

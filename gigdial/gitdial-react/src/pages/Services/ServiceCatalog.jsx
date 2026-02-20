@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Search, Filter, Star, MapPin, ArrowRight, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, Star, MapPin, ArrowRight, Sparkles, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { getFullImagePath } from '../../utils/imagePath';
 
 const ServiceCard = ({ id, title, category, price, rating, reviews, image, index }) => (
     <motion.div
@@ -15,23 +17,24 @@ const ServiceCard = ({ id, title, category, price, rating, reviews, image, index
         <div className="relative h-56 overflow-hidden">
             <div className="absolute inset-0 bg-slate-200 animate-pulse" /> {/* Loading placeholder effect */}
             <img
-                src={image}
+                src={getFullImagePath(image) || 'https://images.unsplash.com/photo-1581578731117-10452b7d702e?auto=format&fit=crop&q=80'}
                 alt={title}
                 loading="lazy"
                 className="relative w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1581578731117-10452b7d702e?auto=format&fit=crop&q=80" }}
             />
             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-dark-surface uppercase tracking-wider shadow-sm">
                 {category}
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 flex justify-between items-end">
                 <div className="flex items-center gap-1.5 text-yellow-400 font-bold text-sm bg-black/20 backdrop-blur-sm px-2 py-1 rounded-lg">
-                    <Star size={14} fill="currentColor" /> {rating} <span className="text-white/80 font-normal text-xs">({reviews})</span>
+                    <Star size={14} fill="currentColor" /> {rating?.toFixed(1) || '0.0'} <span className="text-white/80 font-normal text-xs">({reviews || 0})</span>
                 </div>
             </div>
         </div>
 
         <div className="p-6">
-            <h3 className="text-xl font-display font-bold text-dark-surface mb-2 leading-tight group-hover:text-primary transition-colors">{title}</h3>
+            <h3 className="text-xl font-display font-bold text-dark-surface mb-2 leading-tight group-hover:text-primary transition-colors line-clamp-1">{title}</h3>
             <div className="flex items-center gap-2 text-slate-500 text-sm mb-6">
                 <MapPin size={16} className="text-primary" />
                 <span>Available in your area</span>
@@ -40,7 +43,7 @@ const ServiceCard = ({ id, title, category, price, rating, reviews, image, index
             <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                 <div>
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Starting from</span>
-                    <div className="text-lg font-bold text-dark-surface">{price}</div>
+                    <div className="text-lg font-bold text-dark-surface">₹{price}</div>
                 </div>
                 <Link to={`/services/${id}`} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm transform group-hover:rotate-[-45deg]">
                     <ArrowRight size={20} />
@@ -51,28 +54,56 @@ const ServiceCard = ({ id, title, category, price, rating, reviews, image, index
 );
 
 const ServiceCatalog = () => {
-    const [filter, setFilter] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const initialSearch = queryParams.get('search') || '';
+    const initialCity = queryParams.get('city') || '';
+    const initialCategory = queryParams.get('category') || 'All';
 
-    // Mock Data
-    const services = [
-        { id: 1, title: 'Deep House Cleaning', category: 'Home', price: '₹499', rating: 4.8, reviews: 124, image: 'https://images.unsplash.com/photo-1581578731117-10452b7d702e?auto=format&fit=crop&q=80' },
-        { id: 2, title: 'AC Repair & Service', category: 'Repair', price: '₹399', rating: 4.7, reviews: 89, image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80' },
-        { id: 3, title: 'Web Development', category: 'Tech', price: '₹4,999', rating: 4.9, reviews: 45, image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80' },
-        { id: 4, title: 'Yoga Instructor', category: 'Wellness', price: '₹799', rating: 5.0, reviews: 32, image: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&q=80' },
-        { id: 5, title: 'Plumbing Services', category: 'Repair', price: '₹299', rating: 4.6, reviews: 210, image: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&q=80' },
-        { id: 6, title: 'Wedding Photography', category: 'Events', price: '₹15,000', rating: 4.9, reviews: 18, image: 'https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&q=80' },
-        { id: 7, title: 'Pest Control', category: 'Home', price: '₹899', rating: 4.5, reviews: 56, image: 'https://images.unsplash.com/photo-1587353986036-7977cc49d8ba?auto=format&fit=crop&q=80' },
-        { id: 8, title: 'Electrician', category: 'Repair', price: '₹250', rating: 4.8, reviews: 312, image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80' },
-    ];
+    const [filter, setFilter] = useState(initialCategory);
+    const [searchQuery, setSearchQuery] = useState(initialSearch);
+    const [services, setServices] = useState([]);
+    const [categories, setCategories] = useState(['All']);
+    const [loading, setLoading] = useState(true);
 
-    const categories = ['All', 'Home', 'Repair', 'Tech', 'Wellness', 'Events'];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [gigsRes, catsRes] = await Promise.all([
+                    axios.get('/api/gigs'),
+                    axios.get('/api/gigs/categories')
+                ]);
+
+                setServices(gigsRes.data);
+                setCategories(['All', ...catsRes.data]);
+            } catch (error) {
+                console.error('Error fetching services:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const filteredServices = services.filter(s => {
         const matchesCategory = filter === 'All' || s.category === filter;
-        const matchesSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+        const matchesSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            s.category.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCity = !initialCity || (s.user?.city?.toLowerCase() === initialCity.toLowerCase());
+        return matchesCategory && matchesSearch && matchesCity;
     });
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader className="animate-spin text-primary" size={40} />
+                    <p className="text-slate-500 font-medium animate-pulse">Fetching latest services...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 pb-24 relative overflow-hidden">
@@ -144,9 +175,19 @@ const ServiceCatalog = () => {
                     layout
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
                 >
-                    <AnimatePresence>
+                    <AnimatePresence mode='popLayout'>
                         {filteredServices.map((service, index) => (
-                            <ServiceCard key={service.id} {...service} index={index} />
+                            <ServiceCard
+                                key={service._id}
+                                id={service._id}
+                                title={service.title}
+                                category={service.category}
+                                price={service.price}
+                                rating={service.user?.rating || 0}
+                                reviews={service.user?.numReviews || 0}
+                                image={service.image}
+                                index={index}
+                            />
                         ))}
                     </AnimatePresence>
                 </motion.div>

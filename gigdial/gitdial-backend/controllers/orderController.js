@@ -301,47 +301,64 @@ const cancelOrder = async (req, res) => {
 const submitReview = async (req, res) => {
     try {
         const { rating, review } = req.body;
+        console.log(`Submitting review for order ${req.params.id}: rating=${rating}, review=${review}`);
+
         const order = await Order.findById(req.params.id);
 
-        if (order) {
-            if (order.status !== 'completed') {
-                return res.status(400).json({ message: 'Can only review completed orders' });
-            }
-
-            if (order.isReviewed) {
-                return res.status(400).json({ message: 'You already reviewed this order' });
-            }
-
-            const reviewObj = {
-                reviewer: req.user._id,
-                worker: order.seller,
-                gig: order.gig,
-                rating: Number(rating),
-                comment: review,
-                order: order._id
-            };
-
-            const createdReview = await Review.create(reviewObj);
-
-            order.isReviewed = true;
-            order.rating = rating;
-            order.review = review;
-
-            await order.save();
-
-            // Update seller rating
-            const seller = await User.findById(order.seller);
-            const reviews = await Review.find({ worker: order.seller });
-            seller.rating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
-            seller.numReviews = reviews.length;
-            await seller.save();
-
-            res.status(201).json({ message: 'Review added' });
-        } else {
-            res.status(404).json({ message: 'Order not found' });
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
         }
+
+        if (order.status !== 'completed') {
+            return res.status(400).json({ message: 'Can only review completed orders' });
+        }
+
+        if (order.isReviewed) {
+            return res.status(400).json({ message: 'You already reviewed this order' });
+        }
+
+        const reviewObj = {
+            reviewer: req.user._id,
+            worker: order.seller,
+            gig: order.gig || null,
+            rating: Number(rating),
+            comment: review || '',
+            order: order._id
+        };
+
+        const createdReview = await Review.create(reviewObj);
+        console.log('Review created successfully');
+
+        order.isReviewed = true;
+        order.rating = Number(rating);
+        order.review = review || '';
+
+        await order.save();
+        console.log('Order updated with review');
+
+        // Update seller rating - wrapped in try/catch to prevent failing the whole request
+        try {
+            const seller = await User.findById(order.seller);
+            if (seller) {
+                const reviews = await Review.find({ worker: order.seller });
+                if (reviews.length > 0) {
+                    const totalRating = reviews.reduce((acc, item) => item.rating + acc, 0);
+                    const avgRating = totalRating / reviews.length;
+                    seller.rating = !isNaN(avgRating) ? Number(avgRating.toFixed(1)) : 0;
+                    seller.numReviews = reviews.length;
+                    await seller.save();
+                    console.log(`Seller ${seller.name} rating updated to ${seller.rating}`);
+                }
+            }
+        } catch (ratingError) {
+            console.error('Error updating seller rating:', ratingError);
+            // Don't throw, just log. The review is already saved.
+        }
+
+        res.status(201).json({ message: 'Review added' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error in submitReview:', error);
+        res.status(500).json({ message: error.message || 'Internal Server Error' });
     }
 };
 
