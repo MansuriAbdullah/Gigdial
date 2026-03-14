@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Star, MapPin, ArrowRight, Sparkles, Loader } from 'lucide-react';
+import { Search, Filter, Star, MapPin, ArrowRight, Sparkles, Loader, Home as HomeIcon, Laptop as LaptopIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -59,8 +59,10 @@ const ServiceCatalog = () => {
     const initialSearch = queryParams.get('search') || '';
     const initialCity = queryParams.get('city') || '';
     const initialCategory = queryParams.get('category') || 'All';
+    const initialType = queryParams.get('type') || 'All';
 
     const [filter, setFilter] = useState(initialCategory);
+    const [serviceType, setServiceType] = useState(initialType);
     const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [services, setServices] = useState([]);
     const [categories, setCategories] = useState(['All']);
@@ -86,12 +88,19 @@ const ServiceCatalog = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        setFilter(queryParams.get('category') || 'All');
+        setServiceType(queryParams.get('type') || 'All');
+        setSearchQuery(queryParams.get('search') || '');
+    }, [location.search]);
+
     const filteredServices = services.filter(s => {
         const matchesCategory = filter === 'All' || s.category === filter;
+        const matchesType = serviceType === 'All' || s.serviceType === serviceType;
         const matchesSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             s.category.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCity = !initialCity || (s.user?.city?.toLowerCase() === initialCity.toLowerCase());
-        return matchesCategory && matchesSearch && matchesCity;
+        return matchesCategory && matchesType && matchesSearch && matchesCity;
     });
 
     if (loading) {
@@ -134,10 +143,33 @@ const ServiceCatalog = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-xl text-slate-500 font-light"
+                        className="text-xl text-slate-500 font-light mb-10"
                     >
                         Browse through our extensive catalog of verified professionals ready to help you.
                     </motion.p>
+
+                    {/* Service Type Toggle */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.25 }}
+                        className="flex justify-center gap-3"
+                    >
+                        {[
+                            { id: 'All', label: 'All Services', icon: Sparkles },
+                            { id: 'Residency', label: 'Residency', icon: HomeIcon },
+                            { id: 'Commercial', label: 'Commercial', icon: LaptopIcon }
+                        ].map((type) => (
+                            <button
+                                key={type.id}
+                                onClick={() => setServiceType(type.id)}
+                                className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${serviceType === type.id ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'bg-white text-slate-600 border border-slate-100 hover:border-primary/20 hover:bg-slate-50'}`}
+                            >
+                                <type.icon size={18} className={serviceType === type.id ? 'text-white' : 'text-primary'} />
+                                {type.label}
+                            </button>
+                        ))}
+                    </motion.div>
                 </div>
 
                 {/* Search & Filter Bar */}
@@ -195,7 +227,7 @@ const ServiceCatalog = () => {
                 {filteredServices.length === 0 && (
                     <div className="text-center py-20">
                         <p className="text-slate-400 text-lg">No services found matching your criteria.</p>
-                        <button onClick={() => { setFilter('All'); setSearchQuery(''); }} className="text-primary font-bold mt-2 hover:underline">Clear Filters</button>
+                        <button onClick={() => { setFilter('All'); setServiceType('All'); setSearchQuery(''); }} className="text-primary font-bold mt-2 hover:underline">Clear Filters</button>
                     </div>
                 )}
             </div>

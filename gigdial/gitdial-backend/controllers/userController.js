@@ -45,7 +45,7 @@ const authUser = async (req, res) => {
 // @access  Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, phone, city, address, skills, role, category, experience, serviceDescription } = req.body;
+        const { name, email, password, phone, city, address, skills, role, category, serviceType, experience, serviceDescription } = req.body;
 
         const userExists = await User.findOne({ email });
 
@@ -63,6 +63,7 @@ const registerUser = async (req, res) => {
             address,
             skills: role === 'worker' ? skills : undefined,
             category: role === 'worker' ? category : undefined,
+            serviceType: role === 'worker' ? serviceType : 'Residency',
             experience: role === 'worker' ? experience : 0,
             serviceDescription: role === 'worker' ? serviceDescription : undefined,
             role: role || 'customer',

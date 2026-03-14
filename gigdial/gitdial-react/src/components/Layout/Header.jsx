@@ -37,6 +37,7 @@ const Header = () => {
         { name: t('findServices'), path: '/services' },
         { name: t('joinAsPro'), path: '/register' },
         { name: t('howItWorks'), path: '/how-it-works' },
+        { name: t('requireWorker'), path: '/require-worker' },
     ];
 
     return (
@@ -125,7 +126,7 @@ const Header = () => {
 
                             <div className="w-px h-6 bg-slate-200 hidden lg:block"></div>
 
-                            <Link to="/login" className="hidden lg:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary transition-colors px-3">
+                            <Link to="/login" state={{ from: location }} className="hidden lg:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary transition-colors px-3">
                                 {t('login')}
                             </Link>
                             <Link to="/register" className="hidden lg:flex btn-primary py-2.5 px-6 text-sm rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 items-center gap-2 group transform active:scale-95 transition-all">
@@ -241,7 +242,7 @@ const Header = () => {
                             </div>
 
                             <div className="space-y-4 pt-6 border-t border-slate-50">
-                                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center w-full py-3.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                                <Link to="/login" state={{ from: location }} onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center w-full py-3.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                                     {t('login')}
                                 </Link>
                                 <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center gap-2 w-full py-3.5 rounded-xl bg-primary text-white font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">

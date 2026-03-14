@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Upload, ArrowRight, Check, Briefcase, FileText, Camera, Shield, Star, Award, CheckCircle, Clock, TrendingUp, Heart, BookOpen, BadgeCheck, RefreshCcw, Lock, Loader2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { User, Mail, Phone, MapPin, Upload, ArrowRight, Check, Briefcase, FileText, Camera, Shield, Star, Award, CheckCircle, Clock, TrendingUp, Heart, BookOpen, BadgeCheck, RefreshCcw, Lock, Loader2, Home as HomeIcon, Laptop as LaptopIcon } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const StepIndicator = ({ currentStep, totalSteps }) => (
     <div className="flex items-center justify-center mb-8 lg:mb-12">
@@ -45,6 +45,7 @@ const Register = () => {
         city: '',
         address: '',
         category: '',
+        serviceType: 'Residency',
         experience: '',
         serviceDescription: ''
     });
@@ -62,6 +63,7 @@ const Register = () => {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -142,6 +144,7 @@ const Register = () => {
             data.append('role', 'worker');
             data.append('skills', JSON.stringify(selectedSkills));
             data.append('category', formData.category);
+            data.append('serviceType', formData.serviceType);
             data.append('experience', formData.experience);
             data.append('serviceDescription', formData.serviceDescription);
 
@@ -436,6 +439,27 @@ const Register = () => {
                                                 ></textarea>
                                             </div>
 
+                                            {/* Service Type */}
+                                            <div className="space-y-3">
+                                                <label className="text-sm font-semibold text-slate-700 ml-1">Service Type</label>
+                                                <div className="flex gap-4">
+                                                    {['Residency', 'Commercial'].map((type) => (
+                                                        <label key={type} className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${formData.serviceType === type ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'}`}>
+                                                            <input
+                                                                type="radio"
+                                                                name="serviceType"
+                                                                value={type}
+                                                                checked={formData.serviceType === type}
+                                                                onChange={handleChange}
+                                                                className="hidden"
+                                                            />
+                                                            {type === 'Residency' ? <HomeIcon size={20} /> : <LaptopIcon size={20} />}
+                                                            <span className="font-bold">{type}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+
                                             {/* Additional Skills (Optional) */}
                                             <div className="space-y-3">
                                                 <label className="text-sm font-semibold text-slate-700 ml-1">Additional Skills (Optional)</label>
@@ -520,7 +544,7 @@ const Register = () => {
                                             Welcome to GigDial! We've received your details. Our team will verify your documents and activate your account within 24 hours.
                                         </p>
                                         <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
-                                            <Link to="/login" className="btn-primary w-full justify-center py-4 text-lg">Go to Login</Link>
+                                            <Link to="/login" state={location.state} className="btn-primary w-full justify-center py-4 text-lg">Go to Login</Link>
                                             <Link to="/" className="btn-secondary w-full justify-center py-4 text-lg">Back to Home</Link>
                                         </div>
                                     </motion.div>

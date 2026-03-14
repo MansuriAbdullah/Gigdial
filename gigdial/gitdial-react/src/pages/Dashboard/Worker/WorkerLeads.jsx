@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, MapPin, Clock, DollarSign, Phone, Mail, User, Eye, Lock } from 'lucide-react';
+import { Briefcase, MapPin, Clock, DollarSign, Phone, Mail, User, Eye, Lock, Globe, MessageSquare } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getFullImagePath } from '../../../utils/imagePath';
 
@@ -8,7 +8,8 @@ const WorkerLeads = () => {
     const [visitorLeads, setVisitorLeads] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('All');
-    const [activeTab, setActiveTab] = useState('jobs'); // 'jobs' | 'visitors'
+    const [activeTab, setActiveTab] = useState('marketplace'); // 'jobs' | 'visitors' | 'marketplace'
+    const [jobRequests, setJobRequests] = useState([]);
     const [subscriptionRequired, setSubscriptionRequired] = useState(false);
     const navigate = useNavigate();
 
@@ -124,10 +125,31 @@ const WorkerLeads = () => {
     useEffect(() => {
         if (activeTab === 'jobs') {
             fetchLeads();
-        } else {
+        } else if (activeTab === 'visitors') {
             fetchVisitorLeads();
+        } else {
+            fetchJobRequests();
         }
     }, [activeTab]);
+
+    const fetchJobRequests = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/job-requests', {
+                headers: {
+                    'Authorization': `Bearer ${userInfo?.token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setJobRequests(data);
+            }
+        } catch (error) {
+            console.error('Error fetching job requests:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const updateStatus = async (id, status) => {
         try {
@@ -194,7 +216,19 @@ const WorkerLeads = () => {
                     >
                         <div className="flex items-center gap-2">
                             <Briefcase size={18} />
-                            Job Requests
+                            My Gigs
+                        </div>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('marketplace')}
+                        className={`pb-4 text-sm font-bold border-b-2 transition-all ${activeTab === 'marketplace'
+                            ? 'border-blue-600 text-blue-600'
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                            }`}
+                    >
+                        <div className="flex items-center gap-2">
+                            <Globe size={18} />
+                            Public Requirements
                         </div>
                     </button>
                     <button
@@ -214,6 +248,70 @@ const WorkerLeads = () => {
 
             {loading ? (
                 <div className="text-center py-10">Loading...</div>
+            ) : activeTab === 'marketplace' ? (
+                /* Marketplace Content */
+                jobRequests.length === 0 ? (
+                    <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Globe className="text-slate-400" size={32} />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-2">No public requirements</h3>
+                        <p className="text-slate-500">Check back later for new opportunities.</p>
+                    </div>
+                ) : (
+                    <div className="grid gap-4">
+                        {jobRequests.map((req) => (
+                            <div key={req._id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all">
+                                <div className="flex flex-col lg:flex-row gap-6">
+                                    <div className="flex-1 space-y-4">
+                                        <div className="flex items-start justify-between">
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <h3 className="font-bold text-lg text-slate-900">{req.category} Needed</h3>
+                                                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200 uppercase">
+                                                        Public Request
+                                                    </span>
+                                                </div>
+                                                <p className="text-slate-600 text-sm mb-3">
+                                                    Posted by: {req.user?.name}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 italic">
+                                            "{req.description}"
+                                        </p>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <div className="flex items-center gap-2 text-slate-600">
+                                                <Clock size={16} className="text-slate-400" />
+                                                <span className="text-sm font-medium">Duration: {req.days} Days</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-slate-600">
+                                                <MapPin size={16} className="text-slate-400" />
+                                                <span className="text-sm font-medium">{req.user?.city || 'Anywhere'}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-green-600">
+                                                <DollarSign size={16} />
+                                                <span className="text-sm font-bold">Budget: ₹{req.budget}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex lg:flex-col gap-2 lg:w-40 justify-center">
+                                        <button
+                                            onClick={() => navigate('/worker-dashboard/messages', { state: { user: req.user } })}
+                                            className="w-full px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-all font-bold text-sm shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                                        >
+                                            <MessageSquare size={18} />
+                                            Message
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
             ) : activeTab === 'jobs' ? (
                 /* Job Requests Content */
                 displayedLeads.length === 0 ? (

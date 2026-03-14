@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, DollarSign, Clock, Star, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, DollarSign, Clock, Star, ToggleLeft, ToggleRight, Home, Laptop } from 'lucide-react';
 
 const WorkerServices = () => {
     const [services, setServices] = useState([]);
@@ -12,7 +12,8 @@ const WorkerServices = () => {
         price: '',
         deliveryTime: '',
         description: '',
-        image: ''
+        image: '',
+        serviceType: 'Residency'
     });
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -56,7 +57,8 @@ const WorkerServices = () => {
             price: service.price,
             deliveryTime: service.deliveryTime,
             description: service.description,
-            image: service.image || ''
+            image: service.image || '',
+            serviceType: service.serviceType || 'Residency'
         });
         setShowAddModal(true);
     };
@@ -80,7 +82,7 @@ const WorkerServices = () => {
                 alert(`Service ${editingId ? 'updated' : 'added'} successfully!`);
                 setShowAddModal(false);
                 setEditingId(null);
-                setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', image: '' });
+                setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', image: '', serviceType: 'Residency' });
                 fetchServices();
             } else {
                 const error = await response.json();
@@ -163,7 +165,7 @@ const WorkerServices = () => {
                 <button
                     onClick={() => {
                         setEditingId(null);
-                        setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', image: '' });
+                        setFormData({ title: '', category: '', price: '', deliveryTime: '', description: '', image: '', serviceType: 'Residency' });
                         setShowAddModal(true);
                     }}
                     className="flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all font-bold text-sm sm:text-base w-full sm:w-auto"
@@ -193,6 +195,7 @@ const WorkerServices = () => {
                                 <p className="text-xs text-slate-500 mb-2 line-clamp-2">{service.description}</p>
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg">{service.category}</span>
+                                    <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg">{service.serviceType || 'Residency'}</span>
                                     <span className={`px-2 py-1 text-xs font-bold rounded-lg ${service.status === 'active' ? 'bg-green-50 text-green-700' :
                                         service.status === 'rejected' ? 'bg-red-50 text-red-700' :
                                             'bg-yellow-50 text-yellow-700'
@@ -253,13 +256,30 @@ const WorkerServices = () => {
                                     </datalist>
                                 </div>
                                 <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">Service Type</label>
+                                    <div className="flex bg-slate-100 p-1 rounded-xl">
+                                        {['Residency', 'Commercial'].map((type) => (
+                                            <button
+                                                key={type}
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, serviceType: type })}
+                                                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${formData.serviceType === type ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                            >
+                                                {type}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Price (₹)</label>
-                                    <input type="number" name="price" value={formData.price} onChange={handleInputChange} required className="w-full px-4 py-2 border rounded-lg" placeholder="500" />
+                                    <input type="number" name="price" value={formData.price} onChange={handleInputChange} required min="0" className="w-full px-4 py-2 border rounded-lg" placeholder="500" />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Delivery Time (Days)</label>
-                                <input type="number" name="deliveryTime" value={formData.deliveryTime} onChange={handleInputChange} className="w-full px-4 py-2 border rounded-lg" placeholder="1" />
+                                <input type="number" name="deliveryTime" value={formData.deliveryTime} onChange={handleInputChange} required min="1" className="w-full px-4 py-2 border rounded-lg" placeholder="1" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Service Image</label>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Phone, MapPin, ArrowRight, Check, Shield, Star, Lock, Heart, ShoppingBag, Search, Loader2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const StepIndicator = ({ currentStep, totalSteps }) => (
     <div className="flex items-center justify-center mb-8 lg:mb-12">
@@ -48,6 +48,7 @@ const CustomerRegister = () => {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -259,7 +260,7 @@ const CustomerRegister = () => {
                                             </button>
 
                                             <p className="text-center text-slate-500 mt-6">
-                                                Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in</Link>
+                                                Already have an account? <Link to="/login" state={location.state} className="text-primary font-bold hover:underline">Log in</Link>
                                             </p>
                                         </motion.div>
                                     )}
@@ -279,7 +280,7 @@ const CustomerRegister = () => {
                                                 Your account has been created successfully. You can now login and start exploring services.
                                             </p>
                                             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
-                                                <Link to="/login" className="btn-primary w-full justify-center py-4 text-lg">Go to Login</Link>
+                                                <Link to="/login" state={location.state} className="btn-primary w-full justify-center py-4 text-lg">Go to Login</Link>
                                                 <Link to="/" className="btn-secondary w-full justify-center py-4 text-lg">Back to Home</Link>
                                             </div>
                                         </motion.div>

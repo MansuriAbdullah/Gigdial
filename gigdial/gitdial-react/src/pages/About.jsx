@@ -42,6 +42,8 @@ const TeamMember = ({ name, role, img, delay }) => (
     </motion.div>
 )
 
+import CMSContent from '../components/Common/CMSContent';
+
 const About = () => {
     return (
         <div className="min-h-screen bg-slate-50 overflow-hidden">
@@ -62,7 +64,10 @@ const About = () => {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Gig Workforce</span>
                         </h1>
                         <p className="text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto">
-                            We are on a mission to organize the hyperlocal service industry by connecting skilled professionals with customers through technology, trust, and transparency.
+                            <CMSContent 
+                                contentKey="about_mission" 
+                                fallback="We are on a mission to organize the hyperlocal service industry by connecting skilled professionals with customers through technology, trust, and transparency." 
+                            />
                         </p>
                     </motion.div>
                 </div>

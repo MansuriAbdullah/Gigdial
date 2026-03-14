@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { Star, MapPin, ShieldCheck, Check, Clock, Calendar, ArrowLeft, ArrowRight, Heart, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getFullImagePath } from '../../utils/imagePath';
@@ -7,6 +8,8 @@ import { getFullImagePath } from '../../utils/imagePath';
 const ServiceDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useAuth();
     const [service, setService] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -34,10 +37,9 @@ const ServiceDetail = () => {
     }, [id]);
 
     const handleRequestService = async () => {
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        if (!userInfo) {
+        if (!user) {
             alert('Please login to request a service');
-            navigate('/login');
+            navigate('/login', { state: { from: location } });
             return;
         }
 
@@ -47,7 +49,7 @@ const ServiceDetail = () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userInfo.token}`
+                        'Authorization': `Bearer ${user.token}`
                     },
                     body: JSON.stringify({
                         gig: service._id,

@@ -31,6 +31,11 @@ const gigSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    serviceType: {
+        type: String,
+        enum: ['Commercial', 'Residency'],
+        default: 'Residency'
+    },
     price: {
         type: Number,
         required: true,

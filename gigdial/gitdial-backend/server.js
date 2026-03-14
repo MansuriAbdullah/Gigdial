@@ -18,6 +18,7 @@ import withdrawalRoutes from './routes/withdrawalRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
+import jobRequestRoutes from './routes/jobRequestRoutes.js';
 
 dotenv.config();
 
@@ -27,13 +28,26 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Connect to Database
-connectDB().catch(err => {
+import Content from './models/Content.js';
+connectDB().then(async () => {
+    // Auto-seed sample data if about_mission is missing
+    const mission = await Content.findOne({ key: 'about_mission' });
+    if (!mission) {
+        await Content.create({
+            key: 'about_mission',
+            title: 'Mission Statement',
+            content: '<b>गिगडायल (GigDial)</b> अब भारत के हर घर में स्किल्ड प्रोफेशनल्स पहुँचा रहा है! हमारा उद्देश्य है कि हम टेक्नोलॉजी और भरोसे के जरिए हर वर्कर को उसके काम का सही दाम दिला सकें और ग्राहकों को बेहतरीन सर्विस।',
+            section: 'About Page'
+        });
+        console.log('✔ Sample About Mission seeded');
+    }
+}).catch(err => {
     console.error('Failed to connect to MongoDB:', err.message);
 });
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 // CORS configuration (Allow all in prod for now to debug)
@@ -57,6 +71,7 @@ app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/leads', leadRoutes);
+app.use('/api/job-requests', jobRequestRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');
@@ -78,7 +93,7 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    const statusCode = err.status || err.statusCode || 500;
     res.status(statusCode).json({
         message: err.message,
         stack: process.env.NODE_ENV === 'production' ? null : err.stack,

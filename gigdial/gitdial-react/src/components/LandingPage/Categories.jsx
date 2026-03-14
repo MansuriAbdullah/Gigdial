@@ -255,15 +255,26 @@ const Categories = () => {
               <h3 className="text-2xl font-bold text-slate-800 mb-2">Can't find what you need?</h3>
               <p className="text-slate-600">We have 50+ more categories waiting for you</p>
             </div>
-            <button
-              onClick={() => navigate('/workers')}
-              className="group relative px-8 py-3 bg-gradient-to-r from-blue-600 to-lime-600 text-white font-semibold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-500/30">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-lime-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <span className="relative flex items-center gap-2">
-                Explore All Categories
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => navigate('/services?type=Residency')}
+                className="group relative px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative flex items-center gap-2 text-sm">
+                  Residency Catalog
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </button>
+              <button
+                onClick={() => navigate('/services?type=Commercial')}
+                className="group relative px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-semibold rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-500/30">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-700 to-lime-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative flex items-center gap-2 text-sm">
+                  Commercial Catalog
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </button>
+            </div>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-slate-500">

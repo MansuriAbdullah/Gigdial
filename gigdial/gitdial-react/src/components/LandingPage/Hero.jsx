@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Search, Briefcase, MapPin, CheckCircle, Shield, Zap, CreditCard, Phone, Check } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -35,6 +35,7 @@ const TrustBadge = ({ icon: Icon, title, desc, color = "blue" }) => {
 const Hero = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const location = useLocation();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCity, setSelectedCity] = useState('');
     const [cities, setCities] = useState([]);
@@ -171,7 +172,7 @@ const Hero = () => {
                                 <span className="relative z-10">Service खोजें</span>
                             </button>
 
-                            <Link to="/login" className="group px-8 py-4 bg-white/80 backdrop-blur-sm hover:bg-white rounded-full text-slate-800 font-bold border border-slate-200 shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center w-full sm:w-auto text-lg gap-2 relative overflow-hidden">
+                            <Link to="/login" state={{ from: location }} className="group px-8 py-4 bg-white/80 backdrop-blur-sm hover:bg-white rounded-full text-slate-800 font-bold border border-slate-200 shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center w-full sm:w-auto text-lg gap-2 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-tr from-emerald-50 to-teal-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 <Briefcase className="w-5 h-5 text-slate-600 group-hover:text-emerald-600 transition-colors relative z-10" />
                                 <span className="relative z-10 group-hover:text-emerald-700 transition-colors">Worker बनें</span>

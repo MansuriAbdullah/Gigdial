@@ -50,6 +50,11 @@ const userSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    serviceType: {
+        type: String,
+        enum: ['Residency', 'Commercial'],
+        default: 'Residency'
+    },
     profileImage: {
         type: String,
         required: false,

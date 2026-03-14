@@ -25,6 +25,7 @@ const WorkerPublicProfile = React.lazy(() => import('./pages/WorkerPublicProfile
 const Contact = React.lazy(() => import('./pages/Contact'));
 const About = React.lazy(() => import('./pages/About'));
 const HowItWorks = React.lazy(() => import('./pages/HowItWorks'));
+const RequireWorker = React.lazy(() => import('./pages/RequireWorker'));
 
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -56,6 +57,7 @@ function AnimatedRoutes() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<LandingPage />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/require-worker" element={<RequireWorker />} />
               <Route path="/services" element={<ServiceCatalog />} />
               <Route path="/services/:id" element={<ServiceDetail />} />
               <Route path="/workers" element={<BrowseWorkers />} />

@@ -80,6 +80,7 @@ const createGig = async (req, res) => {
             deliveryTime: req.body.deliveryTime || 3,
             revisions: req.body.revisions || 1,
             image: req.body.image || req.body.coverImage || '',
+            serviceType: req.body.serviceType || 'Residency',
         });
 
         const createdGig = await gig.save();
@@ -110,6 +111,7 @@ const updateGig = async (req, res) => {
             gig.deliveryTime = req.body.deliveryTime || gig.deliveryTime;
             gig.revisions = req.body.revisions || gig.revisions;
             gig.image = req.body.image || req.body.coverImage || gig.image;
+            gig.serviceType = req.body.serviceType || gig.serviceType;
 
             const updatedGig = await gig.save();
             res.json(updatedGig);
