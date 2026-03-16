@@ -173,6 +173,30 @@ const WorkerLeads = () => {
         }
     };
 
+    const handleJobRequestStatus = async (id, status) => {
+        try {
+            const response = await fetch(`/api/job-requests/${id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userInfo?.token}`
+                },
+                body: JSON.stringify({ status })
+            });
+
+            if (response.ok) {
+                alert(status === 'active' ? 'Requirement Approved and added to My Gigs!' : 'Requirement hidden from your list.');
+                fetchJobRequests();
+                fetchLeads(); // Refresh My Gigs list to show the new claimed request
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to update status');
+            }
+        } catch (error) {
+            console.error('Error updating job request status:', error);
+        }
+    };
+
     const displayedLeads = leads.filter(lead => {
         if (filter === 'All') return lead.status !== 'completed' && lead.status !== 'cancelled';
         if (filter === 'New') return lead.status === 'pending';
@@ -301,10 +325,22 @@ const WorkerLeads = () => {
                                     <div className="flex lg:flex-col gap-2 lg:w-40 justify-center">
                                         <button
                                             onClick={() => navigate('/worker-dashboard/messages', { state: { user: req.user } })}
-                                            className="w-full px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-all font-bold text-sm shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                                            className="w-full px-4 py-2.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-bold text-sm shadow-sm flex items-center justify-center gap-2"
                                         >
                                             <MessageSquare size={18} />
                                             Message
+                                        </button>
+                                        <button
+                                            onClick={() => handleJobRequestStatus(req._id, 'active')}
+                                            className="w-full px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-bold text-sm shadow-lg shadow-green-600/20"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={() => handleJobRequestStatus(req._id, 'rejected')}
+                                            className="w-full px-4 py-2.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all font-bold text-sm"
+                                        >
+                                            Reject
                                         </button>
                                     </div>
                                 </div>

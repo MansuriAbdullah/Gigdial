@@ -13,7 +13,7 @@ const orderSchema = mongoose.Schema({
     },
     gig: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: 'Gig',
     },
     title: { type: String, required: true },

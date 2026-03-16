@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Zap, HeartHandshake, Star, Users, CheckCircle2, ArrowRight, ClipboardList, Clock, Banknote, MessageSquare, AlertCircle } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -12,6 +12,12 @@ const RequireWorker = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        if (user && user.role === 'worker') {
+            navigate('/', { replace: true });
+        }
+    }, [user, navigate]);
 
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({

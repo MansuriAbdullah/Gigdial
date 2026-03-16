@@ -11,11 +11,28 @@ const CustomerHome = () => {
     const navigate = useNavigate();
     const [filter, setFilter] = useState('active');
     const [bookings, setBookings] = useState([]);
+    const [jobRequests, setJobRequests] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchDashboardData();
+        fetchMyRequests();
     }, []);
+
+    const fetchMyRequests = async () => {
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const res = await fetch('/api/job-requests/my', {
+                headers: { 'Authorization': `Bearer ${userInfo?.token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setJobRequests(data);
+            }
+        } catch (error) {
+            console.error('Error fetching job requests:', error);
+        }
+    };
 
     const fetchDashboardData = async () => {
         try {
@@ -235,6 +252,62 @@ const CustomerHome = () => {
                     onClick={() => navigate('/contact')}
                 />
             </div>
+
+            {/* My Requests Section */}
+            {jobRequests.length > 0 && (
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 p-6 md:p-8">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                                <MessageSquare size={20} />
+                            </div>
+                            <h2 className="text-xl font-bold text-slate-900">My Public Requests</h2>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {jobRequests.map((req) => (
+                            <div key={req._id} className="p-5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-lg transition-all border-l-4 border-l-blue-500">
+                                <div className="flex justify-between items-start mb-3">
+                                    <span className="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                                        {req.category}
+                                    </span>
+                                    <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold ${
+                                        req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                                        req.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'
+                                    }`}>
+                                        {req.status === 'pending' ? 'WAITING' : 'ACCEPTED'}
+                                    </span>
+                                </div>
+                                <p className="text-slate-700 text-sm font-medium line-clamp-2 mb-4">"{req.description}"</p>
+                                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                                    <div className="flex items-center gap-2 text-slate-500">
+                                        <Clock size={14} />
+                                        <span className="text-xs font-bold">{req.days} Days</span>
+                                    </div>
+                                    <div className="text-blue-600 font-bold text-sm">₹{req.budget}</div>
+                                </div>
+                                {req.status === 'active' && (
+                                    <div className="mt-4 p-3 bg-green-50 rounded-xl flex items-center gap-3">
+                                        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-green-600 font-bold text-xs ring-2 ring-green-100">
+                                            {req.acceptedBy?.name?.charAt(0) || 'W'}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[10px] text-green-600 font-bold uppercase tracking-wider">Accepted By</p>
+                                            <p className="text-xs font-bold text-slate-800 truncate">{req.acceptedBy?.name || 'Assigned Worker'}</p>
+                                        </div>
+                                        <button 
+                                            onClick={() => navigate(`/customer-dashboard/messages?workerId=${req.acceptedBy?._id || req.acceptedBy}`)}
+                                            className="p-2 bg-white text-blue-600 rounded-lg shadow-sm hover:bg-blue-600 hover:text-white transition-all"
+                                        >
+                                            <MessageSquare size={14} />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
                 {/* Left Column: Bookings */}

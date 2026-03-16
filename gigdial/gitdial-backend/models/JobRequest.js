@@ -26,7 +26,15 @@ const jobRequestSchema = mongoose.Schema({
         type: String,
         enum: ['pending', 'active', 'completed', 'cancelled'],
         default: 'pending'
-    }
+    },
+    acceptedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    rejectedBy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 }, {
     timestamps: true
 });
