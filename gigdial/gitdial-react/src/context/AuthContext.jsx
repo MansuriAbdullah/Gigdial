@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('userInfo');
+        localStorage.removeItem('visitorPhone');
         setUser(null);
         // Redirect to home page
         window.location.href = '/';

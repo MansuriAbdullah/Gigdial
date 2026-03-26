@@ -20,74 +20,77 @@ const WorkerCard = ({ worker, navigate, index }) => {
             layout
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            whileHover={{ y: -15, scale: 1.02 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             onClick={() => navigate(`/workers/${worker._id}`)}
-            className={`group relative p-[2px] rounded-[3rem] bg-gradient-to-br ${color.primary} shadow-2xl ${color.shadow} hover:shadow-3xl transition-all duration-500 cursor-pointer`}
+            className={`group relative p-[2px] rounded-xl bg-gradient-to-br ${color.primary} shadow-xl ${color.shadow} transition-all duration-300 cursor-pointer`}
         >
             {/* Inner Content Wrapper */}
-            <div className="bg-white rounded-[2.95rem] overflow-hidden h-full flex flex-col">
+            <div className="bg-white rounded-lg overflow-hidden h-full flex flex-col">
                 {/* Profile Image & Background */}
-                <div className="relative h-64 overflow-hidden bg-slate-900">
-                    {worker.profileImage ? (
-                        <img
-                            src={getFullImagePath(worker.profileImage)}
-                            alt={worker.name}
-                            className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-2 transition-transform duration-700"
-                            referrerPolicy="no-referrer"
-                        />
-                    ) : (
-                        <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${color.primary} text-white text-7xl font-black`}>
-                            {worker.name.charAt(0)}
-                        </div>
-                    )}
-                    
+                <div className="relative h-56 overflow-hidden bg-slate-900">
+                    <img
+                        src={worker.profileImage ? getFullImagePath(worker.profileImage) :
+                            `https://images.unsplash.com/photo-${['1540513032858-583516954829', '1507003211169-0a1dd7228f2d', '1560250097-0b93528c311a', '1573497019940-1c28c88b4f3e', '1580489944761-15a19d654956', '1633332755192-727a05c4013d', '1494790108377-be9c29b29330', '1500648767791-00dcc994a43e'][index % 8]}?q=80&w=400&h=500&auto=format&fit=crop`}
+                        alt={worker.name}
+                        className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-1000"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=random&color=fff&size=512`;
+                        }}
+                    />
+
                     {/* Vibrant Overlays */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent opacity-80"></div>
-                    
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
                     {/* Top Badge Row */}
                     <div className="absolute top-5 left-5 right-5 flex justify-between items-center z-20">
-                        <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
-                            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                            <span className="text-[10px] font-black uppercase text-white tracking-widest">{worker.rating || 4.5}</span>
+                        <div className="bg-black/40 backdrop-blur-xl px-3 py-1 rounded-2xl border border-white/20 flex items-center gap-1.5 shadow-2xl">
+                            <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                            <span className="text-[10px] font-black uppercase text-white tracking-widest leading-none">{worker.rating || 4.5}</span>
                         </div>
 
-                        {worker.isVerified && (
-                            <div className="bg-white/95 backdrop-blur-xl px-3 py-1.5 rounded-full border border-white flex items-center gap-1.5 shadow-xl shadow-yellow-500/20">
-                                <Award className="w-4 h-4 text-amber-500 fill-amber-500" />
-                                <span className="text-[10px] font-black uppercase text-slate-800 tracking-widest">Verified</span>
+                        {worker.isVerified !== false && (
+                            <div className="bg-white/95 backdrop-blur-3xl px-3 py-1 rounded-2xl border border-white flex items-center gap-1.5 shadow-2xl shadow-blue-500/10">
+                                <Award className="w-3.5 h-3.5 text-blue-600" />
+                                <span className="text-[10px] font-black uppercase text-slate-900 tracking-widest leading-none">Pro</span>
                             </div>
                         )}
                     </div>
 
-                    {/* Floating Category Badge */}
-                    <div className={`absolute bottom-6 right-6 z-20 px-4 py-1.5 rounded-full bg-gradient-to-r ${color.primary} text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-xl`}>
-                        {worker.category || 'Expert'}
-                    </div>
-                </div>
-
-                {/* Content Area */}
-                <div className="p-8 relative flex-1 flex flex-col">
-                    {/* Decorative flare */}
-                    <div className={`absolute -top-12 right-12 w-24 h-24 bg-gradient-to-br ${color.primary} rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity`}></div>
-
-                    <div className="mb-6">
-                        <h3 className="text-2xl font-black text-black mb-2 group-hover:text-transparent bg-clip-text bg-gradient-to-r transition-all duration-300" style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }}>
-                            <span className={`group-hover:bg-gradient-to-r ${color.primary} bg-clip-text group-hover:text-transparent`}>
-                                {worker.name}
-                            </span>
+                    {/* Content Overlay - Name & City on Image */}
+                    <div className="absolute bottom-5 left-5 right-5 z-20">
+                        <h3 className="text-xl font-black text-white mb-1 tracking-tight uppercase leading-none truncate">
+                            {worker.name}
                         </h3>
-                        <div className="flex items-center gap-2">
-                            <div className={`p-1.5 ${color.light} rounded-lg`}>
-                                <MapPin className={`w-3.5 h-3.5 ${color.text}`} />
-                            </div>
-                            <span className="text-xs font-black text-slate-700 uppercase tracking-[0.15em]">{worker.city || 'Ahmedabad'}</span>
+                        <div className="flex items-center gap-1.5 opacity-90">
+                            <MapPin className="w-2.5 h-2.5 text-blue-400" />
+                            <span className="text-[9px] font-black text-slate-50 uppercase tracking-[0.2em]">{worker.city || 'Ahmedabad'}</span>
                         </div>
                     </div>
 
-                    {/* Skills Grid */}
-                    <div className="flex flex-wrap gap-2 mb-8">
+                    {/* Experience Badge - Moved into Image */}
+                    <div className="absolute bottom-5 right-5 z-20">
+                        <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 flex flex-col items-center shadow-2xl">
+                            <span className="text-[7px] font-black text-white/70 uppercase tracking-widest leading-none mb-0.5">Experience</span>
+                            <span className="text-[10px] font-black text-white leading-none">{worker.experience || 2}+ Yrs</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content Area - Detailed Professional Overview */}
+                <div className="p-5 relative flex-1 flex flex-col items-start bg-white gap-3">
+
+                    {/* Short Professional Bio */}
+                    <div className="w-full">
+                        <p className="text-[10px] font-bold text-slate-800 leading-relaxed italic line-clamp-2">
+                             "{worker.bio || 'Professional in providing high-quality services with excellence and reliability.'}"
+                        </p>
+                    </div>
+
+                    {/* Skills Grid - Modern Compact Chips */}
+                    <div className="flex flex-wrap gap-1.5 w-full">
                         {(() => {
                             let skillsArray = [];
                             try {
@@ -95,7 +98,6 @@ const WorkerCard = ({ worker, navigate, index }) => {
                                     skillsArray = worker.skills;
                                 } else if (typeof worker.skills === 'string') {
                                     let clean = worker.skills.trim();
-                                    // Remove leading/trailing brackets if they exist but JSON parsing fails
                                     if (clean.startsWith('[') && clean.endsWith(']')) {
                                         try {
                                             skillsArray = JSON.parse(clean);
@@ -116,15 +118,14 @@ const WorkerCard = ({ worker, navigate, index }) => {
                             }
 
                             return skillsArray.slice(0, 3).map((skill, idx) => {
-                                // Double check if skill itself is a string and clean it
-                                const cleanSkill = typeof skill === 'string' 
-                                    ? skill.replace(/[\[\]"]/g, '').trim() 
+                                const cleanSkill = typeof skill === 'string'
+                                    ? skill.replace(/[\[\]"]/g, '').trim()
                                     : String(skill);
-                                
+
                                 return (
-                                    <div key={idx} className={`px-4 py-2 ${color.light} rounded-2xl flex items-center gap-2 transition-all group-hover:scale-105 duration-300 border border-transparent hover:border-slate-100 shadow-sm shadow-slate-200/50`}>
+                                    <div key={idx} className={`px-2.5 py-1 ${color.light} rounded-lg flex items-center gap-1.5 border border-white shadow-sm`}>
                                         <div className={`w-1 h-1 rounded-full bg-gradient-to-br ${color.primary}`}></div>
-                                        <span className={`text-[10px] font-black uppercase tracking-widest ${color.text}`}>
+                                        <span className={`text-[7.5px] font-black uppercase tracking-wider ${color.text}`}>
                                             {cleanSkill}
                                         </span>
                                     </div>
@@ -133,12 +134,12 @@ const WorkerCard = ({ worker, navigate, index }) => {
                         })()}
                     </div>
 
-                    {/* Action Footer - Price Removed */}
-                    <div className="pt-4 border-t border-slate-100 mt-auto">
+                    {/* Action Footer */}
+                    <div className="w-full mt-auto">
                         <motion.button
-                            whileHover={{ scale: 1.05, x: 5 }}
-                            whileTap={{ scale: 0.95 }}
-                            className={`w-full py-4 bg-gradient-to-r ${color.primary} text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-2xl shadow-2xl ${color.shadow} hover:shadow-3xl transition-all flex items-center justify-center gap-3 drop-shadow-xl`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`w-full py-3 bg-gradient-to-r ${color.primary} text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl shadow-lg ${color.shadow} hover:brightness-110 transition-all flex items-center justify-center gap-2`}
                         >
                             View Services
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -208,11 +209,11 @@ const BrowseWorkersMinimal = () => {
 
                 {/* Bottom CTA */}
                 <div className="mt-16 text-center">
-                    <button 
+                    <button
                         onClick={() => navigate('/workers')}
                         className="inline-flex items-center gap-3 px-8 py-4 bg-white border-2 border-slate-100 rounded-3xl font-black text-sm uppercase tracking-widest text-slate-800 hover:border-blue-600 hover:text-blue-600 shadow-xl shadow-slate-200/50 transition-all group"
                     >
-                        View More Professionals 
+                        View More Professionals
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                     </button>
                 </div>

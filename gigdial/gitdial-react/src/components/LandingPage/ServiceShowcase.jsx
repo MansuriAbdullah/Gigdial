@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ArrowRight, Sparkles, Clock, Users, Award, Zap, TrendingUp, Heart, X, Phone, Send, Search } from 'lucide-react';
+import { Star, ArrowRight, Sparkles, Clock, Users, Award, Zap, TrendingUp, Heart, X, Phone, Send, Search, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -27,7 +27,7 @@ const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, 
     >
       {/* Visible Shimmer Border effect */}
       <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradients[color]} rounded-[2rem] blur-sm opacity-25 group-hover:opacity-100 transition-opacity duration-500`}></div>
-      
+
       {/* Main Card Content */}
       <div className="relative bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-xl shadow-slate-200/50 group-hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
         {/* Image Container */}
@@ -36,22 +36,34 @@ const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, 
             src={image}
             alt={title}
             className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
+            onError={(e) => {
+              e.target.onerror = null;
+              const categoryMatch = category || 'Professional';
+              const placeholders = {
+                'Cleaning': 'https://images.unsplash.com/photo-1581578731117-104f8a3d46a8?q=80&w=600',
+                'Plumber': 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=600',
+                'Electrician': 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=600',
+                'Tutor': 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600',
+                'Digital': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600'
+              };
+              e.target.src = placeholders[categoryMatch] || 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=600';
+            }}
           />
           {/* Dynamic Overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
-          
+
           {/* Category Badge - Glassmorphism */}
           <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/30">
             {category}
           </div>
-  
+
           {/* Floating Rating Card */}
           <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-xl px-2.5 py-1.5 rounded-xl shadow-xl flex items-center gap-1.5 border border-white">
             <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
             <span className="text-xs font-black text-slate-800">{rating}</span>
           </div>
         </div>
-  
+
         {/* Content Area */}
         <div className="p-6 flex flex-col flex-1">
           <div className="flex justify-between items-start mb-4">
@@ -62,7 +74,7 @@ const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, 
               <Heart className="w-5 h-5" />
             </button>
           </div>
-  
+
           {/* Trust Badges */}
           <div className="flex flex-wrap gap-3 mb-6">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
@@ -117,7 +129,7 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', on
     if (scrollContainer.current) {
       const { scrollLeft, clientWidth, scrollWidth } = scrollContainer.current;
       const scrollAmount = 350; // Approximating card width + gap
-      
+
       let nextScroll = 0;
       if (direction === 'right') {
         nextScroll = scrollLeft + clientWidth >= scrollWidth - 10 ? 0 : scrollLeft + scrollAmount;
@@ -148,7 +160,7 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', on
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.current;
       setShowLeftArrow(scrollLeft > 20);
       setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 20);
-      
+
       // Update active dot
       const index = Math.round(scrollLeft / 344); // 320 card + 24 gap
       setActiveIndex(index);
@@ -221,9 +233,9 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', on
         {services.map((_, idx) => (
           <motion.div
             key={idx}
-            animate={{ 
+            animate={{
               width: activeIndex === idx ? 24 : 8,
-              opacity: activeIndex === idx ? 1 : 0.4 
+              opacity: activeIndex === idx ? 1 : 0.4
             }}
             className={`h-2 rounded-full cursor-pointer transition-all ${activeIndex === idx ? 'bg-blue-600' : 'bg-slate-300 hover:bg-slate-400'}`}
             onClick={() => {
@@ -300,7 +312,7 @@ const ServiceShowcase = () => {
             price: gig.price,
             bookings: gigHires || 0, // Using numReviews/salesCount as hiring count proxy
             id: gig._id,
-            workerId: gig.user?._id || gig.user 
+            workerId: gig.user?._id || gig.user
           };
 
           // Find matching category group
@@ -333,38 +345,36 @@ const ServiceShowcase = () => {
 
   const handleBookClick = async (service) => {
     setSelectedService(service);
-    
+
     // Check auth status
     const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
-    
+
     if (!user || !userInfo) {
-      // Check if visitor phone is in localStorage
+      // Check for returning visitor with saved phone
       const storedPhone = localStorage.getItem('visitorPhone');
       if (storedPhone) {
-        // Record lead anonymously and proceed
+        // Silent Lead capture for returning visitor
         try {
-          axios.post('/api/leads/anonymous-record', {
-            workerId: service.workerId,
-            phoneNumber: storedPhone
+          axios.post('/api/leads/anonymous-record', { 
+            workerId: service.workerId, 
+            phoneNumber: storedPhone 
           });
-        } catch (err) {
-          console.error("Failed to record lead", err);
-        }
+        } catch(e) { console.error(e); }
 
-        navigate(`/workers/${service.workerId}`, {
-          state: {
+        navigate(`/workers/${service.workerId}`, { 
+          state: { 
             prefilledPhoneNumber: storedPhone,
             fromLandingPage: true
-          }
+          } 
         });
         return;
       }
       
-      // If not logged in and no stored phone, open the phone capture modal
+      // For landing page services, we show the popup to capture lead
       setModalOpen(true);
     } else {
       // If logged in, direct redirect to worker profile (One-click experience)
-      toast.loading("Opening profile...", { duration: 1000 });
+      toast.loading("Connecting...", { duration: 1000 });
       setTimeout(() => {
         navigate(`/workers/${service.workerId}`, {
           state: {
@@ -384,7 +394,7 @@ const ServiceShowcase = () => {
   const handleSubmitContact = async (e) => {
     e.preventDefault();
     const cleanPhone = phoneNumber.replace(/\D/g, ''); // Extract only digits
-    
+
     if (cleanPhone.length !== 10) {
       toast.error("Please enter a valid 10-digit mobile number");
       return;
@@ -392,10 +402,10 @@ const ServiceShowcase = () => {
 
     setSending(true);
     try {
-      // 1. Save to local storage so modal never shows again
+      // 1. Store in local storage
       localStorage.setItem('visitorPhone', cleanPhone);
 
-      // 2. Record this lead in the database for the worker
+      // 2. Record lead anonymously
       await axios.post('/api/leads/anonymous-record', {
         workerId: selectedService.workerId,
         phoneNumber: cleanPhone
@@ -403,7 +413,7 @@ const ServiceShowcase = () => {
 
       setModalOpen(false);
       setSending(false);
-      toast.success("Profile unlocked!");
+      toast.success("Profile Unlocked!", { icon: '🚀' });
 
       // 3. Navigate to worker profile
       navigate(`/workers/${selectedService.workerId}`, {
@@ -498,11 +508,10 @@ const ServiceShowcase = () => {
                     setActiveCategory(tab.id);
                     setSearchTerm(''); // Clear search on tab switch
                   }}
-                  className={`flex-shrink-0 flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-500 whitespace-nowrap border-2 ${
-                    isActive 
-                    ? `bg-gradient-to-r ${theme[tab.color]} text-white border-transparent shadow-xl` 
-                    : 'bg-white text-slate-500 border-slate-50 shadow-lg shadow-slate-200/50 hover:border-slate-300'
-                  }`}
+                  className={`flex-shrink-0 flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-500 whitespace-nowrap border-2 ${isActive
+                      ? `bg-gradient-to-r ${theme[tab.color]} text-white border-transparent shadow-xl`
+                      : 'bg-white text-slate-500 border-slate-50 shadow-lg shadow-slate-200/50 hover:border-slate-300'
+                    }`}
                 >
                   <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} strokeWidth={3} />
                   {tab.label}
@@ -531,7 +540,7 @@ const ServiceShowcase = () => {
 
                 const applySearch = (list) => {
                   if (!searchTerm.trim()) return list;
-                  return list.filter(s => 
+                  return list.filter(s =>
                     s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     s.category.toLowerCase().includes(searchTerm.toLowerCase())
                   );
@@ -640,56 +649,82 @@ const ServiceShowcase = () => {
         </motion.div>
       </div>
 
-      {/* Contact Modal */}
+      {/* Premium Light-Theme Contact Modal */}
       <AnimatePresence>
         {modalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/40 backdrop-blur-xl">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              className="relative p-[2px] rounded-[3rem] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-2xl"
             >
-              <button
-                onClick={() => setModalOpen(false)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
-              >
-                <X size={24} />
-              </button>
-
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="text-blue-600 w-8 h-8" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900">Connect with Worker</h3>
-                <p className="text-slate-500 mt-2">Enter your number to view profile and connect.</p>
-              </div>
-
-              <form onSubmit={handleSubmitContact} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+91 9876543210"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                  />
-                </div>
+              <div className="bg-white rounded-[2.95rem] w-full max-w-md p-10 relative overflow-hidden">
+                {/* Micro-animations Background */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-50"></div>
 
                 <button
-                  type="submit"
-                  disabled={sending}
-                  className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                  onClick={() => setModalOpen(false)}
+                  className="absolute top-6 right-6 p-2.5 bg-slate-50 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all z-10"
                 >
-                  {sending ? 'Redirecting...' : (
-                    <>
-                      <Send size={18} /> View Profile
-                    </>
-                  )}
+                  <X size={20} />
                 </button>
-              </form>
+
+                <div className="text-center mb-10 relative z-10">
+                  <motion.div
+                    initial={{ rotate: -15 }}
+                    animate={{ rotate: 0 }}
+                    className="w-24 h-24 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-blue-200"
+                  >
+                    <Phone className="text-white w-10 h-10" />
+                  </motion.div>
+                  <h3 className="text-3xl font-black text-slate-900 tracking-tight leading-none mb-4">CONNECT WITH PRO</h3>
+                  <p className="text-slate-500 font-medium text-base px-2">Enter your 10-digit number to unlock early access and professional services.</p>
+                </div>
+
+                <form onSubmit={handleSubmitContact} className="space-y-8 relative z-10">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Mobile Number</label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                        <span className="text-lg font-black text-slate-300 tracking-tighter group-focus-within:text-blue-600 transition-colors">+91</span>
+                      </div>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={10}
+                        placeholder="98765 43210"
+                        className="w-full pl-16 pr-8 py-5 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-blue-500 focus:ring-8 focus:ring-blue-500/5 outline-none transition-all font-black text-slate-900 tracking-[0.15em] text-lg lg:text-xl shadow-inner"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className="w-full py-5 bg-slate-950 hover:bg-blue-600 text-white font-black rounded-2xl transition-all flex items-center justify-center gap-4 shadow-xl active:scale-[0.98] uppercase text-sm tracking-[0.2em] group overflow-hidden relative"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+                    {sending ? (
+                      <span className="flex items-center gap-2">
+                        <RefreshCw className="animate-spin" size={18} /> INITIALIZING...
+                      </span>
+                    ) : (
+                      <>
+                        <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> VIEW PROFILE NOW
+                      </>
+                    )}
+                  </button>
+                  <div className="flex items-center justify-center gap-6 mt-8 opacity-40 grayscale group-hover:grayscale-0 transition-all">
+                    <div className="h-[1px] flex-1 bg-slate-200"></div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Verified & Secure</p>
+                    <div className="h-[1px] flex-1 bg-slate-200"></div>
+                  </div>
+                </form>
+              </div>
             </motion.div>
           </div>
         )}

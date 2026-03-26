@@ -5,7 +5,7 @@ import {
     User, Mail, Phone, Shield, ArrowLeft, Heart, MessageSquare,
     Clock, Award, Zap, TrendingUp, X, Send, LayoutDashboard,
     Share2, ExternalLink, Globe, DollarSign, PieChart, CheckCircle2,
-    CalendarDays, ThumbsUp, CreditCard, Facebook, Twitter, Linkedin, ChevronRight
+    CalendarDays, ThumbsUp, CreditCard, Facebook, Twitter, Linkedin, ChevronRight, RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -97,6 +97,9 @@ const WorkerPublicProfile = () => {
     const [worker, setWorker] = useState(null);
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [visitorPhone, setVisitorPhone] = useState('');
+    const [bookingAfterPhone, setBookingAfterPhone] = useState(null);
     const [bookingGigId, setBookingGigId] = useState(null);
 
     useEffect(() => {
@@ -122,7 +125,62 @@ const WorkerPublicProfile = () => {
 
     const handleBack = () => navigate(-1);
 
+    const handlePhoneSubmit = async (e) => {
+        e.preventDefault();
+        const cleanPhone = visitorPhone.replace(/\D/g, '');
+        if (cleanPhone.length !== 10) {
+            toast.error("Please enter a valid 10-digit number");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            localStorage.setItem('visitorPhone', cleanPhone);
+            
+            // Record as lead
+            await fetch('/api/leads/anonymous-record', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ workerId: id, phoneNumber: cleanPhone })
+            });
+
+            setIsModalOpen(false);
+            setLoading(false);
+            toast.success("Details shared with worker!");
+
+            if (bookingAfterPhone) {
+                handleBookService(bookingAfterPhone);
+            }
+        } catch (err) {
+            console.error(err);
+            setLoading(false);
+        }
+    };
+
+    const handleActionClick = (gigId = null) => {
+        const userInfo = localStorage.getItem('userInfo');
+
+        if (!userInfo) {
+            toast.error("Please login first to connect with Pro");
+            navigate('/login', { 
+                state: { 
+                    from: location.pathname,
+                    workerId: id 
+                } 
+            });
+            return;
+        }
+
+        if (gigId) {
+            handleBookService(gigId);
+        } else {
+            // "Hire Now" - Redirect to chat
+            navigate(`/customer-dashboard/messages?workerId=${worker._id}`);
+        }
+    };
+
     const handleBookService = async (gigId) => {
+        setBookingGigId(gigId);
         if (!user) {
             toast.error('Please login to send requests');
             navigate('/login', { state: { from: location, bookingGigId: gigId } });
@@ -246,7 +304,7 @@ const WorkerPublicProfile = () => {
                                             Contact
                                         </button>
                                         <button 
-                                            onClick={() => navigate(`/customer-dashboard/messages?workerId=${worker._id}`)}
+                                            onClick={() => handleActionClick()}
                                             className="px-10 py-2.5 bg-[#e91e63] text-white rounded-lg font-bold text-sm shadow-md hover:bg-[#d81b60] transition-all"
                                         >
                                             Hire Now
@@ -321,7 +379,7 @@ const WorkerPublicProfile = () => {
                                                 image={s.image} 
                                                 category={s.category} 
                                                 price={s.price} 
-                                                onBook={handleBookService} 
+                                                onBook={handleActionClick} 
                                                 isBooking={bookingGigId === s._id}
                                             />
                                         ))}
@@ -410,6 +468,79 @@ const WorkerPublicProfile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Premium Light-Theme Contact Modal */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-white/40 backdrop-blur-xl">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+                            className="relative p-[2px] rounded-[3rem] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-2xl"
+                        >
+                            <div className="bg-white rounded-[2.95rem] w-full max-w-md p-10 relative overflow-hidden">
+                                {/* Micro-animations Background */}
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-50"></div>
+
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="absolute top-6 right-6 p-2.5 bg-slate-50 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all z-10"
+                                >
+                                    <X size={20} />
+                                </button>
+
+                                <div className="text-center mb-10 relative z-10">
+                                    <motion.div
+                                        initial={{ rotate: -15 }}
+                                        animate={{ rotate: 0 }}
+                                        className="w-24 h-24 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-blue-200"
+                                    >
+                                        <Phone className="text-white w-10 h-10" />
+                                    </motion.div>
+                                    <h3 className="text-3xl font-black text-slate-900 tracking-tight leading-none mb-4 uppercase">Connect with Pro</h3>
+                                    <p className="text-slate-500 font-medium text-base px-2 italic text-center">Enter your 10-digit number to connect with {worker.name} and view services.</p>
+                                </div>
+
+                                <form onSubmit={handlePhoneSubmit} className="space-y-8 relative z-10">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Mobile Number</label>
+                                        <div className="relative group">
+                                            <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                                                <span className="text-lg font-black text-slate-300 tracking-tighter group-focus-within:text-blue-600 transition-colors">+91</span>
+                                            </div>
+                                            <input
+                                                type="tel"
+                                                required
+                                                maxLength={10}
+                                                placeholder="98765 43210"
+                                                className="w-full pl-16 pr-8 py-5 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-blue-500 focus:ring-8 focus:ring-blue-500/5 outline-none transition-all font-black text-slate-900 tracking-[0.15em] text-lg lg:text-xl shadow-inner"
+                                                value={visitorPhone}
+                                                onChange={(e) => setVisitorPhone(e.target.value.replace(/\D/g, ''))}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        className="w-full py-5 bg-slate-950 hover:bg-blue-600 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-500/10 active:scale-[0.98] text-sm tracking-widest uppercase flex items-center justify-center gap-4 group relative overflow-hidden"
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+                                        <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> VIEW PROFILE NOW
+                                    </button>
+                                    
+                                    <div className="flex items-center justify-center gap-6 mt-8 opacity-40 grayscale group-hover:grayscale-0 transition-all">
+                                        <div className="h-[1px] flex-1 bg-slate-200"></div>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Instant Connection • Secure Data</p>
+                                        <div className="h-[1px] flex-1 bg-slate-200"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

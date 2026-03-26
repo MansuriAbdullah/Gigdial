@@ -4,23 +4,23 @@ import { motion } from 'framer-motion';
 import { Search, MessageSquare, Briefcase, ChevronRight } from 'lucide-react';
 
 const StepCard = ({ number, icon: Icon, title, desc, gradient, lightBg, textColor }) => (
-    <div className="relative group transition-all duration-500">
-        {/* Colorful Shimmer Border - Always Visible */}
-        <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradient} rounded-[2rem] blur-[2px] opacity-30 group-hover:opacity-60 transition-opacity duration-500`}></div>
+    <div className="relative group h-full">
+        {/* Colorful Shimmer Border - Always Visible & Sync with Features */}
+        <div className={`absolute -inset-0.5 bg-gradient-to-r ${gradient} rounded-[1.8rem] blur opacity-25 group-hover:opacity-100 transition duration-500`}></div>
         
-        <div className="relative flex flex-col items-center text-center p-8 bg-white rounded-[2rem] border border-slate-100/50 shadow-xl shadow-slate-200/40 hover:shadow-blue-500/5 transition-all duration-500 h-full overflow-hidden">
-            {/* Number Badge - Light Theme */}
-            <div className={`absolute top-4 left-4 w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-gradient-to-br ${gradient} group-hover:text-white transition-all duration-500`}>
-                <span className="text-sm font-black text-slate-900 group-hover:text-inherit tracking-tighter">0{number}</span>
+        <div className="relative flex flex-col items-center text-center p-5 bg-white rounded-[1.75rem] border border-slate-100 shadow-xl shadow-slate-200/40 transition-all duration-500 h-full overflow-hidden">
+            {/* Number Badge - Smaller & Lightweight */}
+            <div className={`absolute top-3 left-3 w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-gradient-to-br ${gradient} group-hover:text-white group-hover:border-transparent transition-all duration-500`}>
+                <span className="text-[11px] font-black text-slate-900 group-hover:text-inherit tracking-tighter">0{number}</span>
             </div>
 
-            {/* Icon Container - Light & Theme-Matching */}
-            <div className={`mt-10 mb-6 p-6 rounded-2xl ${lightBg} ${textColor} group-hover:scale-110 transition-all duration-500 shadow-sm border border-white`}>
-                <Icon size={34} />
+            {/* Icon Container - More Compact */}
+            <div className={`mt-6 mb-4 p-5 rounded-xl ${lightBg} ${textColor} group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm border border-white`}>
+                <Icon size={24} />
             </div>
 
-            <h3 className="text-xl font-black text-slate-900 mb-3 tracking-tight">{title}</h3>
-            <p className="text-slate-500 font-medium leading-relaxed text-sm">{desc}</p>
+            <h3 className="text-lg font-black text-slate-900 mb-2 tracking-tight leading-none uppercase">{title}</h3>
+            <p className="text-slate-400 font-bold leading-relaxed text-[11px] flex-1 px-2">{desc}</p>
         </div>
     </div>
 );

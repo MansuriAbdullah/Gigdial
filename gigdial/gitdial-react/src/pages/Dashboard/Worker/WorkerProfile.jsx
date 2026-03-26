@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import {
-    User, Mail, Phone, MapPin, FileText, Briefcase, Camera, Save, Loader
+    User, Mail, Phone, MapPin, FileText, Briefcase, Camera, Save, Loader, Trash2, X
 } from 'lucide-react';
 import { getFullImagePath } from '../../../utils/imagePath';
 
@@ -17,7 +17,7 @@ const WorkerProfile = () => {
         city: '',
         address: '',
         serviceDescription: '',
-        skills: '',
+        skills: [],
         profileImage: ''
     });
 
@@ -30,7 +30,7 @@ const WorkerProfile = () => {
                 city: user.city || '',
                 address: user.address || '',
                 serviceDescription: user.serviceDescription || '',
-                skills: user.skills ? user.skills.join(', ') : '',
+                skills: Array.isArray(user.skills) ? user.skills : [],
                 profileImage: user.profileImage || ''
             });
         }
@@ -80,9 +80,6 @@ const WorkerProfile = () => {
         try {
             const token = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).token : null;
 
-            // Format skills array
-            const skillsArray = formData.skills.split(',').map(skill => skill.trim()).filter(s => s);
-
             const response = await fetch('/api/users/profile', {
                 method: 'PUT',
                 headers: {
@@ -91,7 +88,7 @@ const WorkerProfile = () => {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    skills: skillsArray
+                    skills: formData.skills
                 })
             });
 
@@ -225,20 +222,65 @@ const WorkerProfile = () => {
                                 />
                             </div>
                         </label>
-                        <label className="block">
-                            <span className="text-sm font-bold text-slate-700 mb-1 block">Skills (comma separated)</span>
+                        <div className="space-y-2">
+                            <span className="text-sm font-bold text-slate-700 mb-1 block">Skills & Expertise</span>
+                            <div className="flex flex-wrap gap-2 mb-3 min-h-[42px] p-3 rounded-2xl border border-slate-100 bg-slate-50/50">
+                                {Array.isArray(formData.skills) && formData.skills.length > 0 ? (
+                                    formData.skills.map((skill, index) => (
+                                        <div 
+                                            key={index}
+                                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg flex items-center gap-2 group hover:border-red-200 hover:bg-red-50 transition-all shadow-sm"
+                                        >
+                                            <span className="text-sm font-bold text-slate-700 group-hover:text-red-700">{skill}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newSkills = formData.skills.filter((_, i) => i !== index);
+                                                    setFormData({ ...formData, skills: newSkills });
+                                                }}
+                                                className="text-slate-400 hover:text-red-600 transition-colors"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <span className="text-xs text-slate-400 italic">No skills added yet...</span>
+                                )}
+                            </div>
                             <div className="relative">
                                 <Briefcase className="absolute left-3 top-3 text-slate-400" size={18} />
                                 <input
                                     type="text"
-                                    name="skills"
-                                    value={formData.skills}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                                    placeholder="e.g. Plumbing, AC Repair"
+                                    placeholder="Add a skill (e.g. Plumbing) and press Enter"
+                                    className="w-full pl-10 pr-12 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            const value = e.target.value.trim();
+                                            if (value && !formData.skills.includes(value)) {
+                                                setFormData({ ...formData, skills: [...formData.skills, value] });
+                                                e.target.value = '';
+                                            }
+                                        }
+                                    }}
                                 />
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        const input = e.currentTarget.previousSibling;
+                                        const value = input.value.trim();
+                                        if (value && !formData.skills.includes(value)) {
+                                            setFormData({ ...formData, skills: [...formData.skills, value] });
+                                            input.value = '';
+                                        }
+                                    }}
+                                    className="absolute right-2 top-1.5 p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all font-black text-xs px-3"
+                                >
+                                    ADD
+                                </button>
                             </div>
-                        </label>
+                        </div>
                     </div>
 
                     {/* Bio - Full Width */}

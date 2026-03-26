@@ -15,9 +15,8 @@ const FeatureCard = ({ icon: Icon, title, description, color, index }) => (
         <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-[2rem] blur opacity-25 group-hover:opacity-100 transition duration-500 group-hover:duration-200`}></div>
         
         {/* Main Card Content */}
-        <div className="relative bg-white h-full p-8 rounded-[1.9rem] flex flex-col items-start border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden group-hover:bg-slate-50/50 transition-colors">
-            {/* Background Glow */}
-            <div className={`absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-32 h-32 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-10 blur-3xl transition-opacity`}></div>
+        <div className="relative bg-white h-full p-8 rounded-[1.9rem] flex flex-col items-start border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden transition-colors">
+            {/* Background Glow removed for solid white background as requested */}
 
             {/* Icon Container */}
             <div className={`w-14 h-14 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center text-white mb-8 shadow-lg transform group-hover:rotate-12 transition-transform duration-500`}>
@@ -25,7 +24,7 @@ const FeatureCard = ({ icon: Icon, title, description, color, index }) => (
             </div>
 
             {/* Content */}
-            <h3 className="text-xl font-black text-slate-900 mb-4 tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-slate-900 group-hover:to-slate-600">
+            <h3 className="text-xl font-black text-slate-900 mb-4 tracking-tight">
                 {title}
             </h3>
             <p className="text-slate-500 text-sm leading-relaxed font-medium">
