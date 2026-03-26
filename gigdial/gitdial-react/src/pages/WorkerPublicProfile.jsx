@@ -215,9 +215,13 @@ const WorkerPublicProfile = () => {
                                 <div className="w-40 h-40 md:w-52 md:h-52 rounded-2xl border-4 border-white shadow-2xl overflow-hidden bg-slate-100 p-1">
                                     <div className="w-full h-full rounded-xl overflow-hidden">
                                         <img 
-                                            src={getFullImagePath(worker.profileImage) || `https://ui-avatars.com/api/?name=${worker.name}&size=200`} 
-                                            className="w-full h-full object-cover"
+                                            src={getFullImagePath(worker.profileImage) || `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=random&color=fff&size=512`} 
+                                            className="w-full h-full object-cover transition-all"
                                             alt={worker.name}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=random&color=fff&size=512`;
+                                            }}
                                         />
                                     </div>
                                 </div>
