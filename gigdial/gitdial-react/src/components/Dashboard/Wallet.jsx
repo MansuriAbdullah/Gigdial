@@ -20,7 +20,7 @@ const Wallet = () => {
                 <div className="lg:col-span-2 space-y-8">
                     {/* Featured Card */}
                     <div className="bg-[#0F172A] rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20 group">
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                        <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20"></div>
                         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/30 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
 

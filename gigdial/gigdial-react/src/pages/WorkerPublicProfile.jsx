@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 
 import { getFullImagePath } from '../utils/imagePath';
 
-// Skill cleaner helper to remove brackets and quotes
+// Skill cleaner helper
 const cleanSkills = (skills) => {
     if (!skills) return [];
     if (Array.isArray(skills)) return skills.map(s => String(s).replace(/[\[\]"]/g, '').trim());
@@ -21,73 +21,54 @@ const cleanSkills = (skills) => {
         let clean = skills.trim();
         if (clean.startsWith('[') && clean.endsWith(']')) {
             try {
-                const parsed = JSON.parse(clean);
-                return Array.isArray(parsed) ? parsed.map(s => String(s).trim()) : [String(parsed).trim()];
+                return JSON.parse(clean).map(s => String(s).trim());
             } catch (e) {
                 return clean.slice(1, -1).split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
             }
         }
-        return clean.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+        return clean.split(',').map(s => s.trim());
     }
     return [];
 };
 
-const ServiceCard = ({ title, rating, image, category, price, onBook, gigId, isBooking }) => {
-    // Premium Category fallback images to ensure no broken links
-    const getFallbackImage = (cat) => {
-        const lowerCat = String(cat).toLowerCase();
-        if (lowerCat.includes('fitness') || lowerCat.includes('gym')) return 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop';
-        if (lowerCat.includes('driver')) return 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop';
-        if (lowerCat.includes('plumber')) return 'https://images.unsplash.com/photo-1505798577917-a65157d3320a?q=80&w=2070&auto=format&fit=crop';
-        if (lowerCat.includes('clean')) return 'https://images.unsplash.com/photo-1581578731548-c64695cc6958?q=80&w=2070&auto=format&fit=crop';
-        if (lowerCat.includes('electric')) return 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=2070&auto=format&fit=crop';
-        return `https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop`; // General Professional Fallback
-    };
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            onClick={() => !isBooking && onBook(gigId)}
-            className={`bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col h-full ${isBooking ? 'opacity-70 grayscale-[0.5]' : ''}`}
-        >
-            <div className="h-40 overflow-hidden relative shrink-0">
-                <img
-                    src={getFullImagePath(image) || getFallbackImage(category)}
-                    alt={title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = getFallbackImage(category);
-                    }}
-                />
-                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-slate-900 border border-slate-200 shadow-sm">
-                    {category}
-                </div>
+const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, gigId }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        onClick={() => onBook(gigId)}
+        className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col h-full"
+    >
+        <div className="h-40 overflow-hidden relative shrink-0">
+            <img
+                src={getFullImagePath(image)}
+                alt={title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-slate-900 border border-slate-200 shadow-sm">
+                {category}
             </div>
-            <div className="p-4 flex flex-col flex-grow">
-                <h3 className="font-bold text-slate-900 line-clamp-1 group-hover:text-pink-600 transition-colors mb-2">{title}</h3>
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1 text-xs font-bold text-slate-600">
-                        <Star size={14} className="text-pink-500 fill-pink-500" />
-                        {rating}
-                    </div>
-                    <div className="text-sm font-bold text-slate-900">₹{price}</div>
+        </div>
+        <div className="p-4 flex flex-col flex-grow">
+            <h3 className="font-bold text-slate-900 line-clamp-1 group-hover:text-pink-600 transition-colors mb-2">{title}</h3>
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-1 text-xs font-bold text-slate-600">
+                    <Star size={14} className="text-pink-500 fill-pink-500" />
+                    {rating}
                 </div>
-                
-                <button 
-                    disabled={isBooking}
-                    onClick={(e) => { e.stopPropagation(); onBook(gigId); }}
-                    className="w-full py-2 bg-pink-50 hover:bg-pink-100 text-pink-600 rounded-lg text-xs font-black uppercase tracking-widest transition-all mt-auto flex items-center justify-center gap-2"
-                >
-                    {isBooking ? 'Sending...' : 'Request Service'}
-                    <ChevronRight size={14} />
-                </button>
+                <div className="text-sm font-bold text-slate-900">₹{price}</div>
             </div>
-        </motion.div>
-    );
-};
+            
+            <button 
+                onClick={(e) => { e.stopPropagation(); onBook(gigId); }}
+                className="w-full py-2 bg-pink-50 hover:bg-pink-100 text-pink-600 rounded-lg text-xs font-black uppercase tracking-widest transition-all mt-auto flex items-center justify-center gap-2"
+            >
+                Request Service
+                <ChevronRight size={14} />
+            </button>
+        </div>
+    </motion.div>
+);
 
 const WorkerPublicProfile = () => {
     const { id } = useParams();
@@ -97,7 +78,6 @@ const WorkerPublicProfile = () => {
     const [worker, setWorker] = useState(null);
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [bookingGigId, setBookingGigId] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -122,52 +102,14 @@ const WorkerPublicProfile = () => {
 
     const handleBack = () => navigate(-1);
 
-    const handleBookService = async (gigId) => {
-        if (!user) {
-            toast.error('Please login to send requests');
+    const handleBookService = (gigId) => {
+        const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+        if (!user || (user && !user._id) || !userInfo) {
+            toast.error('Please login first');
             navigate('/login', { state: { from: location, bookingGigId: gigId } });
             return;
         }
-
-        const selectedGig = services.find(s => s._id === gigId);
-        if (!selectedGig) return;
-
-        setBookingGigId(gigId);
-        try {
-            const res = await fetch('/api/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                },
-                body: JSON.stringify({
-                    gig: selectedGig._id,
-                    seller: worker._id,
-                    title: selectedGig.title,
-                    description: selectedGig.description,
-                    price: selectedGig.price,
-                    deliveryTime: selectedGig.deliveryTime || 1,
-                    paymentMethod: 'request',
-                    notes: `Service request initiated from ${worker.name}'s profile.`
-                })
-            });
-
-            if (res.ok) {
-                toast.success(`Request sent to ${worker.name}!`, {
-                    duration: 4000,
-                    icon: '🚀'
-                });
-                navigate('/customer-dashboard/orders');
-            } else {
-                const data = await res.json();
-                toast.error(data.message || 'Failed to send request');
-            }
-        } catch (error) {
-            console.error('Booking error:', error);
-            toast.error('Something went wrong. Please try again.');
-        } finally {
-            setBookingGigId(null);
-        }
+        navigate(`/customer-dashboard/messages?workerId=${worker._id}`);
     };
 
     if (loading) return (
@@ -179,7 +121,7 @@ const WorkerPublicProfile = () => {
     if (!worker) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Worker Profile Missing</h2>
-            <button onClick={handleBack} className="px-6 py-2 bg-pink-50 text-white rounded-lg font-bold">Go Back</button>
+            <button onClick={handleBack} className="px-6 py-2 bg-pink-500 text-white rounded-lg font-bold">Go Back</button>
         </div>
     );
 
@@ -187,7 +129,15 @@ const WorkerPublicProfile = () => {
 
     return (
         <div className="min-h-screen bg-[#F7F7F7] pb-20 font-sans">
-
+            {/* Top Minimalist Category Bar */}
+            <div className="bg-white border-b border-slate-200 sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto px-4 h-12 flex items-center gap-8 overflow-x-auto no-scrollbar">
+                    <span className="text-[10px] font-black uppercase text-slate-400">Explore</span>
+                    {['Web Development', 'Design', 'Marketing', 'Writing', 'Virtual Assistant', 'IT Support'].map(cat => (
+                        <span key={cat} className="text-[11px] font-bold text-slate-600 hover:text-pink-500 cursor-pointer whitespace-nowrap transition-colors">{cat}</span>
+                    ))}
+                </div>
+            </div>
 
             {/* Banner Section */}
             <div className="h-[200px] md:h-[260px] relative w-full overflow-hidden">
@@ -235,17 +185,14 @@ const WorkerPublicProfile = () => {
                                         <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-all shadow-sm font-bold text-sm">
                                             <Share2 size={16} />
                                         </button>
-                                        <button 
-                                            onClick={() => navigate(`/customer-dashboard/messages?workerId=${worker._id}`)}
-                                            className="flex items-center gap-2 px-6 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all shadow-sm font-bold text-sm"
-                                        >
-                                            Contact
+                                        <button className="flex items-center gap-2 px-6 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all shadow-sm font-bold text-sm">
+                                            Invite to Bid
                                         </button>
                                         <button 
                                             onClick={() => navigate(`/customer-dashboard/messages?workerId=${worker._id}`)}
                                             className="px-10 py-2.5 bg-[#e91e63] text-white rounded-lg font-bold text-sm shadow-md hover:bg-[#d81b60] transition-all"
                                         >
-                                            Hire Now
+                                            Contact
                                         </button>
                                     </div>
                                 </div>
@@ -301,12 +248,22 @@ const WorkerPublicProfile = () => {
 
                         {/* Additional Sections */}
                         <div className="space-y-12">
+                            {/* Skills Tag Cloud */}
+                            <section>
+                                <h3 className="text-xl font-black text-slate-900 mb-6">Expertise & Skills</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {skills.map((skill, idx) => (
+                                        <span key={idx} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-default border border-slate-200">
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </section>
+
                             {/* Offered Services */}
                             {services.length > 0 && (
                                 <section>
-                                    <div className="flex items-center justify-between mb-8 border-b border-slate-100 pb-4">
-                                        <h3 className="text-xl font-black text-slate-900">My Offered Services</h3>
-                                    </div>
+                                    <h3 className="text-xl font-black text-slate-900 mb-8 border-b border-slate-100 pb-4">My Offered Services</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         {services.map(s => (
                                             <ServiceCard 
@@ -318,24 +275,11 @@ const WorkerPublicProfile = () => {
                                                 category={s.category} 
                                                 price={s.price} 
                                                 onBook={handleBookService} 
-                                                isBooking={bookingGigId === s._id}
                                             />
                                         ))}
                                     </div>
                                 </section>
                             )}
-
-                            {/* Expertise & Skills */}
-                            <section>
-                                <h3 className="text-xl font-black text-slate-900 mb-6">Expertise & Skills</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {skills.map((skill, idx) => (
-                                        <span key={idx} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-default border border-slate-200">
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
-                            </section>
 
                             {/* Reviews */}
                             <section>
@@ -400,6 +344,22 @@ const WorkerPublicProfile = () => {
                                         <span className="text-sm font-bold text-slate-700">Phone Verified</span>
                                     </div>
                                     <CheckCircle size={16} className="text-pink-500 shrink-0" />
+                                </div>
+                            </div>
+
+                            {/* Performance Metrics */}
+                            <div className="mt-12 pt-10 border-t border-slate-100 space-y-6">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm font-bold text-slate-500">On time</span>
+                                    <span className="text-sm font-black text-slate-900">99%</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm font-bold text-slate-500">On budget</span>
+                                    <span className="text-sm font-black text-slate-900">100%</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm font-bold text-slate-500">Accept rate</span>
+                                    <span className="text-sm font-black text-slate-900">58%</span>
                                 </div>
                             </div>
                         </div>

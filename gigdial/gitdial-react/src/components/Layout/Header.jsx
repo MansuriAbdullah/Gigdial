@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import { Search, Menu, X, User, LogIn, Globe, ChevronDown } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Search, Menu, X, User, LogIn, Globe, ChevronDown, LayoutDashboard, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -10,6 +11,8 @@ const Header = () => {
     const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const [langOpen, setLangOpen] = useState(false);
     const { language, setLanguage, t } = useLanguage();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     const location = useLocation();
     const isHomePage = location.pathname === '/';
@@ -124,15 +127,34 @@ const Header = () => {
                                 </AnimatePresence>
                             </div>
 
-                            <div className="w-px h-6 bg-slate-200 hidden lg:block"></div>
-
-                            <Link to="/login" state={{ from: location }} className="hidden lg:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary transition-colors px-3">
-                                {t('login')}
-                            </Link>
-                            <Link to="/register" className="hidden lg:flex btn-primary py-2.5 px-6 text-sm rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 items-center gap-2 group transform active:scale-95 transition-all">
-                                <span>{t('signup')}</span>
-                                <User size={16} className="opacity-80 group-hover:opacity-100" />
-                            </Link>
+                            {user ? (
+                                <div className="hidden lg:flex items-center gap-3">
+                                    <Link 
+                                        to={user.isWorker ? "/worker-dashboard" : "/customer-dashboard"}
+                                        className="btn-primary py-2.5 px-6 text-sm rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 flex items-center gap-2 group transition-all"
+                                    >
+                                        <LayoutDashboard size={16} />
+                                        <span>{t('dashboard') || 'Dashboard'}</span>
+                                    </Link>
+                                    <button 
+                                        onClick={logout}
+                                        className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                                        title="Logout"
+                                    >
+                                        <LogOut size={20} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <Link to="/login" state={{ from: location }} className="hidden lg:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary transition-colors px-3">
+                                        {t('login')}
+                                    </Link>
+                                    <Link to="/register" className="hidden lg:flex btn-primary py-2.5 px-6 text-sm rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 items-center gap-2 group transform active:scale-95 transition-all">
+                                        <span>{t('signup')}</span>
+                                        <User size={16} className="opacity-80 group-hover:opacity-100" />
+                                    </Link>
+                                </>
+                            )}
 
                             {/* Mobile Search Btn */}
                             <button
@@ -241,14 +263,37 @@ const Header = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-4 pt-6 border-t border-slate-50">
-                                <Link to="/login" state={{ from: location }} onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center w-full py-3.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                                    {t('login')}
-                                </Link>
-                                <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center gap-2 w-full py-3.5 rounded-xl bg-primary text-white font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">
-                                    {t('signupFree')}
-                                </Link>
-                            </div>
+                                {user ? (
+                                    <div className="space-y-3">
+                                        <Link 
+                                            to={user.isWorker ? "/worker-dashboard" : "/customer-dashboard"}
+                                            onClick={() => setIsMobileMenuOpen(false)} 
+                                            className="flex justify-center gap-2 w-full py-3.5 rounded-xl bg-primary text-white font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
+                                        >
+                                            <LayoutDashboard size={18} />
+                                            {t('dashboard') || 'Dashboard'}
+                                        </Link>
+                                        <button 
+                                            onClick={() => {
+                                                logout();
+                                                setIsMobileMenuOpen(false);
+                                            }}
+                                            className="flex justify-center w-full py-3.5 rounded-xl border border-red-100 text-red-500 font-bold hover:bg-red-50 transition-colors"
+                                        >
+                                            <LogOut size={18} className="mr-2" />
+                                            {t('logout') || 'Logout'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Link to="/login" state={{ from: location }} onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center w-full py-3.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                                            {t('login')}
+                                        </Link>
+                                        <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center gap-2 w-full py-3.5 rounded-xl bg-primary text-white font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">
+                                            {t('signupFree')}
+                                        </Link>
+                                    </>
+                                )}
                         </motion.div>
                     </>
                 )}

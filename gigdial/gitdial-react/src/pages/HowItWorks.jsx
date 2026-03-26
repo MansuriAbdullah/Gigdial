@@ -181,7 +181,7 @@ const HowItWorks = () => {
 
             {/* CTA Section */}
             <section className="bg-slate-900 py-20 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+                <div className="absolute inset-0 opacity-20 bg-[url('/noise.svg')]"></div>
                 <div className="container mx-auto px-6 text-center relative z-10">
                     <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-8">
                         Ready to get started?

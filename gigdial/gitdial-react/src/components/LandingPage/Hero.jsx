@@ -7,27 +7,38 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 const TrustBadge = ({ icon: Icon, title, desc, color = "blue" }) => {
-    const colors = {
-        blue: "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white",
-        green: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white",
-        purple: "bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white",
-        orange: "bg-orange-50 text-orange-600 group-hover:bg-orange-600 group-hover:text-white",
+    const gradients = {
+        blue: "from-blue-600 to-indigo-600",
+        green: "from-emerald-500 to-teal-500",
+        purple: "from-purple-500 to-fuchsia-500",
+        orange: "from-amber-400 to-orange-500",
     };
 
     return (
         <motion.div
-            whileHover={{ y: -5 }}
-            className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 cursor-default relative overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="group relative cursor-default"
         >
-            <div className={`p-3 rounded-xl transition-colors duration-300 ${colors[color]}`}>
-                <Icon size={24} strokeWidth={2} />
+            {/* Always Visible Shimmer Border effect */}
+            <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradients[color]} rounded-[1.2rem] blur-[2px] opacity-25 group-hover:opacity-100 transition-opacity duration-300`}></div>
+            
+            {/* Card Content */}
+            <div className={`relative px-4 py-3 rounded-[1.2rem] bg-white border border-slate-100 shadow-lg shadow-slate-200/40 flex items-center gap-4 group-hover:bg-slate-50 transition-colors overflow-hidden`}>
+                <div className={`w-11 h-11 bg-gradient-to-br ${gradients[color]} rounded-[0.9rem] flex items-center justify-center text-white shadow-md transition-transform duration-500 group-hover:rotate-12`}>
+                    <Icon size={20} strokeWidth={2.5} />
+                </div>
+                
+                <div className="flex-1">
+                    <h4 className="text-[13px] font-black text-slate-900 tracking-tight transition-colors">{title}</h4>
+                    <p className="text-[10px] font-bold text-slate-500 mt-0.5 italic">{desc}</p>
+                </div>
+
+                {/* Arrow Icon appears on hover */}
+                <div className={`absolute -right-3 -bottom-3 w-10 h-10 bg-gradient-to-br ${gradients[color]} opacity-0 group-hover:opacity-5 blur-xl transition-all`}></div>
             </div>
-            <div>
-                <h4 className="font-bold text-slate-900 text-sm group-hover:text-blue-700 transition-colors">{title}</h4>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">{desc}</p>
-            </div>
-            {/* Hover Glow Effect */}
-            <div className="absolute -right-12 -top-12 w-24 h-24 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
         </motion.div>
     );
 };
@@ -64,7 +75,7 @@ const Hero = () => {
         const params = new URLSearchParams();
         if (searchQuery) params.append('search', searchQuery);
         if (selectedCity) params.append('city', selectedCity);
-        navigate(`/services?${params.toString()}`);
+        navigate(`/workers?${params.toString()}`);
     };
 
     return (

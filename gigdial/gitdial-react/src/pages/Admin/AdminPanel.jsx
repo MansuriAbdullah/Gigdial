@@ -14,6 +14,7 @@ import AdminSettings from './AdminSettings';
 
 import ManageWithdrawals from './ManageWithdrawals';
 import ManageRefunds from './ManageRefunds';
+import ManageBlogs from './ManageBlogs';
 
 const AdminPanel = () => {
     return (
@@ -30,6 +31,7 @@ const AdminPanel = () => {
                 <Route path="services" element={<ServiceApprovals />} />
                 <Route path="content" element={<ManageContent />} />
                 <Route path="cities" element={<ManageCities />} />
+                <Route path="blogs" element={<ManageBlogs />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="*" element={<Navigate to="" replace />} />
             </Routes>

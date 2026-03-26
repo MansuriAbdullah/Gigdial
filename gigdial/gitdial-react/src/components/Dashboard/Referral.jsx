@@ -6,7 +6,7 @@ const Referral = () => {
         <div className="space-y-8 animate-fade-in pb-10">
             {/* Hero / Header */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] p-10 text-center text-white relative overflow-hidden shadow-2xl shadow-blue-500/20">
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.svg')] opacity-10"></div>
                 <div className="absolute top-[-50%] left-[-20%] w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px]"></div>
                 <div className="absolute bottom-[-50%] right-[-20%] w-[500px] h-[500px] bg-purple-500/30 rounded-full blur-[100px]"></div>
 

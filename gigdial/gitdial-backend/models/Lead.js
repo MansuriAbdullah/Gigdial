@@ -8,8 +8,16 @@ const leadSchema = mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false, // Optional for anonymous leads
         ref: 'User',
+    },
+    phoneNumber: {
+        type: String,
+        required: false // Only for anonymous leads
+    },
+    isAnonymous: {
+        type: Boolean,
+        default: false
     },
     viewedAt: {
         type: Date,

@@ -583,7 +583,7 @@ const Register = () => {
                             <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/80 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
 
                             {/* Grid Pattern Overlay */}
-                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20"></div>
 
                             {step < 3 ? (
                                 <div className="relative z-10 mt-8">

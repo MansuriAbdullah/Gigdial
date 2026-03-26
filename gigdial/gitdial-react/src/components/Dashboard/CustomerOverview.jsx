@@ -10,7 +10,7 @@ const CustomerOverview = () => {
         <div className="space-y-8 animate-fade-in pb-10">
             {/* Welcome Banner */}
             <div className="bg-[#0F172A] rounded-[2rem] p-8 md:p-12 text-white relative overflow-hidden shadow-xl shadow-slate-900/10">
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20"></div>
                 <div className="absolute top-0 right-0 w-96 h-96 bg-primary/30 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/20 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
 
@@ -182,7 +182,7 @@ const CustomerOverview = () => {
                                     <h4 className="font-bold text-slate-800 text-sm">{worker.name}</h4>
                                     <p className="text-slate-500 text-xs mb-3">{worker.role} • {worker.rating}</p>
                                     <button className="w-full py-2 bg-secondary hover:bg-secondary-dark text-white rounded-lg text-xs font-bold transition-colors">
-                                        Book Now
+                                        Request a Service
                                     </button>
                                 </div>
                             ))}
@@ -200,7 +200,7 @@ const CustomerOverview = () => {
 
                         {/* Credit Card Visual */}
                         <div className="bg-[#0F172A] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg mb-6 group cursor-pointer hover:scale-[1.02] transition-transform">
-                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+                            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10"></div>
                             <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
 
                             <div className="relative z-10">

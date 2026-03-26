@@ -1,210 +1,237 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ArrowRight, Sparkles, Clock, Users, Award, Zap, TrendingUp, Heart, X, Phone, Send } from 'lucide-react';
+import { Star, ArrowRight, Sparkles, Clock, Users, Award, Zap, TrendingUp, Heart, X, Phone, Send, Search } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getFullImagePath } from '../../utils/imagePath';
+import axios from 'axios';
 
-const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, workerId }) => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.9 }}
-    whileInView={{ opacity: 1, scale: 1 }}
-    whileHover={{ scale: 1.03, y: -8 }}
-    viewport={{ once: true }}
-    onClick={() => onBook({ title, workerId, image })}
-    className="relative flex-shrink-0 w-72 bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-lg hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 group cursor-pointer"
-  >
-    {/* Premium badge for high ratings */}
-    {parseFloat(rating) >= 4.8 && (
-      <div className="absolute top-4 left-4 z-20 bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
-        <Award className="w-3 h-3" />
-        <span>Premium</span>
-      </div>
-    )}
+const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, workerId, id, color = 'blue' }) => {
+  const gradients = {
+    blue: 'from-blue-600 to-indigo-600',
+    green: 'from-emerald-500 to-teal-500',
+    purple: 'from-purple-500 to-fuchsia-500',
+    orange: 'from-amber-400 to-orange-500',
+    red: 'from-rose-500 to-pink-500',
+    lime: 'from-lime-500 to-green-500'
+  };
 
-    {/* Trending badge for popular services */}
-    {bookings > 100 && (
-      <div className="absolute top-4 right-4 z-20 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
-        <TrendingUp className="w-3 h-3" />
-        <span>Trending</span>
-      </div>
-    )}
-
-    <div className="h-48 overflow-hidden relative">
-      <img
-        src={image}
-        alt={title}
-        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
-      />
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60"></div>
-
-      {/* Category tag */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full border border-white/20">
-        {category}
-      </div>
-    </div>
-
-    {/* Content */}
-    <div className="p-5">
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-          {title}
-        </h3>
-        <Heart className="w-5 h-5 text-slate-300 hover:text-rose-500 transition-colors cursor-pointer hover:scale-110" />
-      </div>
-
-      {/* Stats */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center bg-blue-50 px-3 py-1.5 rounded-lg">
-            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-            <span className="ml-1.5 font-bold text-slate-800">{rating}</span>
-            <span className="text-xs text-slate-500 ml-1">/ 5.0</span>
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -10 }}
+      viewport={{ once: true }}
+      className="relative flex-shrink-0 w-80 group cursor-pointer h-full"
+    >
+      {/* Visible Shimmer Border effect */}
+      <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradients[color]} rounded-[2rem] blur-sm opacity-25 group-hover:opacity-100 transition-opacity duration-500`}></div>
+      
+      {/* Main Card Content */}
+      <div className="relative bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-xl shadow-slate-200/50 group-hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
+        {/* Image Container */}
+        <div className="h-52 overflow-hidden relative shrink-0" onClick={() => onBook({ title, workerId, image, id })}>
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
+          />
+          {/* Dynamic Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+          
+          {/* Category Badge - Glassmorphism */}
+          <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/30">
+            {category}
           </div>
-
-          <div className="flex items-center text-xs text-slate-500">
-            <Users className="w-3 h-3 mr-1" />
-            <span>{bookings}+ bookings</span>
+  
+          {/* Floating Rating Card */}
+          <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-xl px-2.5 py-1.5 rounded-xl shadow-xl flex items-center gap-1.5 border border-white">
+            <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+            <span className="text-xs font-black text-slate-800">{rating}</span>
           </div>
         </div>
+  
+        {/* Content Area */}
+        <div className="p-6 flex flex-col flex-1">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-xl font-black text-slate-800 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-slate-900 group-hover:to-slate-600 transition-all line-clamp-1 flex-1 pr-2">
+              {title}
+            </h3>
+            <button className="p-2 bg-slate-50 rounded-full text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all transform hover:scale-110 active:scale-90 overflow-hidden relative">
+              <Heart className="w-5 h-5" />
+            </button>
+          </div>
+  
+          {/* Trust Badges */}
+          <div className="flex flex-wrap gap-3 mb-6">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+              <Users className="w-3.5 h-3.5 text-blue-500" />
+              <span>{bookings}+ hires</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+              <Clock className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Quick response</span>
+            </div>
+          </div>
 
-        <div className="flex items-center text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
-          <Clock className="w-3 h-3 mr-1" />
-          <span>2h avg.</span>
+          <div className="mt-auto">
+            {/* Action Button - Vibrant Gradient */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onBook({ title, workerId, image, id });
+              }}
+              className={`w-full py-4 bg-gradient-to-r ${gradients[color]} text-white text-[11px] font-black rounded-2xl shadow-lg border-t border-white/20 transition-all uppercase tracking-widest flex items-center justify-center gap-2 group/btn`}
+            >
+              <Zap className="w-4 h-4 fill-white group-hover/btn:animate-pulse" />
+              <span>Request Now</span>
+              <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all" />
+            </motion.button>
+          </div>
         </div>
       </div>
-
-      {/* CTA */}
-      <div className="pt-4 border-t border-slate-100">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onBook({ title, workerId, image });
-          }}
-          className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-        >
-          <Zap className="w-4 h-4" />
-          Book Now
-        </motion.button>
-      </div>
-    </div>
-
-    {/* Hover effect border */}
-    <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500/30 rounded-2xl transition-all duration-300 pointer-events-none"></div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', onBook, onExplore, category }) => {
   const scrollContainer = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const colors = {
-    blue: 'from-blue-500 to-cyan-500',
-    green: 'from-emerald-500 to-green-500',
-    purple: 'from-purple-500 to-pink-500',
-    orange: 'from-orange-500 to-amber-500',
-    red: 'from-rose-500 to-pink-500',
-    lime: 'from-lime-500 to-green-500'
+    blue: 'from-blue-600/20 to-blue-600/5 text-blue-600',
+    green: 'from-emerald-600/20 to-emerald-600/5 text-emerald-600',
+    purple: 'from-purple-600/20 to-purple-600/5 text-purple-600',
+    orange: 'from-orange-600/20 to-orange-600/5 text-orange-600',
+    red: 'from-rose-600/20 to-rose-600/5 text-rose-600',
+    lime: 'from-lime-600/20 to-lime-600/5 text-lime-600'
   };
 
   const scroll = (direction) => {
     if (scrollContainer.current) {
-      const scrollAmount = 300;
-      scrollContainer.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+      const { scrollLeft, clientWidth, scrollWidth } = scrollContainer.current;
+      const scrollAmount = 350; // Approximating card width + gap
+      
+      let nextScroll = 0;
+      if (direction === 'right') {
+        nextScroll = scrollLeft + clientWidth >= scrollWidth - 10 ? 0 : scrollLeft + scrollAmount;
+      } else {
+        nextScroll = scrollLeft <= 0 ? scrollWidth - clientWidth : scrollLeft - scrollAmount;
+      }
+
+      scrollContainer.current.scrollTo({
+        left: nextScroll,
         behavior: 'smooth'
       });
+    }
+  };
 
-      setTimeout(() => {
-        if (scrollContainer.current) {
-          const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.current;
-          setShowLeftArrow(scrollLeft > 0);
-          setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 10);
-        }
-      }, 300);
+  // Auto-scroll logic
+  useEffect(() => {
+    if (isHovered || services.length <= 1) return;
+
+    const interval = setInterval(() => {
+      scroll('right');
+    }, 4000); // Scroll every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [isHovered, services.length]);
+
+  const handleScroll = () => {
+    if (scrollContainer.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.current;
+      setShowLeftArrow(scrollLeft > 20);
+      setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 20);
+      
+      // Update active dot
+      const index = Math.round(scrollLeft / 344); // 320 card + 24 gap
+      setActiveIndex(index);
     }
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="relative mb-16 last:mb-0"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative mb-24 last:mb-0 group/section"
     >
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8 px-4 md:px-0">
-        <div className="flex items-center gap-3">
-          <div className={`p-3 rounded-xl bg-gradient-to-br ${colors[color]} bg-opacity-10`}>
-            <Icon className={`w-6 h-6 text-${color}-600`} />
+      {/* Header - More premium */}
+      <div className="flex justify-between items-end mb-10 px-4 md:px-0">
+        <div className="flex items-center gap-5">
+          <div className={`p-4 rounded-[1.5rem] bg-gradient-to-br ${colors[color]} border border-white shadow-xl flex items-center justify-center transform group-hover/section:scale-110 transition-all duration-500`}>
+            <Icon className="w-8 h-8" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-900">{title}</h2>
+          <div>
+            <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">{title}</h2>
+            <p className="text-slate-500 font-bold text-sm tracking-widest uppercase mt-1 opacity-70">Handpicked Professionals</p>
+          </div>
         </div>
         <motion.button
           onClick={() => onExplore(category)}
           whileHover={{ x: 5 }}
-          className="flex items-center text-sm text-blue-600 hover:text-blue-700 font-semibold transition-colors group"
+          className="flex items-center gap-3 px-5 py-2.5 bg-white border border-slate-100 rounded-2xl text-blue-600 font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-md hover:border-blue-100 transition-all group/btn"
         >
-          <span className="mr-2">Explore All</span>
-          <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-            <ArrowRight className="w-4 h-4" />
-          </div>
+          Explore All
+          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </motion.button>
       </div>
 
-      {/* Scroll arrows */}
-      {showLeftArrow && (
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+      {/* Navigation Arrows - Sleeker */}
+      <div className="absolute top-1/2 -left-4 -right-4 flex justify-between pointer-events-none z-30 opacity-0 group-hover/section:opacity-100 transition-opacity translate-y-4">
+        <button
           onClick={() => scroll('left')}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-white p-3 rounded-full shadow-lg border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all"
+          className={`p-4 bg-white/90 backdrop-blur-xl rounded-full shadow-2xl border border-slate-100 pointer-events-auto hover:bg-white hover:scale-110 active:scale-95 transition-all text-slate-800 ${!showLeftArrow ? 'opacity-30 cursor-not-allowed' : ''}`}
         >
-          <ArrowRight className="w-5 h-5 text-slate-700 rotate-180" />
-        </motion.button>
-      )}
-
-      {showRightArrow && (
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          <ArrowRight className="w-6 h-6 rotate-180" />
+        </button>
+        <button
           onClick={() => scroll('right')}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-white p-3 rounded-full shadow-lg border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all"
+          className={`p-4 bg-white/90 backdrop-blur-xl rounded-full shadow-2xl border border-slate-100 pointer-events-auto hover:bg-white hover:scale-110 active:scale-95 transition-all text-slate-800 ${!showRightArrow ? 'opacity-30 cursor-not-allowed' : ''}`}
         >
-          <ArrowRight className="w-5 h-5 text-slate-700" />
-        </motion.button>
-      )}
+          <ArrowRight className="w-6 h-6" />
+        </button>
+      </div>
 
       {/* Services container */}
       <div
         ref={scrollContainer}
-        className="overflow-x-auto scrollbar-hide px-4 md:px-0 pb-8"
-        onScroll={() => {
-          if (scrollContainer.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.current;
-            setShowLeftArrow(scrollLeft > 0);
-            setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 10);
-          }
-        }}
+        onScroll={handleScroll}
+        className="overflow-x-auto scrollbar-hide px-4 md:px-0 pb-12 snap-x snap-mandatory"
       >
-        <div className="flex space-x-6 w-max">
+        <div className="flex space-x-8 w-max">
           {services.map((service, idx) => (
-            <ServiceCard key={idx} {...service} onBook={onBook} />
+            <div key={idx} className="snap-start h-full">
+              <ServiceCard {...service} onBook={onBook} color={color} />
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Progress indicator */}
-      <div className="flex justify-center gap-2 mt-4">
+      {/* Modern Progress Dots */}
+      <div className="flex justify-center gap-2 -mt-4">
         {services.map((_, idx) => (
-          <div
+          <motion.div
             key={idx}
-            className="w-2 h-2 rounded-full bg-slate-300"
+            animate={{ 
+              width: activeIndex === idx ? 24 : 8,
+              opacity: activeIndex === idx ? 1 : 0.4 
+            }}
+            className={`h-2 rounded-full cursor-pointer transition-all ${activeIndex === idx ? 'bg-blue-600' : 'bg-slate-300 hover:bg-slate-400'}`}
+            onClick={() => {
+              scrollContainer.current.scrollTo({
+                left: idx * 344,
+                behavior: 'smooth'
+              });
+            }}
           />
         ))}
       </div>
@@ -222,6 +249,8 @@ const ServiceShowcase = () => {
     beautyServices: []
   });
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
@@ -258,30 +287,36 @@ const ServiceShowcase = () => {
         };
 
         gigs.forEach(gig => {
+          // Fallback to user rating if gig doesn't have one
+          const gigRating = (gig.rating && gig.rating > 0) ? gig.rating : (gig.user?.rating || 0);
+          const gigHires = (gig.numReviews && gig.numReviews > 0) ? gig.numReviews : (gig.user?.numReviews || 0);
+
           // Map backend fields to frontend card props
           const mappedGig = {
             title: gig.title,
-            rating: gig.rating?.toString() || '0',
+            rating: gigRating.toString() || '0',
             image: getFullImagePath(gig.image || gig.coverImage) || 'https://images.unsplash.com/photo-1581578731117-104f8a3d46a8?auto=format&fit=crop&w=600&q=80',
-            category: gig.category,
+            category: gig.category || 'Professional',
             price: gig.price,
-            bookings: gig.salesCount || 0,
+            bookings: gigHires || 0, // Using numReviews/salesCount as hiring count proxy
             id: gig._id,
-            workerId: gig.user?._id || gig.user // Use ID if object, or directly if string
+            workerId: gig.user?._id || gig.user 
           };
 
           // Find matching category group
           let added = false;
           for (const [key, keywords] of Object.entries(categories)) {
-            if (keywords.some(k => gig.category.toLowerCase().includes(k.toLowerCase()))) {
+            // Case insensitive check for any keyword matching the category
+            const gigCat = (gig.category || '').toLowerCase();
+            if (keywords.some(k => gigCat.includes(k.toLowerCase()))) {
               categorizedData[key].push(mappedGig);
               added = true;
               break;
             }
           }
-          // Fallback if no specific category match, put in 'digitalServices' or just skip
+          // Default bucket if no specific category match
           if (!added) {
-            categorizedData.homeServices.push(mappedGig); // Default bucket
+            categorizedData.homeServices.push(mappedGig);
           }
         });
 
@@ -296,35 +331,92 @@ const ServiceShowcase = () => {
     fetchServices();
   }, []);
 
-  const handleBookClick = (service) => {
+  const handleBookClick = async (service) => {
     setSelectedService(service);
-    setModalOpen(true);
+    
+    // Check auth status
+    const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
+    
+    if (!user || !userInfo) {
+      // Check if visitor phone is in localStorage
+      const storedPhone = localStorage.getItem('visitorPhone');
+      if (storedPhone) {
+        // Record lead anonymously and proceed
+        try {
+          axios.post('/api/leads/anonymous-record', {
+            workerId: service.workerId,
+            phoneNumber: storedPhone
+          });
+        } catch (err) {
+          console.error("Failed to record lead", err);
+        }
+
+        navigate(`/workers/${service.workerId}`, {
+          state: {
+            prefilledPhoneNumber: storedPhone,
+            fromLandingPage: true
+          }
+        });
+        return;
+      }
+      
+      // If not logged in and no stored phone, open the phone capture modal
+      setModalOpen(true);
+    } else {
+      // If logged in, direct redirect to worker profile (One-click experience)
+      toast.loading("Opening profile...", { duration: 1000 });
+      setTimeout(() => {
+        navigate(`/workers/${service.workerId}`, {
+          state: {
+            fromLandingPage: true,
+            autoRequest: true,
+            gigId: service.id || service._id
+          }
+        });
+      }, 500);
+    }
   };
 
   const handleExplore = (category) => {
     navigate(`/services?category=${encodeURIComponent(category)}`);
   };
 
-  const handleSubmitContact = (e) => {
+  const handleSubmitContact = async (e) => {
     e.preventDefault();
-    if (!phoneNumber.trim()) {
-      toast.error("Please enter your phone number");
+    const cleanPhone = phoneNumber.replace(/\D/g, ''); // Extract only digits
+    
+    if (cleanPhone.length !== 10) {
+      toast.error("Please enter a valid 10-digit mobile number");
       return;
     }
 
     setSending(true);
-    // Simulate processing
-    setTimeout(() => {
-      setSending(false);
+    try {
+      // 1. Save to local storage so modal never shows again
+      localStorage.setItem('visitorPhone', cleanPhone);
+
+      // 2. Record this lead in the database for the worker
+      await axios.post('/api/leads/anonymous-record', {
+        workerId: selectedService.workerId,
+        phoneNumber: cleanPhone
+      });
+
       setModalOpen(false);
-      // Navigate to profile with phone number in state
+      setSending(false);
+      toast.success("Profile unlocked!");
+
+      // 3. Navigate to worker profile
       navigate(`/workers/${selectedService.workerId}`, {
         state: {
-          prefilledPhoneNumber: phoneNumber,
+          prefilledPhoneNumber: cleanPhone,
           fromLandingPage: true
         }
       });
-    }, 500);
+    } catch (err) {
+      console.error("Error submitting contact", err);
+      toast.error("Process failed. Please try again.");
+      setSending(false);
+    }
   };
 
   if (loading) return <div className="py-24 text-center">Loading services...</div>;
@@ -348,69 +440,183 @@ const ServiceShowcase = () => {
             <span className="text-sm font-semibold text-blue-700">Handpicked Premium Services</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Explore <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Premium Services</span>
+            Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Premium Services</span>
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Discover top-rated professionals for all your needs. Book instantly with verified reviews and transparent pricing.
+            Handpicked professionals delivering exceptional service with verified ratings and instant booking.
           </p>
         </motion.div>
 
-        {/* Service Rows */}
-        <div className="space-y-20">
-          <ServiceRow
-            title="Digital & Tech Services"
-            services={data.digitalServices}
-            icon={Zap}
-            color="blue"
-            onBook={handleBookClick}
-            onExplore={handleExplore}
-            category="IT Support"
-          />
-          <ServiceRow
-            title="Wellness & Fitness"
-            services={data.wellnessServices}
-            icon={Heart}
-            color="red"
-            onBook={handleBookClick}
-            onExplore={handleExplore}
-            category="Fitness"
-          />
-          <ServiceRow
-            title="Home Services"
-            services={data.homeServices}
-            icon={Sparkles}
-            color="green"
-            onBook={handleBookClick}
-            onExplore={handleExplore}
-            category="House Help"
-          />
-          <ServiceRow
-            title="Tutoring & Education"
-            services={data.tutoringServices}
-            icon={Award}
-            color="purple"
-            onBook={handleBookClick}
-            onExplore={handleExplore}
-            category="Tutor"
-          />
-          <ServiceRow
-            title="Events & Creative Services"
-            services={data.creativeServices}
-            icon={TrendingUp}
-            color="orange"
-            onBook={handleBookClick}
-            onExplore={handleExplore}
-            category="Creative"
-          />
-          <ServiceRow
-            title="Beauty & Personal Care"
-            services={data.beautyServices}
-            icon={Star}
-            color="lime"
-            onBook={handleBookClick}
-            onExplore={handleExplore}
-            category="Beauty"
-          />
+        {/* Search & Tabs Row */}
+        <div className="mb-12 space-y-8">
+          {/* Search Bar - Modern Glassmorphism */}
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-lime-500/10 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative flex items-center bg-white border border-slate-200 rounded-2xl p-1 shadow-xl shadow-slate-200/50 focus-within:border-blue-500/50 transition-all duration-300">
+                <div className="pl-5 pr-3">
+                  <Search className="w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="What service are you looking for today?"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="flex-1 bg-transparent py-4 text-slate-800 placeholder:text-slate-400 font-bold outline-none text-sm md:text-base pr-4"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Category Tabs - Compact Single Line */}
+          <div className="flex flex-nowrap items-center justify-start md:justify-center gap-2.5 overflow-x-auto pb-4 scrollbar-hide px-2">
+            {[
+              { id: 'all', label: 'All Services', icon: Sparkles, color: 'blue' },
+              { id: 'digitalServices', label: 'Tech', icon: Zap, color: 'blue' },
+              { id: 'wellnessServices', label: 'Fitness', icon: Heart, color: 'red' },
+              { id: 'homeServices', label: 'Home', icon: Sparkles, color: 'green' },
+              { id: 'tutoringServices', label: 'Tutors', icon: Award, color: 'purple' },
+              { id: 'creativeServices', label: 'Events', icon: TrendingUp, color: 'orange' },
+              { id: 'beautyServices', label: 'Beauty', icon: Star, color: 'lime' }
+            ].map((tab) => {
+              const isActive = activeCategory === tab.id;
+              const theme = {
+                blue: 'from-blue-600 to-indigo-600 shadow-blue-500/25',
+                red: 'from-rose-600 to-pink-600 shadow-rose-500/25',
+                green: 'from-emerald-600 to-teal-600 shadow-emerald-500/25',
+                purple: 'from-purple-600 to-indigo-600 shadow-purple-500/25',
+                orange: 'from-orange-600 to-amber-600 shadow-orange-500/25',
+                lime: 'from-lime-600 to-green-600 shadow-lime-500/25'
+              };
+
+              return (
+                <motion.button
+                  key={tab.id}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setActiveCategory(tab.id);
+                    setSearchTerm(''); // Clear search on tab switch
+                  }}
+                  className={`flex-shrink-0 flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-500 whitespace-nowrap border-2 ${
+                    isActive 
+                    ? `bg-gradient-to-r ${theme[tab.color]} text-white border-transparent shadow-xl` 
+                    : 'bg-white text-slate-500 border-slate-50 shadow-lg shadow-slate-200/50 hover:border-slate-300'
+                  }`}
+                >
+                  <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} strokeWidth={3} />
+                  {tab.label}
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Dynamic Service Area */}
+        <div className="min-h-[400px] relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory + searchTerm}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            >
+              {(() => {
+                let servicesToShow = [];
+                let title = "";
+                let icon = Sparkles;
+                let color = "blue";
+                let category = "All";
+
+                const applySearch = (list) => {
+                  if (!searchTerm.trim()) return list;
+                  return list.filter(s => 
+                    s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    s.category.toLowerCase().includes(searchTerm.toLowerCase())
+                  );
+                };
+
+                if (activeCategory === 'all') {
+                  const combined = [
+                    ...data.digitalServices,
+                    ...data.wellnessServices,
+                    ...data.homeServices,
+                    ...data.tutoringServices,
+                    ...data.creativeServices,
+                    ...data.beautyServices
+                  ];
+                  // Remove duplicates if any (by id)
+                  const unique = Array.from(new Map(combined.map(s => [s.id, s])).values());
+                  servicesToShow = applySearch(unique);
+                  title = "Best Recommended Services";
+                  icon = Sparkles;
+                  color = "blue";
+                  category = "Professional";
+                } else if (activeCategory === 'digitalServices') {
+                  servicesToShow = applySearch(data.digitalServices);
+                  title = "Digital & Tech Services";
+                  icon = Zap;
+                  color = "blue";
+                  category = "IT Support";
+                } else if (activeCategory === 'wellnessServices') {
+                  servicesToShow = applySearch(data.wellnessServices);
+                  title = "Wellness & Fitness";
+                  icon = Heart;
+                  color = "red";
+                  category = "Fitness";
+                } else if (activeCategory === 'homeServices') {
+                  servicesToShow = applySearch(data.homeServices);
+                  title = "Home Services";
+                  icon = Sparkles;
+                  color = "green";
+                  category = "House Help";
+                } else if (activeCategory === 'tutoringServices') {
+                  servicesToShow = applySearch(data.tutoringServices);
+                  title = "Tutoring & Education";
+                  icon = Award;
+                  color = "purple";
+                  category = "Tutor";
+                } else if (activeCategory === 'creativeServices') {
+                  servicesToShow = applySearch(data.creativeServices);
+                  title = "Events & Creative Services";
+                  icon = TrendingUp;
+                  color = "orange";
+                  category = "Creative";
+                } else if (activeCategory === 'beautyServices') {
+                  servicesToShow = applySearch(data.beautyServices);
+                  title = "Beauty & Personal Care";
+                  icon = Star;
+                  color = "lime";
+                  category = "Beauty";
+                }
+
+                if (servicesToShow.length === 0) {
+                  return (
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                      <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                        <Search className="w-10 h-10 text-slate-300" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-800">No services found</h3>
+                      <p className="text-slate-500 mt-2">Try searching for something else or browse another category.</p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <ServiceRow
+                    title={title}
+                    services={servicesToShow}
+                    icon={icon}
+                    color={color}
+                    onBook={handleBookClick}
+                    onExplore={handleExplore}
+                    category={category}
+                  />
+                );
+              })()}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* CTA Section */}

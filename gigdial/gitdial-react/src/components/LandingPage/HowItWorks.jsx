@@ -3,98 +3,122 @@ import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Search, MessageSquare, Briefcase, ChevronRight } from 'lucide-react';
 
-const StepCard = ({ number, icon: Icon, title, desc }) => (
-    <div className="relative flex flex-col items-center text-center p-8 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-blue-900/5 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-300 group">
-        <div className="absolute -top-6 w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
-            {number}
+const StepCard = ({ number, icon: Icon, title, desc, gradient, lightBg, textColor }) => (
+    <div className="relative group transition-all duration-500">
+        {/* Colorful Shimmer Border - Always Visible */}
+        <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradient} rounded-[2rem] blur-[2px] opacity-30 group-hover:opacity-60 transition-opacity duration-500`}></div>
+        
+        <div className="relative flex flex-col items-center text-center p-8 bg-white rounded-[2rem] border border-slate-100/50 shadow-xl shadow-slate-200/40 hover:shadow-blue-500/5 transition-all duration-500 h-full overflow-hidden">
+            {/* Number Badge - Light Theme */}
+            <div className={`absolute top-4 left-4 w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-gradient-to-br ${gradient} group-hover:text-white transition-all duration-500`}>
+                <span className="text-sm font-black text-slate-900 group-hover:text-inherit tracking-tighter">0{number}</span>
+            </div>
+
+            {/* Icon Container - Light & Theme-Matching */}
+            <div className={`mt-10 mb-6 p-6 rounded-2xl ${lightBg} ${textColor} group-hover:scale-110 transition-all duration-500 shadow-sm border border-white`}>
+                <Icon size={34} />
+            </div>
+
+            <h3 className="text-xl font-black text-slate-900 mb-3 tracking-tight">{title}</h3>
+            <p className="text-slate-500 font-medium leading-relaxed text-sm">{desc}</p>
         </div>
-        <div className="mt-8 mb-6 p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-            <Icon size={32} />
-        </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-3">{title}</h3>
-        <p className="text-slate-500 leading-relaxed max-w-xs">{desc}</p>
     </div>
 );
 
 const HowItWorks = () => {
     const { t } = useLanguage();
+    
+    const steps = [
+        { 
+            number: "1", 
+            icon: Search, 
+            gradient: "from-blue-600 to-indigo-500",
+            lightBg: "bg-blue-50",
+            textColor: "text-blue-600",
+            title: t('step1Title'),
+            desc: t('step1Desc')
+        },
+        { 
+            number: "2", 
+            icon: MessageSquare, 
+            gradient: "from-rose-500 to-pink-500",
+            lightBg: "bg-rose-50",
+            textColor: "text-rose-600",
+            title: t('step2Title'),
+            desc: t('step2Desc')
+        },
+        { 
+            number: "3", 
+            icon: Briefcase, 
+            gradient: "from-emerald-500 to-teal-500",
+            lightBg: "bg-emerald-50",
+            textColor: "text-emerald-600",
+            title: t('step3Title'),
+            desc: t('step3Desc')
+        }
+    ];
+
     return (
-        <section className="py-20 bg-slate-50 relative overflow-hidden">
-            {/* Background Gradients similar to Hero */}
+        <section className="py-24 bg-slate-50/50 relative overflow-hidden">
+            {/* Subtle Light-Theme Gradients */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-blue-100/50 blur-[100px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-lime-100/50 blur-[120px]" />
+                <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-100/30 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[700px] h-[700px] bg-rose-100/20 rounded-full blur-[120px]" />
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
                 <motion.div
-                    className="text-center mb-20"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    className="text-center mb-16"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
                 >
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
-                        How <span className="text-blue-600">GigDial</span> Works
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 mb-6">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+                        <span className="text-[9px] font-black uppercase text-blue-700 tracking-widest">How It Works</span>
+                    </div>
+
+                    <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
+                        How <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-rose-500">GigDial</span> Works
                     </h2>
-                    <p className="text-slate-600 max-w-2xl mx-auto text-lg">
-                        Get your work done in 3 simple steps. It's fast, easy, and secure.
+                    <p className="text-slate-500 max-w-2xl mx-auto text-lg font-medium opacity-80">
+                        A seamless experience, from search to service.
                     </p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-3 gap-8 relaltive">
-                    {/* Connecting Lines for Desktop */}
-                    <div className="hidden md:block absolute top-[43%] left-[20%] w-[25%] h-[2px] bg-gradient-to-r from-blue-200 to-transparent z-0"></div>
-                    <div className="hidden md:block absolute top-[43%] right-[20%] w-[25%] h-[2px] bg-gradient-to-l from-blue-200 to-transparent z-0"></div>
+                <div className="grid md:grid-cols-3 gap-8 relative">
+                    {/* Connecting Lines - Thinner & Lighter */}
+                    <div className="hidden lg:block absolute top-[43%] left-[18%] w-[18%] h-[1px] bg-slate-200/50"></div>
+                    <div className="hidden lg:block absolute top-[43%] right-[18%] w-[18%] h-[1px] bg-slate-200/50"></div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                    >
-                        <StepCard
-                            number="1"
-                            icon={Search}
-                            title={t('step1Title')}
-                            desc={t('step1Desc')}
-                        />
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                    >
-                        <StepCard
-                            number="2"
-                            icon={MessageSquare}
-                            title={t('step2Title')}
-                            desc={t('step2Desc')}
-                        />
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.5 }}
-                    >
-                        <StepCard
-                            number="3"
-                            icon={Briefcase}
-                            title={t('step3Title')}
-                            desc={t('step3Desc')}
-                        />
-                    </motion.div>
+                    {steps.map((step, idx) => (
+                        <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: idx * 0.1 }}
+                        >
+                            <StepCard {...step} />
+                        </motion.div>
+                    ))}
                 </div>
 
-                <div className="mt-16 text-center">
-                    <button className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-full font-bold shadow-xl hover:bg-slate-800 hover:scale-105 transition-all">
-                        Get Started Now <ChevronRight size={20} />
+                <motion.div 
+                    className="mt-16 text-center"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                >
+                    <button className="relative group overflow-hidden px-10 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all">
+                        <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        <span className="relative flex items-center justify-center gap-3">
+                            Get Started Now 
+                            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </span>
                     </button>
-                </div>
+                    <p className="mt-6 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Free for all users</p>
+                </motion.div>
             </div>
         </section>
     );

@@ -26,6 +26,8 @@ const Contact = React.lazy(() => import('./pages/Contact'));
 const About = React.lazy(() => import('./pages/About'));
 const HowItWorks = React.lazy(() => import('./pages/HowItWorks'));
 const RequireWorker = React.lazy(() => import('./pages/RequireWorker'));
+const BlogList = React.lazy(() => import('./pages/Blog/BlogList'));
+const BlogPost = React.lazy(() => import('./pages/Blog/BlogPost'));
 
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -64,6 +66,8 @@ function AnimatedRoutes() {
               <Route path="/workers/:id" element={<WorkerPublicProfile />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
+              <Route path="/blog" element={<BlogList />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
             </Route>
 
             {/* Auth Routes (No Header/Footer) */}

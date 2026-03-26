@@ -19,6 +19,7 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
 import jobRequestRoutes from './routes/jobRequestRoutes.js';
+import blogRoutes from './routes/blogRoutes.js';
 
 dotenv.config();
 
@@ -72,6 +73,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/job-requests', jobRequestRoutes);
+app.use('/api/blogs', blogRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');

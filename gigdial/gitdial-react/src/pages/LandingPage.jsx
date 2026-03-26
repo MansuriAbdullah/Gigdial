@@ -5,13 +5,15 @@ import { motion } from 'framer-motion';
 
 import Hero from '../components/LandingPage/Hero';
 import Stats from '../components/LandingPage/Stats';
-import Categories from '../components/LandingPage/Categories';
 import ServiceShowcase from '../components/LandingPage/ServiceShowcase';
+import BrowseWorkersMinimal from '../components/LandingPage/BrowseWorkersMinimal';
+import Testimonials from '../components/LandingPage/Testimonials';
 import Features from '../components/LandingPage/Features';
 import HowItWorks from '../components/LandingPage/HowItWorks';
 import Pricing from '../components/LandingPage/Pricing';
 import LiveDemoSection from '../components/LandingPage/LiveDemoSection';
 import AppShowcase from '../components/LandingPage/AppShowcase';
+import BlogSection from '../components/LandingPage/BlogSection';
 import SEO from '../components/Shared/SEO';
 
 // Page transition variants
@@ -51,9 +53,9 @@ const LandingPage = () => {
             {/* Live Demo Section - New Addition */}
             <LiveDemoSection />
 
-            {/* Main Service Categories */}
-            <div id="categories">
-                <Categories />
+            {/* Detailed Service Showcase - Now at the Top */}
+            <div id="services">
+                <ServiceShowcase />
             </div>
 
             {/* Features & Value Props */}
@@ -61,13 +63,21 @@ const LandingPage = () => {
                 <Features />
             </div>
 
-            {/* App Showcase - New Addition */}
+            {/* App Showcase - Mobile Experience */}
             <AppShowcase />
 
-            {/* Detailed Service Showcase */}
-            <div id="services">
-                <ServiceShowcase />
+            {/* Top Workers Listing - Replaces Categories Section */}
+            <div id="workers-grid">
+                <BrowseWorkersMinimal />
             </div>
+
+            {/* User Testimonials Section */}
+            <div id="testimonials">
+                <Testimonials />
+            </div>
+
+            {/* Blog Section & Knowledge Hub */}
+            <BlogSection />
 
             {/* How It Works Section */}
             <HowItWorks />

@@ -494,20 +494,37 @@ const WorkerLeads = () => {
                                     )}
                                 </div>
                                 <div className="flex-1">
-                                    <h4 className="font-bold text-slate-900">{item.user?.name || 'Guest User'}</h4>
-                                    <p className="text-sm text-slate-500 flex items-center gap-2">
-                                        <Clock size={12} />
-                                        Viewed on {new Date(item.viewedAt).toLocaleDateString()} at {new Date(item.viewedAt).toLocaleTimeString()}
-                                    </p>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h4 className="font-bold text-slate-900">
+                                            {item.isAnonymous ? 'Landing Page Visitor' : (item.user?.name || 'Guest User')}
+                                        </h4>
+                                        {item.isAnonymous && (
+                                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100">
+                                                New Lead
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                        <p className="text-sm text-slate-500 flex items-center gap-2">
+                                            <Clock size={12} />
+                                            Viewed on {new Date(item.viewedAt).toLocaleDateString()} at {new Date(item.viewedAt).toLocaleTimeString()}
+                                        </p>
+                                        {item.phoneNumber && (
+                                            <p className="text-sm font-black text-blue-600 flex items-center gap-2">
+                                                <Phone size={12} />
+                                                {item.phoneNumber}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
-                                {item.user && (
+                                {(item.user || item.phoneNumber) && (
                                     <div className="flex gap-2">
-                                        {item.user.phone && (
-                                            <a href={`tel:${item.user.phone}`} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors" title="Call">
+                                        {(item.user?.phone || item.phoneNumber) && (
+                                            <a href={`tel:${item.user?.phone || item.phoneNumber}`} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors shadow-sm" title="Call">
                                                 <Phone size={18} />
                                             </a>
                                         )}
-                                        {item.user.email && (
+                                        {item.user?.email && (
                                             <a href={`mailto:${item.user.email}`} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors" title="Email">
                                                 <Mail size={18} />
                                             </a>

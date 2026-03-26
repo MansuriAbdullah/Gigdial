@@ -143,8 +143,18 @@ const updateOrderStatus = async (req, res) => {
                 await Notification.create({
                     user: order.buyer,
                     type: 'order',
-                    title: 'Order Completed',
-                    message: `Your order "${order.title}" has been completed`,
+                    title: 'Order Status Updated',
+                    message: `Status of your order "${order.title}" has been updated to: ${req.body.status}`,
+                    relatedOrder: order._id,
+                    link: `/customer-dashboard/orders/${order._id}`
+                });
+            } else if (req.body.status === 'in-progress' || req.body.status === 'approved' || req.body.status === 'active') {
+                // Notify buyer that request was accepted
+                await Notification.create({
+                    user: order.buyer,
+                    type: 'order',
+                    title: 'Service Request Accepted',
+                    message: `Worker has accepted your request for "${order.title}"! They will contact you shortly.`,
                     relatedOrder: order._id,
                     link: `/customer-dashboard/orders/${order._id}`
                 });

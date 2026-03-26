@@ -98,7 +98,7 @@ const FavoriteWorkers = () => {
                                     <span className="text-slate-900 font-bold">{worker.hourlyRate}</span>
                                 </div>
                                 <button className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/10">
-                                    Book Now
+                                    Request a Service
                                 </button>
                             </div>
                         </div>

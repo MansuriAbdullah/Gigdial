@@ -39,23 +39,25 @@ const Login = () => {
             // Use context login
             login(data);
 
-            // Redirect based on user role or previous location
-            const state = location.state;
-            const fromLocation = state?.from;
-
-            if (fromLocation) {
-                const path = typeof fromLocation === 'string'
-                    ? fromLocation
-                    : (fromLocation.pathname + (fromLocation.search || ''));
-
-                const { from, ...returnState } = state;
-                navigate(path, { state: returnState });
-            } else if (data.isAdmin) {
+            // Redirect based on user role
+            if (data.isAdmin) {
                 navigate('/admin');
-            } else if (data.isProvider) { // Assuming backend returns isProvider
+            } else if (data.isWorker || data.isProvider) { 
+                // Workers always go to their dashboard
                 navigate('/worker-dashboard');
             } else {
-                navigate('/customer-dashboard');
+                // Customers can go back to where they were, or to dashboard
+                const state = location.state;
+                const fromLocation = state?.from;
+                if (fromLocation) {
+                    const path = typeof fromLocation === 'string'
+                        ? fromLocation
+                        : (fromLocation.pathname + (fromLocation.search || ''));
+                    const { from, ...returnState } = state;
+                    navigate(path, { state: returnState });
+                } else {
+                    navigate('/customer-dashboard');
+                }
             }
 
         } catch (err) {

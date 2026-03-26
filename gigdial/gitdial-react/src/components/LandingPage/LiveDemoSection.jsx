@@ -18,7 +18,7 @@ const LiveDemoSection = () => {
                     <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3 group-hover:bg-emerald-400/20 transition-colors duration-700"></div>
 
                     {/* Grid Pattern Overlay */}
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 mix-blend-overlay"></div>
+                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20 brightness-100 mix-blend-overlay"></div>
 
                     <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-8 items-center p-6 sm:p-8 md:p-12 lg:p-16 relative z-10">
                         {/* Left Content */}

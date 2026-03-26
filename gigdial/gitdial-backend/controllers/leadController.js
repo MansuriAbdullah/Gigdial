@@ -77,4 +77,44 @@ const getWorkerLeads = asyncHandler(async (req, res) => {
     res.json(leads);
 });
 
-export { recordLead, getWorkerLeads };
+// @desc    Record an anonymous lead with phone number
+// @route   POST /api/leads/anonymous-record
+// @access  Public
+const recordAnonymousLead = asyncHandler(async (req, res) => {
+    const { workerId, phoneNumber } = req.body;
+
+    if (!workerId || !phoneNumber) {
+        res.status(400);
+        throw new Error('Worker ID and phone number are required');
+    }
+
+    // Check if worker exists
+    const worker = await User.findById(workerId);
+    if (!worker) {
+        res.status(404);
+        throw new Error('Worker not found');
+    }
+
+    // record if not already recorded within last hour to avoid spam
+    const existing = await Lead.findOne({
+        worker: workerId,
+        phoneNumber,
+        isAnonymous: true,
+        viewedAt: { $gt: new Date(Date.now() - 60 * 60 * 1000) }
+    });
+
+    if (existing) {
+        return res.status(200).json(existing);
+    }
+
+    const lead = await Lead.create({
+        worker: workerId,
+        phoneNumber,
+        isAnonymous: true,
+        viewedAt: Date.now()
+    });
+
+    res.status(201).json(lead);
+});
+
+export { recordLead, getWorkerLeads, recordAnonymousLead };
