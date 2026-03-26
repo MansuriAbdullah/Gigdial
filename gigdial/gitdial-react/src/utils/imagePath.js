@@ -16,5 +16,11 @@ export const getFullImagePath = (path) => {
     // Ensure backslashes are replaced with forward slashes
     const normalizedPath = cleanPath.replace(/\\/g, '/');
 
-    return `/${normalizedPath}`;
+    // Handle Backend URL for production
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+    
+    // If backendUrl is provided, ensure it doesn't have a trailing slash
+    const base = backendUrl.endsWith('/') ? backendUrl.slice(0, -1) : backendUrl;
+    
+    return base ? `${base}/${normalizedPath}` : `/${normalizedPath}`;
 };
