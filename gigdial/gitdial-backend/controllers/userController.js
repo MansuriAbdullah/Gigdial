@@ -11,11 +11,19 @@ import generateToken from '../utils/generateToken.js';
 // @access  Public
 const authUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role } = req.body;
 
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
+            // Verify role
+            const userRole = user.role || 'customer';
+            const requestedRole = role || 'customer';
+
+            if (userRole !== requestedRole && !user.isAdmin) {
+                res.status(401);
+                throw new Error(`Profile not found for this email address as a ${requestedRole}`);
+            }
             const token = generateToken(res, user._id);
 
             res.status(200).json({

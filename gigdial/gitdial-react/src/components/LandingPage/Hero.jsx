@@ -79,7 +79,7 @@ const Hero = () => {
     };
 
     return (
-        <div className="relative overflow-hidden bg-white pt-28 pb-16 lg:pt-32 lg:pb-24">
+        <div className="relative overflow-hidden bg-white pt-6 pb-12 lg:pt-8 lg:pb-20">
             {/* Background Gradients */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
                 <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-blue-100/80 blur-[100px] animate-pulse" />
@@ -95,7 +95,7 @@ const Hero = () => {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6 }}
                         >
-                            <div className="inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-blue-50 border border-blue-100 backdrop-blur-md text-blue-700 text-sm font-medium mb-8 shadow-sm">
+                            <div className="inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-blue-50 border border-blue-100 backdrop-blur-md text-blue-700 text-sm font-medium mb-4 shadow-sm">
                                 <span className="relative flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>

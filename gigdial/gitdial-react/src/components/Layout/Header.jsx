@@ -47,8 +47,8 @@ const Header = () => {
         <>
             <header
                 className={`sticky top-0 z-40 w-full transition-all duration-300 ${isScrolled
-                    ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm py-2'
-                    : 'bg-white hover:bg-white border-b border-transparent py-4'
+                    ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm py-0.5'
+                    : 'bg-white hover:bg-white border-b border-transparent py-0.5'
                     }`}
             >
                 <div className="container mx-auto px-6">
@@ -56,7 +56,7 @@ const Header = () => {
 
                         {/* Logo */}
                         <Link to="/" className="flex-shrink-0 group flex items-center gap-2.5">
-                            <img src="/logo.png" alt="GigDial" className="h-10 sm:h-14 md:h-16 lg:h-20 w-auto object-contain group-hover:scale-105 transition-transform" />
+                            <img src="/logo.png" alt="GigDial" className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain group-hover:scale-105 transition-transform" />
                         </Link>
 
                         {/* Navigation (Desktop) */}
