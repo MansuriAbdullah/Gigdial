@@ -21,6 +21,8 @@ import {
     getWallet,
     addMoneyToWallet,
     getAdminStats,
+    getAdminActivityHistory,
+    toggleBlockUser,
     getFavourites,
     toggleFavorite,
     getWorkerCategories
@@ -70,6 +72,8 @@ router.post('/wallet/add', protect, addMoneyToWallet);
 
 // Admin routes
 router.get('/dashboard/stats', protect, admin, getAdminStats);
+router.get('/dashboard/history', protect, admin, getAdminActivityHistory);
+router.put('/:id/block', protect, admin, toggleBlockUser);
 
 router.route('/')
     .get(protect, admin, getUsers);

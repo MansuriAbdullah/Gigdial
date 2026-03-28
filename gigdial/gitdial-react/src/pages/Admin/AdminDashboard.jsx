@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
-import { Users, DollarSign, CheckCircle, AlertCircle, TrendingUp, Activity, BarChart2, MoreHorizontal, ArrowUpRight, Calendar, Bell, Briefcase, ShoppingBag, Loader } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Users, DollarSign, CheckCircle, AlertCircle, TrendingUp, Activity, BarChart2, MoreHorizontal, ArrowUpRight, Calendar, Bell, Briefcase, ShoppingBag, Loader, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 
@@ -62,15 +63,19 @@ const ActivityItem = ({ icon: Icon, title, time, type, delay }) => (
 const AdminDashboard = () => {
     const { t } = useLanguage();
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [stats, setStats] = useState({
         totalWorkers: 0,
         totalCustomers: 0,
         activeBookings: 0,
         totalRevenue: 0,
         recentActivities: [],
-        monthlyRevenue: Array(12).fill(0)
+        monthlyRevenue: Array(12).fill(0),
+        monthlyActiveCustomers: Array(12).fill(0),
+        monthlyActiveWorkers: Array(12).fill(0)
     });
     const [loading, setLoading] = useState(true);
+    const [activeChart, setActiveChart] = useState('month');
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -100,12 +105,14 @@ const AdminDashboard = () => {
 
                 setStats({
                     totalWorkers: data.totalWorkers,
-                    totalCustomers: data.totalCustomers, // Add totalCustomers back
+                    totalCustomers: data.totalCustomers,
                     totalUsers: data.totalUsers,
                     activeBookings: data.activeBookings,
                     totalRevenue: data.totalRevenue,
                     recentActivities: activities,
-                    monthlyRevenue: data.monthlyRevenue || Array(12).fill(0)
+                    monthlyRevenue: data.monthlyRevenue || Array(12).fill(0),
+                    monthlyActiveCustomers: data.monthlyActiveCustomers || Array(12).fill(0),
+                    monthlyActiveWorkers: data.monthlyActiveWorkers || Array(12).fill(0)
                 });
                 setLoading(false);
             } catch (error) {
@@ -119,8 +126,10 @@ const AdminDashboard = () => {
         }
     }, [user]);
 
-    // Calculate max revenue for chart scaling
-    const maxRevenue = Math.max(...stats.monthlyRevenue, 1); // Avoid division by zero
+    // Calculate max for chart scaling
+    const maxCustomers = Math.max(...stats.monthlyActiveCustomers, 1);
+    const maxWorkers = Math.max(...stats.monthlyActiveWorkers, 1);
+    const maxBarVal = Math.max(maxCustomers, maxWorkers, 1);
 
     if (loading) {
         return (
@@ -208,54 +217,95 @@ const AdminDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Main Graph Section (Placeholder Visualization) */}
+                {/* Main Graph Section — Active Customers & Workers */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
                     className="lg:col-span-2 bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col"
                 >
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className="text-xl font-bold text-slate-900">{t('revenueAnalytics')}</h2>
-                            <p className="text-sm text-slate-500 font-medium">Monthly performance overview</p>
+                            <h2 className="text-xl font-bold text-slate-900">Active Customers & Workers</h2>
+                            <p className="text-sm text-slate-500 font-medium">Monthly registration overview</p>
                         </div>
-                        <div className="flex bg-slate-50 p-1 rounded-xl">
-                            {['Day', 'Week', 'Month', 'Year'].map((period, i) => (
-                                <button
-                                    key={period}
-                                    className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${i === 2 ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                                >
-                                    {period}
-                                </button>
-                            ))}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 text-xs font-bold">
+                                <span className="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                                <span className="text-slate-500">Customers</span>
+                                <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block ml-2"></span>
+                                <span className="text-slate-500">Workers</span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* CSS-only Bar Chart Visualization */}
-                    <div className="flex-1 flex items-end justify-between gap-2 h-64 w-full box-border px-4 pb-2">
-                        {stats.monthlyRevenue.map((rev, i) => {
-                            const heightPercentage = (rev / maxRevenue) * 100;
+                    {/* Dual Bar Chart */}
+                    <div className="flex-1 flex items-end justify-between gap-1 h-64 w-full box-border px-2 pb-2">
+                        {stats.monthlyActiveCustomers.map((customers, i) => {
+                            const workers = stats.monthlyActiveWorkers[i];
+                            const custHeight = Math.max(4, (customers / maxBarVal) * 100);
+                            const workHeight = Math.max(4, (workers / maxBarVal) * 100);
+                            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                             return (
-                                <div key={i} className="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
-                                    <motion.div
-                                        initial={{ height: 0 }}
-                                        whileInView={{ height: `${heightPercentage}%` }}
-                                        transition={{ duration: 1, ease: "easeOut", delay: i * 0.05 }}
-                                        className="w-full max-w-[40px] bg-slate-100 rounded-t-xl relative overflow-hidden group-hover:bg-blue-50 transition-colors"
-                                    >
-                                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-600 to-indigo-500 opacity-80 h-full rounded-t-xl group-hover:opacity-100 transition-opacity" />
-                                        {/* Tooltip */}
-                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                                            ₹{rev.toLocaleString()}
+                                <div key={i} className="flex-1 flex flex-col items-center gap-1 group cursor-pointer">
+                                    <div className="w-full flex items-end justify-center gap-0.5" style={{ height: '220px' }}>
+                                        {/* Customer Bar */}
+                                        <div className="relative flex-1 flex flex-col items-center justify-end" style={{ height: '100%' }}>
+                                            <div
+                                                className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-blue-900 text-white text-[10px] font-bold py-0.5 px-1.5 rounded pointer-events-none z-50 whitespace-nowrap left-1/2 -translate-x-1/2"
+                                            >
+                                                {customers} customers
+                                            </div>
+                                            <motion.div
+                                                initial={{ height: 0 }}
+                                                whileInView={{ height: `${custHeight}%` }}
+                                                transition={{ duration: 0.8, ease: 'easeOut', delay: i * 0.04 }}
+                                                className="w-full max-w-[14px] bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-md opacity-80 group-hover:opacity-100 transition-opacity"
+                                            />
                                         </div>
-                                    </motion.div>
-                                    <span className="text-xs font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
-                                        {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}
+                                        {/* Worker Bar */}
+                                        <div className="relative flex-1 flex flex-col items-center justify-end" style={{ height: '100%' }}>
+                                            <div
+                                                className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-emerald-900 text-white text-[10px] font-bold py-0.5 px-1.5 rounded pointer-events-none z-50 whitespace-nowrap left-1/2 -translate-x-1/2"
+                                            >
+                                                {workers} workers
+                                            </div>
+                                            <motion.div
+                                                initial={{ height: 0 }}
+                                                whileInView={{ height: `${workHeight}%` }}
+                                                transition={{ duration: 0.8, ease: 'easeOut', delay: i * 0.04 + 0.02 }}
+                                                className="w-full max-w-[14px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md opacity-80 group-hover:opacity-100 transition-opacity"
+                                            />
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
+                                        {months[i]}
                                     </span>
                                 </div>
-                            )
+                            );
                         })}
+                    </div>
+
+                    {/* Summary totals */}
+                    <div className="mt-4 pt-4 border-t border-slate-50 flex gap-6">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
+                                <Users size={16} className="text-blue-600" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase">Total Customers</p>
+                                <p className="text-lg font-extrabold text-slate-900">{stats.totalCustomers}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                <Wrench size={16} className="text-emerald-600" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase">Total Workers</p>
+                                <p className="text-lg font-extrabold text-slate-900">{stats.totalWorkers}</p>
+                            </div>
+                        </div>
                     </div>
                 </motion.div>
 
@@ -290,7 +340,10 @@ const AdminDashboard = () => {
                         )}
 
                         <div className="pt-4 mt-2 border-t border-slate-50">
-                            <button className="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2">
+                            <button
+                                onClick={() => navigate('/admin/history')}
+                                className="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2"
+                            >
                                 {t('viewFullHistory')} <ArrowUpRight size={16} />
                             </button>
                         </div>

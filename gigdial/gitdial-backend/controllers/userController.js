@@ -24,6 +24,11 @@ const authUser = async (req, res) => {
                 res.status(401);
                 throw new Error(`Profile not found for this email address as a ${requestedRole}`);
             }
+            if (user.isBlocked) {
+                res.status(403);
+                throw new Error('Your account has been blocked. Please contact support.');
+            }
+
             const token = generateToken(res, user._id);
 
             res.status(200).json({
@@ -669,6 +674,23 @@ const getAdminStats = async (req, res) => {
             }
         });
 
+        // Monthly Active Customers & Workers (users registered per month this year)
+        const allUsers = await User.find({
+            createdAt: { $gte: new Date(`${currentYear}-01-01`), $lte: new Date(`${currentYear}-12-31`) }
+        }).select('role createdAt');
+
+        const monthlyActiveCustomers = Array(12).fill(0);
+        const monthlyActiveWorkers = Array(12).fill(0);
+
+        allUsers.forEach(u => {
+            const month = new Date(u.createdAt).getMonth();
+            if (u.role === 'worker') {
+                monthlyActiveWorkers[month] += 1;
+            } else if (u.role === 'customer') {
+                monthlyActiveCustomers[month] += 1;
+            }
+        });
+
         const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5);
         const recentOrders = await Order.find()
             .populate('buyer', 'name')
@@ -683,10 +705,77 @@ const getAdminStats = async (req, res) => {
             totalRevenue,
             recentUsers,
             recentOrders,
-            monthlyRevenue
+            monthlyRevenue,
+            monthlyActiveCustomers,
+            monthlyActiveWorkers
         });
     } catch (error) {
         console.error("Error in getAdminStats:", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get full platform activity history
+// @route   GET /api/users/dashboard/history
+// @access  Private/Admin
+const getAdminActivityHistory = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+        const filter = req.query.filter || 'all'; // 'all', 'users', 'orders'
+
+        let userEvents = [];
+        let orderEvents = [];
+
+        if (filter === 'all' || filter === 'users') {
+            const users = await User.find()
+                .select('name role createdAt profileImage city')
+                .sort({ createdAt: -1 })
+                .limit(limit * 2);
+            userEvents = users.map(u => ({
+                id: u._id,
+                type: u.role === 'worker' ? 'worker_join' : 'customer_join',
+                title: `${u.role === 'worker' ? 'New Worker' : 'New Customer'}: ${u.name}`,
+                subtitle: u.city || 'Unknown city',
+                time: u.createdAt,
+                avatar: u.profileImage || null,
+                role: u.role
+            }));
+        }
+
+        if (filter === 'all' || filter === 'orders') {
+            const orders = await Order.find()
+                .populate('buyer', 'name profileImage')
+                .populate('seller', 'name')
+                .select('title status price createdAt buyer seller')
+                .sort({ createdAt: -1 })
+                .limit(limit * 2);
+            orderEvents = orders.map(o => ({
+                id: o._id,
+                type: 'booking',
+                title: `Booking: ${o.title}`,
+                subtitle: `By ${o.buyer?.name || 'Unknown'} → ${o.seller?.name || 'Unknown'} | ₹${o.price}`,
+                time: o.createdAt,
+                avatar: o.buyer?.profileImage || null,
+                status: o.status,
+                price: o.price
+            }));
+        }
+
+        const combined = [...userEvents, ...orderEvents]
+            .sort((a, b) => new Date(b.time) - new Date(a.time))
+            .slice(skip, skip + limit);
+
+        const totalItems = userEvents.length + orderEvents.length;
+
+        res.json({
+            activities: combined,
+            page,
+            totalPages: Math.ceil(totalItems / limit),
+            total: totalItems
+        });
+    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
@@ -739,9 +828,25 @@ const toggleFavorite = async (req, res) => {
     }
 };
 
-// @desc    Get worker categories
-// @route   GET /api/users/worker-categories
-// @access  Public
+// @desc    Toggle block user
+// @route   PUT /api/users/:id/block
+// @access  Private/Admin
+const toggleBlockUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            user.isBlocked = !user.isBlocked;
+            await user.save();
+            res.json({ message: `User ${user.isBlocked ? 'blocked' : 'unblocked'} successfully`, isBlocked: user.isBlocked });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 const getWorkerCategories = async (req, res) => {
     // Return all categories including those from landing page
     res.json(['Driver', 'Plumber', 'Electrician', 'House Help', 'Tutor', 'Fitness', 'Elder Care', 'IT Support', 'Cleaning', 'Electrical', 'Carpentry', 'Painting', 'Appliance Repair']);
@@ -769,6 +874,8 @@ export {
     getWallet,
     addMoneyToWallet,
     getAdminStats,
+    getAdminActivityHistory,
+    toggleBlockUser,
     getFavourites,
     toggleFavorite,
     getWorkerCategories

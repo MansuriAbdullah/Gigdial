@@ -11,10 +11,10 @@ import ManageContent from './ManageContent';
 import ServiceApprovals from './ServiceApprovals';
 import Disputes from './Disputes';
 import AdminSettings from './AdminSettings';
-
 import ManageWithdrawals from './ManageWithdrawals';
 import ManageRefunds from './ManageRefunds';
 import ManageBlogs from './ManageBlogs';
+import FullHistory from './FullHistory';
 
 const AdminPanel = () => {
     return (
@@ -33,6 +33,7 @@ const AdminPanel = () => {
                 <Route path="cities" element={<ManageCities />} />
                 <Route path="blogs" element={<ManageBlogs />} />
                 <Route path="settings" element={<AdminSettings />} />
+                <Route path="history" element={<FullHistory />} />
                 <Route path="*" element={<Navigate to="" replace />} />
             </Routes>
         </DashboardLayout>

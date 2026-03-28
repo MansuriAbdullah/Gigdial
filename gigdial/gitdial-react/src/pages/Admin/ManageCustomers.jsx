@@ -6,37 +6,55 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ManageCustomers = () => {
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const { user } = useAuth();
 
-    useEffect(() => {
-        const fetchCustomers = async () => {
-            try {
-                const response = await fetch('/api/users', {
-                    headers: {
-                        Authorization: `Bearer ${user?.token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const data = await response.json();
-
-                if (Array.isArray(data)) {
-                    // Filter only customers (users who are NOT workers and NOT admins)
-                    const customerList = data.filter(u => u.role === 'customer' || (!u.role && !u.isProvider));
-                    setCustomers(customerList);
+    const fetchCustomers = async () => {
+        try {
+            const response = await fetch('/api/users', {
+                headers: {
+                    Authorization: `Bearer ${user?.token}`,
+                    'Content-Type': 'application/json'
                 }
-                setLoading(false);
-            } catch (error) {
-                console.error("Failed to fetch customers:", error);
-                setLoading(false);
-            }
-        };
+            });
+            const data = await response.json();
 
+            if (Array.isArray(data)) {
+                // Filter only customers (users who are NOT workers and NOT admins)
+                const customerList = data.filter(u => u.role === 'customer' || (!u.role && !u.isProvider));
+                setCustomers(customerList);
+            }
+            setLoading(false);
+        } catch (error) {
+            console.error("Failed to fetch customers:", error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         if (user?.token) {
             fetchCustomers();
         }
     }, [user]);
+
+    const handleBlockToggle = async (id) => {
+        try {
+            const response = await fetch(`/api/users/${id}/block`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${user?.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                fetchCustomers();
+                setActiveDropdown(null);
+            }
+        } catch (error) {
+            console.error("Error toggling block:", error);
+        }
+    };
 
     const filteredCustomers = customers.filter(c => {
         const matchesSearch =
@@ -128,10 +146,16 @@ const ManageCustomers = () => {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 md:px-6 py-4">
-                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm whitespace-nowrap">
-                                                            <CheckCircle size={14} className="mt-0.5" /> Active
-                                                        </span>
+                                                    <td className="px-4 md:px-6 py-4" onMouseLeave={() => setActiveDropdown(null)}>
+                                                        {customer.isBlocked ? (
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold bg-red-100 text-red-700 border border-red-200 shadow-sm whitespace-nowrap">
+                                                                <XCircle size={14} className="mt-0.5" /> Blocked
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm whitespace-nowrap">
+                                                                <CheckCircle size={14} className="mt-0.5" /> Active
+                                                            </span>
+                                                        )}
                                                     </td>
                                                     <td className="px-4 md:px-6 py-4">
                                                         <div className="flex items-center gap-2 text-slate-600 text-[10px] md:text-sm font-medium whitespace-nowrap">
@@ -140,9 +164,26 @@ const ManageCustomers = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-6 md:px-8 py-4 text-right">
-                                                        <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                                            <MoreVertical size={18} />
-                                                        </button>
+                                                        <div className="relative inline-block text-left">
+                                                            <button
+                                                                onClick={() => setActiveDropdown(activeDropdown === customer._id ? null : customer._id)}
+                                                                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                            >
+                                                                <MoreVertical size={18} />
+                                                            </button>
+
+                                                            {activeDropdown === customer._id && (
+                                                                <div className="absolute right-8 top-0 w-36 py-2 bg-white rounded-xl shadow-xl border border-slate-100 z-50">
+                                                                    <button
+                                                                        onClick={() => handleBlockToggle(customer._id)}
+                                                                        className={`w-full text-left px-4 py-2 text-xs font-bold flex items-center gap-2 ${customer.isBlocked ? 'text-emerald-600 hover:bg-emerald-50' : 'text-red-600 hover:bg-red-50'}`}
+                                                                    >
+                                                                        {customer.isBlocked ? <Shield className="size-4" /> : <ShieldAlert className="size-4" />}
+                                                                        {customer.isBlocked ? 'Unblock' : 'Block'}
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </td>
                                                 </motion.tr>
                                             ))
