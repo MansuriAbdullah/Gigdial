@@ -52,13 +52,24 @@ const userSchema = mongoose.Schema({
     },
     serviceType: {
         type: String,
-        enum: ['Residency', 'Commercial'],
+        enum: ['Residency', 'Commercial', 'Both'],
         default: 'Residency'
     },
     profileImage: {
         type: String,
         required: false,
     },
+    mainCategory: {
+        type: String,
+        required: false
+    },
+    dob: {
+        type: String,
+        required: false
+    },
+    languages: [{
+        type: String
+    }],
     savedAddresses: [{
         type: {
             type: String,

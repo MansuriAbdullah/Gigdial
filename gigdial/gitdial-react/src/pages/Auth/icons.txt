@@ -1,0 +1,2 @@
+﻿import { motion, AnimatePresence } from 'framer-motion';
+import { User, Mail, Phone, MapPin, Upload, ArrowRight, Check, Briefcase, FileText, Camera, Shield, Star, Award, CheckCircle, Clock, TrendingUp, Heart, BookOpen, BadgeCheck, RefreshCcw, Lock, Loader2, Home as HomeIcon, Laptop as LaptopIcon, Building } from 'lucide-react';

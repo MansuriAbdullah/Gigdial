@@ -75,7 +75,7 @@ const Hero = () => {
         const params = new URLSearchParams();
         if (searchQuery) params.append('search', searchQuery);
         if (selectedCity) params.append('city', selectedCity);
-        navigate(`/workers?${params.toString()}`);
+        navigate(`/services?${params.toString()}`);
     };
 
     return (
@@ -89,13 +89,13 @@ const Hero = () => {
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center mb-16">
                     {/* Left Column: Content */}
-                    <div className="flex flex-col items-start text-left">
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left order-1 px-2 lg:px-0">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6 }}
                         >
-                            <div className="inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-blue-50 border border-blue-100 backdrop-blur-md text-blue-700 text-sm font-medium mb-4 shadow-sm">
+                            <div className="inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-blue-50 border border-blue-100 backdrop-blur-md text-blue-700 text-xs sm:text-sm font-medium mb-4 shadow-sm">
                                 <span className="relative flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
@@ -105,17 +105,17 @@ const Hero = () => {
                         </motion.div>
 
                         <motion.h1
-                            className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.15]"
+                            className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-4 md:mb-6 leading-[1.2] md:leading-[1.15]"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                         >
-                            {t('heroTitle')} <br />
-                            <span className="bg-gradient-to-r from-blue-600 to-lime-600 bg-clip-text text-transparent text-3xl md:text-5xl lg:text-5xl">{t('heroPricing')}</span>
+                            {t('heroTitle')} <br className="hidden md:block" />
+                            <span className="bg-gradient-to-r from-blue-600 to-lime-600 bg-clip-text text-transparent text-2xl md:text-4xl lg:text-5xl block md:inline mt-2 md:mt-0">{t('heroPricing')}</span>
                         </motion.h1>
 
                         <motion.p
-                            className="text-xl md:text-2xl font-medium text-slate-700 mb-8 italic"
+                            className="text-lg md:text-2xl font-medium text-slate-700 mb-6 md:mb-8 italic leading-snug"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.6, delay: 0.3 }}
@@ -124,7 +124,7 @@ const Hero = () => {
                         </motion.p>
 
                         <motion.p
-                            className="max-w-xl text-lg text-slate-600 mb-8 leading-relaxed"
+                            className="max-w-xl text-base md:text-lg text-slate-600 mb-8 leading-relaxed mx-auto lg:mx-0"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.4 }}
@@ -139,13 +139,13 @@ const Hero = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.5 }}
                         >
-                            <form onSubmit={handleSearch} className="bg-white p-2 rounded-2xl shadow-lg border border-slate-200 flex flex-col sm:flex-row gap-2">
+                            <form onSubmit={handleSearch} className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 flex flex-col sm:flex-row gap-2">
                                 <div className="relative w-full sm:min-w-[160px] sm:w-auto">
                                     <MapPin className="absolute left-3 top-3.5 text-slate-400" size={18} />
                                     <select
                                         value={selectedCity}
                                         onChange={(e) => setSelectedCity(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 outline-none text-slate-700 font-medium appearance-none cursor-pointer hover:bg-slate-100 transition-colors"
+                                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 outline-none text-slate-700 font-bold text-sm appearance-none cursor-pointer hover:bg-slate-100 transition-colors"
                                     >
                                         <option value="">Select City</option>
                                         {cities.map((city) => (
@@ -193,7 +193,7 @@ const Hero = () => {
 
                     {/* Right Column: Image */}
                     <motion.div
-                        className="relative lg:h-[600px] w-full flex items-center justify-center"
+                        className="relative lg:h-[600px] w-full flex items-center justify-center order-2 px-4 lg:px-0 mt-10 lg:mt-0"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}

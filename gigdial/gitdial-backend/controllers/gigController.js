@@ -5,7 +5,7 @@ import Gig from '../models/Gig.js';
 // @access  Public
 const getGigs = async (req, res) => {
     try {
-        const gigs = await Gig.find({ status: 'active' }).populate('user', 'name profileImage rating numReviews');
+        const gigs = await Gig.find({ status: 'active' }).populate('user', 'name profileImage rating numReviews city mainCategory');
         res.json(gigs);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -17,7 +17,7 @@ const getGigs = async (req, res) => {
 // @access  Private/Admin
 const getAllGigs = async (req, res) => {
     try {
-        const gigs = await Gig.find({}).populate('user', 'name profileImage rating numReviews');
+        const gigs = await Gig.find({}).populate('user', 'name profileImage rating numReviews city mainCategory');
         res.json(gigs);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -53,7 +53,7 @@ const getCategories = async (req, res) => {
 // @access  Public
 const getGigById = async (req, res) => {
     try {
-        const gig = await Gig.findById(req.params.id).populate('user', 'name profileImage rating numReviews');
+        const gig = await Gig.findById(req.params.id).populate('user', 'name profileImage rating numReviews city mainCategory');
 
         if (gig) {
             res.json(gig);

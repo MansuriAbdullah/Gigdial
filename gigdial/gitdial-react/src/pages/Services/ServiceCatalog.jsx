@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Star, MapPin, ArrowRight, Sparkles, Loader, Home as HomeIcon, Laptop as LaptopIcon } from 'lucide-react';
+import { Search, Filter, Star, MapPin, ArrowRight, Sparkles, Loader, Home as HomeIcon, Laptop as LaptopIcon, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -56,30 +56,94 @@ const ServiceCard = ({ id, title, category, price, rating, reviews, image, index
 const ServiceCatalog = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
+    const rawCategory = queryParams.get('category') || 'All';
+    const initialCategory = rawCategory.toLowerCase().startsWith('all') ? 'All' : rawCategory;
+    const initialType = queryParams.get('type') || 'All';
     const initialSearch = queryParams.get('search') || '';
     const initialCity = queryParams.get('city') || '';
-    const initialCategory = queryParams.get('category') || 'All';
-    const initialType = queryParams.get('type') || 'All';
 
     const [filter, setFilter] = useState(initialCategory);
     const [serviceType, setServiceType] = useState(initialType);
     const [searchQuery, setSearchQuery] = useState(initialSearch);
+    const [cityFilter, setCityFilter] = useState(initialCity);
     const [services, setServices] = useState([]);
     const [categories, setCategories] = useState(['All']);
+    const [cities, setCities] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const getCategoryIcon = (cat) => {
+        const icons = {
+            'All': '🔍',
+            'Cleaning': '🧹',
+            'Cooking': '👨‍🍳',
+            'Driver': '🚗',
+            'Fitness': '🏋️',
+            'Fitness Trainer': '💪',
+            'Painting': '🎨',
+            'Pest Control': '🦟',
+            'Plumber': '🔧',
+            'Security': '🛡️',
+            'Gym': '🏃',
+            'Trades & Services (Manual)': '🛠️',
+            'Health, Medical & Wellness': '🏃',
+            'Computers, IT & Software': '💻',
+            'Design, Media & Architecture': '🎨',
+            'Events, Hospitality & Tourism': '📷',
+            'Education, Teaching & Coaching': '🎓',
+            'Sales, Marketing & PR': '📈',
+            'Logistics, Shipping & Transport': '🚛',
+            'Business, Admin & HR': '💼',
+            'Legal & Compliance': '⚖️',
+            'Writing, Content & Languages': '✍️',
+            'Artificial Intelligence & Future Tech': '🤖',
+            'Others & General Jobs': '⚙️'
+        };
+        return icons[cat] || '✨';
+    };
+
+    const getCityIcon = (city) => {
+        const cityName = typeof city === 'string' ? city : city.name;
+        const icons = {
+            'Ahmedabad': '🏘️',
+            'Surat': '🏗️',
+            'Vadodara': '🏙️',
+            'Rajkot': '🏭',
+            'Gandhinagar': '🏛️',
+            'Mumbai': '🌆',
+            'Delhi': '🚩',
+            'Bangalore': '🛰️',
+            'Pune': '🎓'
+        };
+        return icons[cityName] || '📍';
+    };
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
-                const [gigsRes, catsRes] = await Promise.all([
-                    axios.get('/api/gigs'),
-                    axios.get('/api/gigs/categories')
-                ]);
-
+                // Fetch basic data
+                const gigsRes = await axios.get('/api/gigs');
                 setServices(gigsRes.data);
-                setCategories(['All', ...catsRes.data]);
+                
+                // Fetch non-blocking extras
+                Promise.all([
+                    axios.get('/api/gigs/categories'),
+                    axios.get('/api/cities')
+                ]).then(([catsRes, citiesRes]) => {
+                    setCategories(['All', ...catsRes.data]);
+                    if (citiesRes.data?.length > 0) {
+                        setCities(citiesRes.data);
+                    }
+                }).catch(err => {
+                    console.error("Delayed data fetch error:", err);
+                });
+
+                // Set initial cities fallback if nothing loaded yet
+                setCities([{name: 'Ahmedabad'}, {name: 'Surat'}, {name: 'Vadodara'}, {name: 'Rajkot'}, {name: 'Gandhinagar'}]);
+
             } catch (error) {
                 console.error('Error fetching services:', error);
+                toast.error("Failed to load services. Please check your connection.");
             } finally {
                 setLoading(false);
             }
@@ -89,17 +153,35 @@ const ServiceCatalog = () => {
     }, []);
 
     useEffect(() => {
-        setFilter(queryParams.get('category') || 'All');
+        const rawParam = queryParams.get('category') || 'All';
+        const finalFilter = rawParam.toLowerCase().startsWith('all') ? 'All' : rawParam;
+        setFilter(finalFilter);
         setServiceType(queryParams.get('type') || 'All');
         setSearchQuery(queryParams.get('search') || '');
+        setCityFilter(queryParams.get('city') || '');
     }, [location.search]);
 
     const filteredServices = services.filter(s => {
-        const matchesCategory = filter === 'All' || s.category === filter;
-        const matchesType = serviceType === 'All' || s.serviceType === serviceType;
-        const matchesSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            s.category.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesCity = !initialCity || (s.user?.city?.toLowerCase() === initialCity.toLowerCase());
+        // Universal Category Normalization
+        const currentFilter = filter.toLowerCase();
+        const sCat = (s.category || s.mainCategory || '').toLowerCase();
+        const matchesCategory = currentFilter === 'all' || sCat === currentFilter;
+        
+        // Universal Service Type Mapping
+        const currentType = serviceType.toLowerCase();
+        const sType = (s.serviceType || '').toLowerCase();
+        const matchesType = currentType === 'all' || sType === currentType || !sType; // Show if missing type on "All"
+        
+        const currentSearch = searchQuery.toLowerCase().trim();
+        const matchesSearch = !currentSearch || 
+            s.title.toLowerCase().includes(currentSearch) ||
+            sCat.includes(currentSearch) ||
+            (s.description && s.description.toLowerCase().includes(currentSearch));
+        
+        const cFilter = cityFilter.toLowerCase().trim();
+        const sCity = (s.user?.city || s.city || '').toLowerCase().trim();
+        const matchesCity = !cFilter || cFilter === 'all' || sCity === cFilter;
+        
         return matchesCategory && matchesType && matchesSearch && matchesCity;
     });
 
@@ -116,26 +198,24 @@ const ServiceCatalog = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-24 relative overflow-hidden">
-            {/* Bg Decoration */}
             <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-white to-transparent"></div>
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
 
-            <div className="container mx-auto px-6 relative z-10 pt-24">
+            <div className="container mx-auto px-6 relative z-10 pt-10">
 
-                {/* Header */}
-                <div className="text-center max-w-3xl mx-auto mb-16">
+                <div className="text-center max-w-3xl mx-auto mb-12">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-500 font-bold text-xs mb-6 shadow-sm"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-500 font-bold text-xs mb-6 shadow-sm uppercase tracking-widest"
                     >
-                        <Sparkles size={14} className="text-primary" /> DISCOVER TALENT
+                        <Sparkles size={14} className="text-primary" /> Discover Talent
                     </motion.div>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-display font-extrabold text-dark-surface mb-6"
+                        className="text-3xl md:text-5xl font-display font-black text-dark-surface mb-4 leading-tight"
                     >
                         Find the perfect service
                     </motion.h1>
@@ -143,17 +223,16 @@ const ServiceCatalog = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-xl text-slate-500 font-light mb-10"
+                        className="text-base sm:text-lg text-slate-500 font-light mb-8 max-w-2xl mx-auto px-4"
                     >
                         Browse through our extensive catalog of verified professionals ready to help you.
                     </motion.p>
 
-                    {/* Service Type Toggle */}
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.25 }}
-                        className="flex justify-center gap-3"
+                        className="flex flex-wrap justify-center gap-2 sm:gap-3 px-4"
                     >
                         {[
                             { id: 'All', label: 'All Services', icon: Sparkles },
@@ -163,46 +242,77 @@ const ServiceCatalog = () => {
                             <button
                                 key={type.id}
                                 onClick={() => setServiceType(type.id)}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${serviceType === type.id ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'bg-white text-slate-600 border border-slate-100 hover:border-primary/20 hover:bg-slate-50'}`}
+                                className={`flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 ${serviceType === type.id ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'bg-white text-slate-600 border border-slate-100 hover:border-primary/20 hover:bg-slate-50'}`}
                             >
-                                <type.icon size={18} className={serviceType === type.id ? 'text-white' : 'text-primary'} />
+                                <type.icon size={16} className={serviceType === type.id ? 'text-white' : 'text-primary'} />
                                 {type.label}
                             </button>
                         ))}
                     </motion.div>
                 </div>
 
-                {/* Search & Filter Bar */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white p-2 rounded-[1.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col lg:flex-row gap-4 mb-16 max-w-5xl mx-auto"
+                    className="max-w-7xl mx-auto flex flex-col md:flex-row flex-wrap lg:flex-nowrap lg:items-stretch gap-3 mb-12 px-4"
                 >
-                    <div className="relative flex-1 lg:min-w-[300px]">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                        <input
-                            type="text"
-                            placeholder="What are you looking for?"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-14 pr-6 py-4 bg-transparent border-none outline-none text-slate-700 placeholder:text-slate-400 text-lg"
-                        />
+                    <div className="flex-[2] relative group min-w-[280px]">
+                        <div className="absolute inset-0 bg-slate-900/5 rounded-[2.5rem] blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-700"></div>
+                        <div className="relative flex items-center bg-white border-2 border-slate-900 rounded-full lg:rounded-[2.5rem] p-0.5 shadow-lg shadow-slate-200/40 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all duration-500">
+                            <div className="pl-5 pr-1">
+                                <Search className="w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Service or Professional?"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-2 pr-4 py-3 sm:py-4 bg-transparent outline-none text-slate-900 font-extrabold placeholder:text-slate-300 text-sm sm:text-base"
+                            />
+                        </div>
                     </div>
-                    <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0 w-full lg:w-auto p-2 no-scrollbar">
-                        {categories.map(cat => (
-                            <button
-                                key={cat}
-                                onClick={() => setFilter(cat)}
-                                className={`px-6 py-3 rounded-xl font-bold text-sm whitespace-nowrap transition-all duration-300 ${filter === cat ? 'bg-dark-surface text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+
+                    <div className="flex-1 relative group/dropdown min-w-[160px]">
+                        <div className="relative h-full">
+                            <select
+                                value={filter}
+                                onChange={(e) => setFilter(e.target.value)}
+                                className="w-full h-full appearance-none bg-white border-2 border-slate-900 rounded-full lg:rounded-[2.5rem] px-6 py-3.5 sm:py-5 font-black text-[10px] sm:text-xs uppercase tracking-widest text-slate-800 outline-none focus:ring-4 focus:ring-slate-900/5 cursor-pointer shadow-md transition-all pr-12"
                             >
-                                {cat}
-                            </button>
-                        ))}
+                                {categories.map(cat => (
+                                    <option key={cat} value={cat}>
+                                        {getCategoryIcon(cat)} {cat === 'All' ? 'CATEGORIES' : cat.toUpperCase()}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-900">
+                                <ChevronDown className="w-4 h-4" strokeWidth={4} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 relative group/dropdown min-w-[140px]">
+                        <div className="relative h-full">
+                            <select
+                                value={cityFilter}
+                                onChange={(e) => setCityFilter(e.target.value)}
+                                className="w-full h-full appearance-none bg-white border-2 border-slate-900 rounded-full lg:rounded-[2.5rem] px-6 py-3.5 sm:py-5 font-black text-[10px] sm:text-xs uppercase tracking-widest text-slate-800 outline-none focus:ring-4 focus:ring-slate-900/5 cursor-pointer shadow-md transition-all pr-12"
+                            >
+                                <option value="">📍 CITIES</option>
+                                {cities.map(city => (
+                                    <option key={city.name || city} value={city.name || city}>
+                                        {getCityIcon(city)} {(city.name || city).toUpperCase()}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-900">
+                                <ChevronDown className="w-4 h-4" strokeWidth={4} />
+                            </div>
+                        </div>
                     </div>
                 </motion.div>
 
-                {/* Grid */}
                 <motion.div
                     layout
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
@@ -225,9 +335,8 @@ const ServiceCatalog = () => {
                 </motion.div>
 
                 {filteredServices.length === 0 && (
-                    <div className="text-center py-20">
-                        <p className="text-slate-400 text-lg">No services found matching your criteria.</p>
-                        <button onClick={() => { setFilter('All'); setServiceType('All'); setSearchQuery(''); }} className="text-primary font-bold mt-2 hover:underline">Clear Filters</button>
+                    <div className="text-center py-20 bg-white rounded-[2rem] border border-slate-100 shadow-sm mt-10">
+                        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No services found matching your criteria.</p>
                     </div>
                 )}
             </div>

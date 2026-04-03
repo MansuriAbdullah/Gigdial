@@ -41,8 +41,7 @@ const ManageWorkers = () => {
 
             const workerList = data.filter(u =>
                 u.role === 'worker' ||
-                u.isProvider === true ||
-                u.kycStatus === 'pending'
+                u.isProvider === true
             );
 
             setWorkers(workerList);

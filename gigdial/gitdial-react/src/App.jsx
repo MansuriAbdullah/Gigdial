@@ -15,6 +15,7 @@ const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const Login = React.lazy(() => import('./pages/Auth/Login'));
 const Register = React.lazy(() => import('./pages/Auth/Register'));
 const CustomerRegister = React.lazy(() => import('./pages/Auth/CustomerRegister'));
+const RoleSelection = React.lazy(() => import('./pages/Auth/RoleSelection'));
 const WorkerDashboard = React.lazy(() => import('./pages/Dashboard/WorkerDashboard'));
 const CustomerDashboard = React.lazy(() => import('./pages/Dashboard/CustomerDashboard'));
 const AdminPanel = React.lazy(() => import('./pages/Admin/AdminPanel'));
@@ -72,7 +73,8 @@ function AnimatedRoutes() {
 
             {/* Auth Routes (No Header/Footer) */}
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<RoleSelection />} />
+            <Route path="/register/worker" element={<Register />} />
             <Route path="/register/customer" element={<CustomerRegister />} />
 
             {/* Dashboard Routes (Custom Layout) */}

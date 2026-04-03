@@ -163,7 +163,6 @@ const Register = () => {
             data.append('role', 'worker');
             data.append('skills', JSON.stringify(selectedSkills));
             data.append('category', formData.category);
-            data.append('mainCategory', formData.mainCategory);
             data.append('serviceType', formData.serviceType);
             data.append('experience', formData.experience);
             data.append('serviceDescription', formData.serviceDescription);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, Star, Filter, ArrowRight, Zap, Shield, Loader2, Sparkles, X, Phone, Send, RefreshCw } from 'lucide-react';
+import { Search, MapPin, Star, Filter, ArrowRight, Zap, Shield, Loader2, Sparkles, X, Phone, Send, RefreshCw, ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getFullImagePath } from '../utils/imagePath';
@@ -139,6 +139,9 @@ const BrowseWorkers = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedType, setSelectedType] = useState('All');
+    const [cityFilter, setCityFilter] = useState('');
+    const [cities, setCities] = useState([]);
+    const [categories, setCategories] = useState(['All']);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -148,7 +151,65 @@ const BrowseWorkers = () => {
     const [selectedWorker, setSelectedWorker] = useState(null);
     const [sending, setSending] = useState(false);
 
-    const categories = ['All', 'Driver', 'Plumber', 'Electrician', 'House Help', 'Tutor', 'Fitness', 'Elder Care', 'IT Support', 'Cleaning', 'Beauty', 'Painting', 'Carpentry', 'Repair', 'Creative', 'Appliance Repair'];
+    const getCategoryIcon = (cat) => {
+        const icons = {
+            'All': '🔍',
+            'Cleaning': '🧹',
+            'Cooking': '👨‍🍳',
+            'Driver': '🚗',
+            'Fitness': '🏋️',
+            'Fitness Trainer': '💪',
+            'Painting': '🎨',
+            'Pest Control': '🦟',
+            'Plumber': '🔧',
+            'Security': '🛡️',
+            'Gym': '🏃',
+            'Trades': '🛠️',
+            'Tech': '💻',
+            'Marketing': '📈',
+            'Business': '💼',
+            'Legal': '⚖️',
+            'Content': '✍️',
+            'Design': '🎨',
+            'Product': '📦',
+            'Logistics': '🚛',
+            'Tutors': '🎓',
+            'Health': '🏥',
+            'AI': '🤖',
+            'Events': '📷',
+            'Trades & Services (Manual)': '🛠️',
+            'Health, Medical & Wellness': '🏃',
+            'Computers, IT & Software': '💻',
+            'Design, Media & Architecture': '🎨',
+            'Events, Hospitality & Tourism': '📷',
+            'Education, Teaching & Coaching': '🎓',
+            'Sales, Marketing & PR': '📈',
+            'Logistics, Shipping & Transport': '🚛',
+            'Business, Admin & HR': '💼',
+            'Legal & Compliance': '⚖️',
+            'Writing, Content & Languages': '✍️',
+            'Artificial Intelligence & Future Tech': '🤖',
+            'Others & General Jobs': '⚙️'
+        };
+        return icons[cat] || '✨';
+    };
+
+    const getCityIcon = (city) => {
+        const cityName = typeof city === 'string' ? city : city.name;
+        const icons = {
+            'Ahmedabad': '🏘️',
+            'Surat': '🏗️',
+            'Vadodara': '🏙️',
+            'Rajkot': '🏭',
+            'Gandhinagar': '🏛️',
+            'Mumbai': '🌆',
+            'Delhi': '🚩',
+            'Bangalore': '🛰️',
+            'Pune': '🎓'
+        };
+        return icons[cityName] || '📍';
+    };
+
     const colors = [
         { primary: 'from-blue-600 to-indigo-600' },
         { primary: 'from-rose-500 to-pink-500' },
@@ -173,8 +234,28 @@ const BrowseWorkers = () => {
             const response = await fetch('/api/users/workers');
             const data = await response.json();
             setWorkers(data);
+
+            // Fetch cities non-blocking
+            fetch('/api/cities')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length > 0) setCities(data);
+                })
+                .catch(err => console.error("Cities fetch error", err));
+
+            // Fetch categories non-blocking
+            fetch('/api/gigs/categories')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length > 0) setCategories(['All', ...data]);
+                })
+                .catch(err => console.error("Categories fetch error", err));
+
+            // Set fallback cities
+            setCities([{name: 'Ahmedabad'}, {name: 'Surat'}, {name: 'Vadodara'}, {name: 'Rajkot'}, {name: 'Gandhinagar'}]);
         } catch (error) {
             console.error('Failed to fetch workers:', error);
+            toast.error("Failed to load workers cloud.");
         } finally {
             setLoading(false);
         }
@@ -234,23 +315,21 @@ const BrowseWorkers = () => {
     };
 
     const filteredWorkers = workers.filter(worker => {
-        const term = searchTerm.toLowerCase();
-        const matchesSearch = worker.name.toLowerCase().includes(term) ||
-            (worker.category && worker.category.toLowerCase().includes(term)) ||
-            (worker.city && worker.city.toLowerCase().includes(term)) ||
-            worker.skills?.some(skill => String(skill).toLowerCase().includes(term));
+        const matchesSearch = worker.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (worker.mainCategory && worker.mainCategory.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (worker.category && worker.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (worker.city && worker.city.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (worker.skills && worker.skills.some(skill => String(skill).toLowerCase().includes(searchTerm.toLowerCase())));
 
         const cat = selectedCategory.toLowerCase();
         const matchesCategory = selectedCategory === 'All' ||
+            (worker.mainCategory && worker.mainCategory.toLowerCase().includes(cat)) ||
             (worker.category && worker.category.toLowerCase().includes(cat)) ||
-            worker.skills?.some(skill => String(skill).toLowerCase().includes(cat));
+            (worker.skills && worker.skills.some(skill => String(skill).toLowerCase().includes(cat)));
 
-        const type = selectedType.toLowerCase();
-        const matchesType = selectedType === 'All' ||
-            (worker.category && worker.category.toLowerCase().includes(type)) ||
-            (worker.skills && worker.skills.some(skill => String(skill).toLowerCase().includes(type)));
+        const matchesCity = !cityFilter || (worker.city?.toLowerCase() === cityFilter.toLowerCase());
 
-        return matchesSearch && matchesCategory && matchesType;
+        return matchesSearch && matchesCategory && matchesCity;
     });
 
     return (
@@ -260,24 +339,24 @@ const BrowseWorkers = () => {
                 <div className="absolute bottom-[10%] right-[0%] w-[35%] h-[35%] bg-rose-100/30 blur-[120px] rounded-full"></div>
             </div>
 
-            <div className="relative pt-32 pb-24 z-10 overflow-hidden border-b border-slate-100 bg-white/40 backdrop-blur-3xl">
+            <div className="relative pt-10 pb-8 z-10 overflow-hidden border-b border-slate-100 bg-white/40 backdrop-blur-3xl">
                 <div className="container mx-auto px-6">
                     <div className="max-w-7xl mx-auto text-center">
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100 mb-8"
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100 mb-2"
                         >
                             <Sparkles size={14} className="fill-blue-600" />
                             <span className="text-[10px] font-black uppercase tracking-[0.2em]">India's Verified Talent</span>
                         </motion.div>
 
-                        <h1 className="text-4xl md:text-7xl font-black mb-8 leading-tight tracking-tighter text-slate-950 uppercase">
+                        <h1 className="text-4xl md:text-7xl font-black mb-4 leading-tight tracking-tighter text-slate-950 uppercase">
                             BROWSE OUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-rose-500 to-amber-500">PRO NETWORK</span>
                         </h1>
 
-                        <div className="max-w-2xl mx-auto mt-12">
-                            <div className="relative group">
+                        <div className="max-w-6xl mx-auto mt-2 flex flex-col lg:flex-row gap-4 items-stretch px-4">
+                            <div className="flex-[2] relative group">
                                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-rose-500 to-amber-500 rounded-[1.8rem] blur opacity-15 group-focus-within:opacity-25 transition-opacity"></div>
                                 <div className="relative flex items-center bg-white border border-slate-100 rounded-[1.8rem] shadow-xl shadow-blue-500/5 overflow-hidden">
                                     <Search className="ml-6 text-slate-300" size={20} />
@@ -290,37 +369,47 @@ const BrowseWorkers = () => {
                                     />
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="mt-12 max-w-5xl mx-auto">
-                            <div className="flex flex-wrap justify-center gap-3">
-                                {categories.map((category, idx) => {
-                                    const categoryGradients = [
-                                        'from-blue-600 to-cyan-500', 'from-rose-500 to-pink-500', 'from-emerald-500 to-teal-500',
-                                        'from-amber-400 to-orange-500', 'from-indigo-600 to-purple-500', 'from-violet-500 to-fuchsia-500'
-                                    ];
-                                    const gradient = category === 'All' ? 'from-slate-950 to-slate-800' : categoryGradients[idx % categoryGradients.length];
+                            <div className="flex-1 relative group bg-white border-2 border-slate-900 rounded-[1.8rem] overflow-hidden pr-4 shadow-lg shadow-slate-200/40">
+                                <select
+                                    value={selectedCategory}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="w-full h-full appearance-none bg-transparent px-8 py-5 font-black text-[11px] uppercase tracking-widest text-slate-900 outline-none cursor-pointer pr-12"
+                                >
+                                    {categories.map(category => (
+                                        <option key={category} value={category}>
+                                            {getCategoryIcon(category)} {category === 'All' ? 'ALL CATEGORIES' : category.toUpperCase()}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-900">
+                                    <ChevronDown className="w-4 h-4" strokeWidth={4} />
+                                </div>
+                            </div>
 
-                                    return (
-                                        <button
-                                            key={category}
-                                            onClick={() => setSelectedCategory(category)}
-                                            className="relative group transition-all"
-                                        >
-                                            <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradient} rounded-xl blur-[2px] ${selectedCategory === category ? 'opacity-100' : 'opacity-20 group-hover:opacity-100'} transition-opacity`}></div>
-                                            <div className={`relative px-8 py-3 rounded-[12px] font-black text-[11px] uppercase tracking-widest transition-all ${selectedCategory === category ? 'bg-slate-950 text-white' : 'bg-white text-slate-800'}`}>
-                                                {category}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
+                            <div className="flex-1 relative group bg-white border-2 border-slate-900 rounded-[1.8rem] overflow-hidden pr-4 shadow-lg shadow-slate-200/40">
+                                <select
+                                    value={cityFilter}
+                                    onChange={(e) => setCityFilter(e.target.value)}
+                                    className="w-full h-full appearance-none bg-transparent px-8 py-5 font-black text-[11px] uppercase tracking-widest text-slate-900 outline-none cursor-pointer pr-12"
+                                >
+                                    <option value="">📍 ALL CITIES</option>
+                                    {cities.map(city => (
+                                        <option key={city.name || city} value={city.name || city}>
+                                            {getCityIcon(city)} {(city.name || city).toUpperCase()}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-900">
+                                    <ChevronDown className="w-4 h-4" strokeWidth={4} />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 py-20 relative z-10 max-w-7xl">
+            <div className="container mx-auto px-6 py-8 relative z-10 max-w-7xl">
                 <AnimatePresence mode="popLayout">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-40">
@@ -347,7 +436,6 @@ const BrowseWorkers = () => {
                 </AnimatePresence>
             </div>
 
-            {/* Premium Light-Theme Contact Modal */}
             <AnimatePresence>
                 {isModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-white/40 backdrop-blur-xl">
@@ -358,7 +446,6 @@ const BrowseWorkers = () => {
                             className="relative p-[2px] rounded-[3rem] bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-2xl"
                         >
                             <div className="bg-white rounded-[2.95rem] w-full max-w-md p-10 relative overflow-hidden">
-                                {/* Micro-animations Background */}
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
                                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-50"></div>
 
@@ -377,8 +464,8 @@ const BrowseWorkers = () => {
                                     >
                                         <Phone className="text-white w-10 h-10" />
                                     </motion.div>
-                                    <h3 className="text-3xl font-black text-slate-900 tracking-tight leading-none mb-4 uppercase">Connect with Pro</h3>
-                                    <p className="text-slate-500 font-medium text-base px-2">Provide your 10-digit number to unlock the professional's profile and services.</p>
+                                    <h3 className="text-3xl font-black text-slate-900 tracking-tight leading-none mb-4 uppercase">Direct Connect</h3>
+                                    <p className="text-slate-500 font-medium text-base px-2">Enter your 10-digit number to unlock early access and professional services.</p>
                                 </div>
 
                                 <form onSubmit={handlePhoneSubmit} className="space-y-8 relative z-10">
@@ -392,7 +479,7 @@ const BrowseWorkers = () => {
                                                 type="tel"
                                                 required
                                                 maxLength={10}
-                                                placeholder="98765 43210"
+                                                placeholder="Enter 10-digit number"
                                                 className="w-full pl-16 pr-8 py-5 rounded-2xl bg-slate-50 border-2 border-slate-50 focus:bg-white focus:border-blue-500 focus:ring-8 focus:ring-blue-500/5 outline-none transition-all font-black text-slate-900 tracking-[0.15em] text-lg lg:text-xl shadow-inner"
                                                 value={phoneNumber}
                                                 onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
@@ -416,11 +503,6 @@ const BrowseWorkers = () => {
                                             </>
                                         )}
                                     </button>
-                                    <div className="flex items-center justify-center gap-6 mt-8 opacity-40 grayscale group-hover:grayscale-0 transition-all">
-                                        <div className="h-[1px] flex-1 bg-slate-200"></div>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Secure • Verified • Reliable</p>
-                                        <div className="h-[1px] flex-1 bg-slate-200"></div>
-                                    </div>
                                 </form>
                             </div>
                         </motion.div>

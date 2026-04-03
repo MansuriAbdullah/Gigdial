@@ -23,7 +23,7 @@ const ServiceCard = ({ title, rating, image, category, price, bookings, onBook, 
       whileInView={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -10 }}
       viewport={{ once: true }}
-      className="relative flex-shrink-0 w-80 group cursor-pointer h-full"
+      className="relative flex-shrink-0 w-[280px] sm:w-80 group cursor-pointer h-full"
     >
       {/* Visible Shimmer Border effect */}
       <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradients[color]} rounded-[2rem] blur-sm opacity-25 group-hover:opacity-100 transition-opacity duration-500`}></div>
@@ -177,28 +177,28 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', on
       className="relative mb-24 last:mb-0 group/section"
     >
       {/* Header - More premium */}
-      <div className="flex justify-between items-end mb-10 px-4 md:px-0">
-        <div className="flex items-center gap-5">
-          <div className={`p-4 rounded-[1.5rem] bg-gradient-to-br ${colors[color]} border border-white shadow-xl flex items-center justify-center transform group-hover/section:scale-110 transition-all duration-500`}>
-            <Icon className="w-8 h-8" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-8 px-4 md:px-0">
+        <div className="flex items-center gap-4">
+          <div className={`p-3 sm:p-4 rounded-[1.2rem] sm:rounded-[1.5rem] bg-gradient-to-br ${colors[color]} border border-white shadow-xl flex items-center justify-center transform group-hover/section:scale-110 transition-all duration-500`}>
+            <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
           </div>
           <div>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">{title}</h2>
-            <p className="text-slate-500 font-bold text-sm tracking-widest uppercase mt-1 opacity-70">Handpicked Professionals</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 tracking-tight leading-tight">{title}</h2>
+            <p className="text-slate-500 font-bold text-[10px] sm:text-sm tracking-widest uppercase mt-0.5 sm:mt-1 opacity-70">Handpicked Professionals</p>
           </div>
         </div>
         <motion.button
           onClick={() => onExplore(category)}
           whileHover={{ x: 5 }}
-          className="flex items-center gap-3 px-5 py-2.5 bg-white border border-slate-100 rounded-2xl text-blue-600 font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-md hover:border-blue-100 transition-all group/btn"
+          className="flex items-center gap-3 px-6 py-3 sm:px-5 sm:py-2.5 bg-white border border-slate-100 rounded-2xl text-blue-600 font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-md hover:border-blue-100 transition-all group/btn w-fit"
         >
           Explore All
           <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </motion.button>
       </div>
 
-      {/* Navigation Arrows - Sleeker */}
-      <div className="absolute top-1/2 -left-4 -right-4 flex justify-between pointer-events-none z-30 opacity-0 group-hover/section:opacity-100 transition-opacity translate-y-4">
+      {/* Navigation Arrows - Hidden on very small mobile */}
+      <div className="hidden sm:flex absolute top-1/2 -left-4 -right-4 justify-between pointer-events-none z-30 opacity-0 group-hover/section:opacity-100 transition-opacity translate-y-4">
         <button
           onClick={() => scroll('left')}
           className={`p-4 bg-white/90 backdrop-blur-xl rounded-full shadow-2xl border border-slate-100 pointer-events-auto hover:bg-white hover:scale-110 active:scale-95 transition-all text-slate-800 ${!showLeftArrow ? 'opacity-30 cursor-not-allowed' : ''}`}
@@ -217,9 +217,9 @@ const ServiceRow = ({ title, services, icon: Icon = Sparkles, color = 'blue', on
       <div
         ref={scrollContainer}
         onScroll={handleScroll}
-        className="overflow-x-auto scrollbar-hide px-4 md:px-0 pb-12 snap-x snap-mandatory"
+        className="overflow-x-auto scrollbar-hide px-4 md:px-0 pb-12 snap-x snap-mandatory scroll-smooth"
       >
-        <div className="flex space-x-8 w-max">
+        <div className="flex space-x-4 sm:space-x-8 w-max">
           {services.map((service, idx) => (
             <div key={idx} className="snap-start h-full">
               <ServiceCard {...service} onBook={onBook} color={color} />
@@ -279,23 +279,37 @@ const ServiceShowcase = () => {
         const res = await fetch('/api/gigs');
         const gigs = await res.json();
 
-        // Categorize services
-        const categories = {
-          digitalServices: ['Tech', 'Development', 'Design', 'Media', 'Marketing', 'Writing', 'Technical', 'Support', 'IT Support'],
-          wellnessServices: ['Fitness', 'Health', 'Wellness', 'Yoga', 'Mindfulness'],
-          homeServices: ['Cleaning', 'Repair', 'Electric', 'Plumbing', 'Home', 'Maintenance', 'Plumber', 'House Help'],
-          tutoringServices: ['Education', 'Tutor', 'Language', 'Academics'],
-          creativeServices: ['Art', 'Events', 'Photography', 'Music', 'Creative', 'Driver', 'Chauffeur'],
-          beautyServices: ['Beauty', 'Salon', 'Makeup', 'Bridal', 'Nails', 'Spa']
+        // Categorize services based on the new registration categories
+        const categoriesMap = {
+          tradesServices: ['Trades & Services (Manual)', 'Plumbing', 'Electrician', 'Carpenter', 'Painter', 'AC Repair', 'Cleaning'],
+          marketingSales: ['Sales, Marketing & PR', 'Marketing', 'SEO', 'Sales', 'Digital Marketing'],
+          businessAdmin: ['Business, Admin & HR', 'Accounting', 'Human Resources', 'Admin', 'Financial'],
+          legalCompliance: ['Legal & Compliance', 'Legal', 'Lawyer', 'Compliance'],
+          techSoftware: ['Computers, IT & Software', 'Tech', 'Development', 'Software', 'IT', 'Cybersecurity', 'Cloud'],
+          writingContent: ['Writing, Content & Languages', 'Writing', 'Content', 'Translator', 'Blogger'],
+          designMedia: ['Design, Media & Architecture', 'Design', 'Media', 'Architecture', 'Graphic', 'Photographer'],
+          logisticsTransport: ['Logistics, Shipping & Transport', 'Logistics', 'Transport', 'Driver', 'Shipping'],
+          educationCoaching: ['Education, Teaching & Coaching', 'Education', 'Tutor', 'Teaching', 'Coaching'],
+          healthWellness: ['Health, Medical & Wellness', 'Health', 'Medical', 'Wellness', 'Yoga', 'Fitness', 'Nurse'],
+          aiTech: ['Artificial Intelligence & Future Tech', 'AI', 'Artificial Intelligence', 'Machine Learning', 'Future Tech'],
+          eventsHospitality: ['Events, Hospitality & Tourism', 'Events', 'Hospitality', 'Tourism', 'Wedding', 'Chef'],
+          othersGeneral: ['Others & General Jobs', 'Others', 'Security', 'Laborer', 'Delivery']
         };
 
         const categorizedData = {
-          digitalServices: [],
-          wellnessServices: [],
-          homeServices: [],
-          tutoringServices: [],
-          creativeServices: [],
-          beautyServices: []
+          tradesServices: [],
+          marketingSales: [],
+          businessAdmin: [],
+          legalCompliance: [],
+          techSoftware: [],
+          writingContent: [],
+          designMedia: [],
+          logisticsTransport: [],
+          educationCoaching: [],
+          healthWellness: [],
+          aiTech: [],
+          eventsHospitality: [],
+          othersGeneral: []
         };
 
         gigs.forEach(gig => {
@@ -317,9 +331,9 @@ const ServiceShowcase = () => {
 
           // Find matching category group
           let added = false;
-          for (const [key, keywords] of Object.entries(categories)) {
-            // Case insensitive check for any keyword matching the category
-            const gigCat = (gig.category || '').toLowerCase();
+          const gigCat = (gig.mainCategory || gig.category || '').toLowerCase();
+          
+          for (const [key, keywords] of Object.entries(categoriesMap)) {
             if (keywords.some(k => gigCat.includes(k.toLowerCase()))) {
               categorizedData[key].push(mappedGig);
               added = true;
@@ -328,7 +342,7 @@ const ServiceShowcase = () => {
           }
           // Default bucket if no specific category match
           if (!added) {
-            categorizedData.homeServices.push(mappedGig);
+            categorizedData.othersGeneral.push(mappedGig);
           }
         });
 
@@ -457,67 +471,54 @@ const ServiceShowcase = () => {
           </p>
         </motion.div>
 
-        {/* Search & Tabs Row */}
-        <div className="mb-12 space-y-8">
-          {/* Search Bar - Modern Glassmorphism */}
-          <div className="max-w-2xl mx-auto px-4">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-lime-500/10 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative flex items-center bg-white border border-slate-200 rounded-2xl p-1 shadow-xl shadow-slate-200/50 focus-within:border-blue-500/50 transition-all duration-300">
-                <div className="pl-5 pr-3">
-                  <Search className="w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+        {/* Bada Search & Selection Row */}
+        <div className="mb-16 max-w-5xl mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-stretch gap-6">
+            {/* Compact Search Bar with Black Border */}
+            <div className="flex-[2] relative group">
+              <div className="absolute inset-0 bg-slate-900/5 rounded-[2.5rem] blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-700"></div>
+              <div className="relative flex items-center bg-white border-2 border-slate-900 rounded-[2.5rem] p-1 shadow-lg shadow-slate-200/40 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all duration-500">
+                <div className="pl-6 pr-2">
+                  <Search className="w-5 h-5 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                 </div>
                 <input
                   type="text"
-                  placeholder="What service are you looking for today?"
+                  placeholder="Find the best professional..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="flex-1 bg-transparent py-4 text-slate-800 placeholder:text-slate-400 font-bold outline-none text-sm md:text-base pr-4"
+                  className="flex-1 bg-transparent py-3.5 text-slate-900 placeholder:text-slate-300 font-extrabold outline-none text-base pr-4"
                 />
               </div>
             </div>
-          </div>
 
-          {/* Category Tabs - Compact Single Line */}
-          <div className="flex flex-nowrap items-center justify-start md:justify-center gap-2.5 overflow-x-auto pb-4 scrollbar-hide px-2">
-            {[
-              { id: 'all', label: 'All Services', icon: Sparkles, color: 'blue' },
-              { id: 'digitalServices', label: 'Tech', icon: Zap, color: 'blue' },
-              { id: 'wellnessServices', label: 'Fitness', icon: Heart, color: 'red' },
-              { id: 'homeServices', label: 'Home', icon: Sparkles, color: 'green' },
-              { id: 'tutoringServices', label: 'Tutors', icon: Award, color: 'purple' },
-              { id: 'creativeServices', label: 'Events', icon: TrendingUp, color: 'orange' },
-              { id: 'beautyServices', label: 'Beauty', icon: Star, color: 'lime' }
-            ].map((tab) => {
-              const isActive = activeCategory === tab.id;
-              const theme = {
-                blue: 'from-blue-600 to-indigo-600 shadow-blue-500/25',
-                red: 'from-rose-600 to-pink-600 shadow-rose-500/25',
-                green: 'from-emerald-600 to-teal-600 shadow-emerald-500/25',
-                purple: 'from-purple-600 to-indigo-600 shadow-purple-500/25',
-                orange: 'from-orange-600 to-amber-600 shadow-orange-500/25',
-                lime: 'from-lime-600 to-green-600 shadow-lime-500/25'
-              };
-
-              return (
-                <motion.button
-                  key={tab.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setActiveCategory(tab.id);
-                    setSearchTerm(''); // Clear search on tab switch
-                  }}
-                  className={`flex-shrink-0 flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-500 whitespace-nowrap border-2 ${isActive
-                      ? `bg-gradient-to-r ${theme[tab.color]} text-white border-transparent shadow-xl`
-                      : 'bg-white text-slate-500 border-slate-50 shadow-lg shadow-slate-200/50 hover:border-slate-300'
-                    }`}
+            {/* Compact Dropdown Button with Black Border */}
+            <div className="flex-1 relative group/dropdown min-w-[240px]">
+              <div className="relative h-full">
+                <select
+                  value={activeCategory}
+                  onChange={(e) => setActiveCategory(e.target.value)}
+                  className="w-full h-full appearance-none bg-white border-2 border-slate-900 rounded-[2.5rem] px-8 py-3.5 font-black text-xs uppercase tracking-[0.12em] text-slate-800 outline-none focus:ring-4 focus:ring-slate-900/5 cursor-pointer shadow-md transition-all pr-12"
                 >
-                  <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} strokeWidth={3} />
-                  {tab.label}
-                </motion.button>
-              );
-            })}
+                  <option value="all">🔍 All Services</option>
+                  <option value="tradesServices">🛠️ Trades & Manual</option>
+                  <option value="healthWellness">🏃 Fitness & Wellness</option>
+                  <option value="techSoftware">💻 IT & Software</option>
+                  <option value="designMedia">🎨 Design & Media</option>
+                  <option value="eventsHospitality">📷 Events & Beauty</option>
+                  <option value="educationCoaching">🎓 Tutors & Coaching</option>
+                  <option value="marketingSales">📈 Marketing & Sales</option>
+                  <option value="logisticsTransport">🚛 Logistics & Driving</option>
+                  <option value="businessAdmin">💼 Business & HR</option>
+                  <option value="legalCompliance">⚖️ Legal & Law</option>
+                  <option value="writingContent">Writing & Content</option>
+                  <option value="aiTech">🤖 AI & Future Tech</option>
+                  <option value="othersGeneral">⚙️ Others & General</option>
+                </select>
+                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-900">
+                  <ArrowRight className="w-4 h-4 rotate-90" strokeWidth={4} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -540,64 +541,78 @@ const ServiceShowcase = () => {
 
                 const applySearch = (list) => {
                   if (!searchTerm.trim()) return list;
+                  const term = searchTerm.toLowerCase().trim();
                   return list.filter(s =>
-                    s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    s.category.toLowerCase().includes(searchTerm.toLowerCase())
+                    s.title.toLowerCase().includes(term) ||
+                    (s.category && s.category.toLowerCase().includes(term)) ||
+                    (s.mainCategory && s.mainCategory.toLowerCase().includes(term)) ||
+                    (s.serviceDescription && s.serviceDescription.toLowerCase().includes(term))
                   );
                 };
 
                 if (activeCategory === 'all') {
-                  const combined = [
-                    ...data.digitalServices,
-                    ...data.wellnessServices,
-                    ...data.homeServices,
-                    ...data.tutoringServices,
-                    ...data.creativeServices,
-                    ...data.beautyServices
-                  ];
+                  const combined = Object.values(data).flat();
                   // Remove duplicates if any (by id)
                   const unique = Array.from(new Map(combined.map(s => [s.id, s])).values());
                   servicesToShow = applySearch(unique);
                   title = "Best Recommended Services";
                   icon = Sparkles;
                   color = "blue";
-                  category = "Professional";
-                } else if (activeCategory === 'digitalServices') {
-                  servicesToShow = applySearch(data.digitalServices);
-                  title = "Digital & Tech Services";
+                  category = "All Professionals";
+                } else if (activeCategory === 'tradesServices') {
+                  servicesToShow = applySearch(data.tradesServices);
+                  title = "Trades & Manual Services";
                   icon = Zap;
                   color = "blue";
-                  category = "IT Support";
-                } else if (activeCategory === 'wellnessServices') {
-                  servicesToShow = applySearch(data.wellnessServices);
-                  title = "Wellness & Fitness";
+                  category = "Trades";
+                } else if (activeCategory === 'techSoftware') {
+                  servicesToShow = applySearch(data.techSoftware);
+                  title = "Computers & IT Support";
+                  icon = Send;
+                  color = "blue";
+                  category = "Tech";
+                } else if (activeCategory === 'healthWellness') {
+                  servicesToShow = applySearch(data.healthWellness);
+                  title = "Health & Wellness";
                   icon = Heart;
                   color = "red";
-                  category = "Fitness";
-                } else if (activeCategory === 'homeServices') {
-                  servicesToShow = applySearch(data.homeServices);
-                  title = "Home Services";
-                  icon = Sparkles;
+                  category = "Wellness";
+                } else if (activeCategory === 'marketingSales') {
+                  servicesToShow = applySearch(data.marketingSales);
+                  title = "Marketing & Sales";
+                  icon = Users;
                   color = "green";
-                  category = "House Help";
-                } else if (activeCategory === 'tutoringServices') {
-                  servicesToShow = applySearch(data.tutoringServices);
-                  title = "Tutoring & Education";
-                  icon = Award;
-                  color = "purple";
-                  category = "Tutor";
-                } else if (activeCategory === 'creativeServices') {
-                  servicesToShow = applySearch(data.creativeServices);
-                  title = "Events & Creative Services";
-                  icon = TrendingUp;
-                  color = "orange";
-                  category = "Creative";
-                } else if (activeCategory === 'beautyServices') {
-                  servicesToShow = applySearch(data.beautyServices);
-                  title = "Beauty & Personal Care";
+                  category = "Marketing";
+                } else if (activeCategory === 'designMedia') {
+                  servicesToShow = applySearch(data.designMedia);
+                  title = "Design & Creative Media";
                   icon = Star;
+                  color = "purple";
+                  category = "Design";
+                } else if (activeCategory === 'educationCoaching') {
+                  servicesToShow = applySearch(data.educationCoaching);
+                  title = "Education & Tutoring";
+                  icon = Award;
+                  color = "orange";
+                  category = "Tutor";
+                } else if (activeCategory === 'eventsHospitality') {
+                  servicesToShow = applySearch(data.eventsHospitality);
+                  title = "Events & Hospitality";
+                  icon = TrendingUp;
                   color = "lime";
-                  category = "Beauty";
+                  category = "Events";
+                } else if (activeCategory === 'aiTech') {
+                  servicesToShow = applySearch(data.aiTech);
+                  title = "AI & Future Technology";
+                  icon = Zap;
+                  color = "blue";
+                  category = "AI Expert";
+                } else if (activeCategory === 'logisticsTransport') {
+                  servicesToShow = applySearch(data.logisticsTransport);
+                  title = "Logistics & Transport";
+                  icon = Clock;
+                  color = "green";
+                  category = "Logistics";
                 }
 
                 if (servicesToShow.length === 0) {

@@ -79,40 +79,58 @@ const Login = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white/80 backdrop-blur-2xl border border-white/60 relative z-10"
+                className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white/80 backdrop-blur-2xl border border-white/60 relative z-10"
             >
                 {/* Left Side - Form */}
-                <div className="p-5 md:p-12 lg:p-16 flex flex-col justify-center order-2 lg:order-1 relative">
+                <div className="p-5 md:p-10 lg:p-12 flex flex-col justify-center order-2 lg:order-1 relative">
                     {/* Role Toggle Switch */}
                     <div className="flex items-center justify-between gap-4 mb-8 lg:absolute lg:top-12 lg:right-12 lg:mb-0">
                         <Link to="/" className="inline-block lg:hidden group focus:outline-none active:bg-transparent">
                             <img src="/images/login-logo.png" alt="GigDial" className="h-8 md:h-10 w-auto mix-blend-multiply select-none" />
                         </Link>
-                        <div className="bg-slate-100/80 p-1 rounded-xl flex shadow-inner w-fit">
+                        <div className="bg-slate-100/80 p-1.5 rounded-2xl flex shadow-inner border border-slate-200/60 w-fit backdrop-blur-sm relative">
                             <button
+                                type="button"
                                 onClick={() => setRole('customer')}
-                                className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 ${role === 'customer' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`relative z-10 px-6 py-2.5 text-sm sm:text-base font-bold rounded-xl transition-colors duration-300 ${role === 'customer' ? 'text-white' : 'text-slate-500 hover:text-slate-800'}`}
                             >
-                                Customer
+                                {role === 'customer' && (
+                                    <motion.div
+                                        layoutId="activeRoleTab"
+                                        className="absolute inset-0 bg-[#0B3A69] rounded-xl shadow-[0_4px_12px_rgba(11,58,105,0.3)]"
+                                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                        style={{ zIndex: -1 }}
+                                    />
+                                )}
+                                <span className="relative z-10 block">Customer</span>
                             </button>
                             <button
+                                type="button"
                                 onClick={() => setRole('worker')}
-                                className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 ${role === 'worker' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                className={`relative z-10 px-6 py-2.5 text-sm sm:text-base font-bold rounded-xl transition-colors duration-300 ${role === 'worker' ? 'text-white' : 'text-slate-500 hover:text-slate-800'}`}
                             >
-                                Worker
+                                {role === 'worker' && (
+                                    <motion.div
+                                        layoutId="activeRoleTab"
+                                        className="absolute inset-0 bg-[#0B3A69] rounded-xl shadow-[0_4px_12px_rgba(11,58,105,0.3)]"
+                                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                        style={{ zIndex: -1 }}
+                                    />
+                                )}
+                                <span className="relative z-10 block">Worker</span>
                             </button>
                         </div>
                     </div>
 
                     <div className="mb-6 lg:mb-10 lg:mt-0">
-                        <Link to="/" className="hidden lg:inline-block mb-8 group focus:outline-none active:bg-transparent">
-                            <img src="/images/login-logo.png" alt="GigDial" className="h-20 w-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
+                        <Link to="/" className="hidden lg:inline-block mb-6 group focus:outline-none active:bg-transparent">
+                            <img src="/images/login-logo.png" alt="GigDial" className="h-14 w-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
                         </Link>
-                        <h1 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-slate-800 mb-3 md:mb-4 tracking-tight">
-                            Welcome Back
+                        <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-display font-black text-slate-800 mb-3 md:mb-4 tracking-tighter uppercase whitespace-nowrap">
+                            Login with {role}
                         </h1>
                         <p className="text-slate-500 text-sm md:text-lg">
-                            Sign in to access your {role === 'customer' ? 'customer dashboard' : 'worker account'}.
+                            Sign in to access your {role === 'customer' ? 'customer dashboard' : 'professional account'}.
                         </p>
                     </div>
 
@@ -164,16 +182,16 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-white font-bold py-4 rounded-2xl shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:pointer-events-none"
+                            className="w-full bg-[#0B3A69] hover:bg-[#082b4f] text-white font-bold py-4 rounded-2xl shadow-xl shadow-[#0B3A69]/20 hover:shadow-2xl hover:shadow-[#0B3A69]/30 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:pointer-events-none"
                         >
-                            {loading ? <Loader2 className="animate-spin" size={20} /> : 'Sign In'}
+                            {loading ? <Loader2 className="animate-spin" size={20} /> : `LOGIN WITH ${role.toUpperCase()}`}
                             {!loading && <ArrowRight size={20} />}
                         </button>
                     </form>
 
                     <p className="mt-8 text-center text-slate-500">
                         New to GigDial?{' '}
-                        <Link to={role === 'customer' ? "/register/customer" : "/register"} className="text-primary font-bold hover:text-primary-dark underline decoration-2 decoration-transparent hover:decoration-primary/30 underline-offset-4 transition-all">
+                        <Link to="/register" className="text-primary font-bold hover:text-primary-dark underline decoration-2 decoration-transparent hover:decoration-primary/30 underline-offset-4 transition-all">
                             Create Account
                         </Link>
                     </p>

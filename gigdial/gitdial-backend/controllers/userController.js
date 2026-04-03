@@ -58,7 +58,11 @@ const authUser = async (req, res) => {
 // @access  Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, phone, city, address, skills, role, category, serviceType, experience, serviceDescription } = req.body;
+        const { name, email, password, phone, city, address, skills, role, category, mainCategory, serviceType, experience, serviceDescription, dob, languages } = req.body;
+
+        // Parse JSON strings if necessary (common with FormData)
+        const processedSkills = typeof skills === 'string' ? JSON.parse(skills) : (skills || []);
+        const processedLanguages = typeof languages === 'string' ? JSON.parse(languages) : (languages || []);
 
         const userExists = await User.findOne({ email });
 
@@ -74,11 +78,14 @@ const registerUser = async (req, res) => {
             phone,
             city,
             address,
-            skills: role === 'worker' ? skills : undefined,
+            skills: role === 'worker' ? processedSkills : undefined,
             category: role === 'worker' ? category : undefined,
+            mainCategory: role === 'worker' ? mainCategory : undefined,
             serviceType: role === 'worker' ? serviceType : 'Residency',
             experience: role === 'worker' ? experience : 0,
             serviceDescription: role === 'worker' ? serviceDescription : undefined,
+            dob: role === 'worker' ? dob : undefined,
+            languages: role === 'worker' ? processedLanguages : undefined,
             role: role || 'customer',
             isProvider: role === 'worker',
             profileImage: req.files?.profileImage?.[0]

@@ -27,7 +27,7 @@ const TopBar = () => {
                         <span>100% Verified Professionals</span>
                     </div>
                     <div className="hidden md:block w-px h-3 bg-slate-700"></div>
-                    <div className="flex items-center gap-4">
+                    <div className="hidden sm:flex items-center gap-4">
                         <Link to="/worker-dashboard" className="hover:text-primary transition-colors">
                             For Professionals
                         </Link>
