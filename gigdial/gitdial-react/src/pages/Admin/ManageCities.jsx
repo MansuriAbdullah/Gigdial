@@ -28,7 +28,7 @@ const ManageCities = () => {
 
     const fetchCities = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/cities', config);
+            const { data } = await axios.get('/api/cities', config);
             setCities(data);
             setLoading(false);
         } catch (error) {
@@ -43,7 +43,7 @@ const ManageCities = () => {
         if (!newCity.trim()) return;
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/cities', { name: newCity }, config);
+            const { data } = await axios.post('/api/cities', { name: newCity }, config);
             setCities([...cities, data]);
             setNewCity('');
         } catch (error) {
@@ -56,7 +56,7 @@ const ManageCities = () => {
         if (!window.confirm('Are you sure you want to delete this city?')) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/cities/${id}`, config);
+            await axios.delete(`/api/cities/${id}`, config);
             setCities(cities.filter(city => city._id !== id));
         } catch (error) {
             console.error('Error deleting city:', error);
@@ -76,7 +76,7 @@ const ManageCities = () => {
 
     const saveEdit = async (id) => {
         try {
-            const { data } = await axios.put(`http://localhost:5000/api/cities/${id}`, { name: editName }, config);
+            const { data } = await axios.put(`/api/cities/${id}`, { name: editName }, config);
             setCities(cities.map(city => city._id === id ? data : city));
             setEditingId(null);
             setEditName('');

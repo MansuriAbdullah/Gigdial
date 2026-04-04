@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Star, MapPin, Phone, MessageSquare, Trash2, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { getFullImagePath } from '../../../utils/imagePath';
 
 const Favourites = () => {
     const [favourites, setFavourites] = useState([]);
@@ -80,7 +81,7 @@ const Favourites = () => {
                             <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
                                 {service.images && service.images[0] ? (
                                     <img
-                                        src={`http://localhost:5000/${service.images[0].replace(/\\/g, '/')}`}
+                                        src={getFullImagePath(service.images[0])}
                                         alt={service.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                     />
@@ -121,7 +122,7 @@ const Favourites = () => {
                                 <div className="flex items-center gap-2 mb-4 p-2 bg-slate-50 rounded-lg">
                                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600 overflow-hidden">
                                         {service.user?.profileImage ? (
-                                            <img src={`http://localhost:5000/${service.user.profileImage.replace(/\\/g, '/')}`} alt={service.user.name} className="w-full h-full object-cover" />
+                                            <img src={getFullImagePath(service.user.profileImage)} alt={service.user.name} className="w-full h-full object-cover" />
                                         ) : (
                                             service.user?.name?.charAt(0) || 'W'
                                         )}
