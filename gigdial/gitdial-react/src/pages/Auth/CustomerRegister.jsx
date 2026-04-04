@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Phone, MapPin, ArrowRight, Check, Shield, Star, Lock, Heart, ShoppingBag, Search, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, MapPin, ArrowRight, Check, Shield, Star, Lock, Heart, ShoppingBag, Search, Loader2, Home as HomeIcon, Laptop as LaptopIcon, Building } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const StepIndicator = ({ currentStep, totalSteps }) => (
@@ -42,8 +42,23 @@ const CustomerRegister = () => {
         confirmPassword: '',
         phone: '',
         city: '',
-        address: ''
+        address: '',
+        serviceType: 'Residency'
     });
+    
+    const [indianCities] = useState([
+        "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Surat", "Pune", "Jaipur",
+        "Lucknow", "Kanpur", "Nagpur", "Indore", "Thane", "Bhopal", "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara",
+        "Ghaziabad", "Ludhiana", "Agra", "Nashik", "Faridabad", "Meerut", "Rajkot", "Kalyan-Dombivli", "Vasai-Virar", "Varanasi",
+        "Srinagar", "Aurangabad", "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad", "Ranchi", "Howrah", "Coimbatore", "Jabalpur",
+        "Gwalior", "Vijayawada", "Jodhpur", "Madurai", "Raipur", "Kota", "Guwahati", "Chandigarh", "Solapur", "Hubli-Dharwad",
+        "Bareilly", "Moradabad", "Mysore", "Gurgaon", "Aligarh", "Jalandhar", "Tiruchirappalli", "Bhubaneswar", "Salem", "Mira-Bhayandar",
+        "Warangal", "Thiruvananthapuram", "Bhiwandi", "Saharanpur", "Guntur", "Amravati", "Bikaner", "Noida", "Jamshedpur", "Bhilai",
+        "Cuttack", "Firozabad", "Kochi", "Nellore", "Bhavnagar", "Dehradun", "Durgapur", "Asansol", "Rourkela", "Nanded",
+        "Kolhapur", "Ajmer", "Akola", "Gulbarga", "Jamnagar", "Ujjain", "Loni", "Siliguri", "Jhansi", "Ulhasnagar",
+        "Jammu", "Sangli-Miraj & Kupwad", "Mangalore", "Erode", "Belgaum", "Ambattur", "Tirunelveli", "Malegaon", "Gaya", "Jalgaon",
+        "Udaipur", "Maheshtala"
+    ]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -90,6 +105,7 @@ const CustomerRegister = () => {
                     phone: formData.phone,
                     city: formData.city,
                     address: formData.address,
+                    serviceType: formData.serviceType,
                     isProvider: false // Customer
                 }),
             });
@@ -234,18 +250,41 @@ const CustomerRegister = () => {
                                                         <label className="text-sm font-semibold text-slate-700 ml-1">City</label>
                                                         <div className="relative">
                                                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
-                                                            <select
+                                                            <input
+                                                                type="text"
                                                                 name="city"
                                                                 value={formData.city}
                                                                 onChange={handleChange}
-                                                                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all appearance-none text-slate-600"
-                                                            >
-                                                                <option value="">Select City</option>
-                                                                <option value="Mumbai">Mumbai</option>
-                                                                <option value="Delhi">Delhi</option>
-                                                                <option value="Bangalore">Bangalore</option>
-                                                            </select>
+                                                                list="indian-cities"
+                                                                placeholder="Select or type your city"
+                                                                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-slate-600"
+                                                            />
+                                                            <datalist id="indian-cities">
+                                                                {indianCities.map((city) => (
+                                                                    <option key={city} value={city} />
+                                                                ))}
+                                                            </datalist>
                                                         </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-3 pt-2">
+                                                    <label className="text-sm font-semibold text-slate-700 ml-1">Looking for Service At</label>
+                                                    <div className="flex gap-4">
+                                                        {['Residency', 'Commercial', 'Both'].map((type) => (
+                                                            <label key={type} className={`flex-1 flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${formData.serviceType === type ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'}`}>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="serviceType"
+                                                                    value={type}
+                                                                    checked={formData.serviceType === type}
+                                                                    onChange={handleChange}
+                                                                    className="hidden"
+                                                                />
+                                                                {type === 'Residency' ? <HomeIcon size={20} /> : type === 'Commercial' ? <LaptopIcon size={20} /> : <Building size={20} />}
+                                                                <span className="font-bold text-xs sm:text-sm">{type}</span>
+                                                            </label>
+                                                        ))}
                                                     </div>
                                                 </div>
                                             </div>

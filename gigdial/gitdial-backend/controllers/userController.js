@@ -81,7 +81,7 @@ const registerUser = async (req, res) => {
             skills: role === 'worker' ? processedSkills : undefined,
             category: role === 'worker' ? category : undefined,
             mainCategory: role === 'worker' ? mainCategory : undefined,
-            serviceType: role === 'worker' ? serviceType : 'Residency',
+            serviceType: serviceType || 'Residency',
             experience: role === 'worker' ? experience : 0,
             serviceDescription: role === 'worker' ? serviceDescription : undefined,
             dob: role === 'worker' ? dob : undefined,
