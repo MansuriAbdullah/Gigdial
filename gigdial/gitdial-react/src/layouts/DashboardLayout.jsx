@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
 import { getFullImagePath } from '../utils/imagePath';
+import LeadNotification from '../components/Dashboard/LeadNotification';
 
 const SidebarItem = ({ icon: Icon, label, path, active, onClick }) => (
     <Link to={path} onClick={onClick}>
@@ -101,6 +102,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] flex font-sans relative">
+            {role === 'worker' && <LeadNotification />}
             {/* Mobile Sidebar Overlay */}
             <AnimatePresence>
                 {isSidebarOpen && window.innerWidth < 1024 && (

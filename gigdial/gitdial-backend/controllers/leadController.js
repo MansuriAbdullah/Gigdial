@@ -49,32 +49,44 @@ const getWorkerLeads = asyncHandler(async (req, res) => {
         throw new Error('User not found');
     }
 
-    // Check subscription
-    if (!user.subscription || !user.subscription.isActive) {
-        // Return empty or error? Or specific message.
-        // User asked for 499 package... purchase karne ke baad usko lead ani chaheyie"
-        // So if no package, no leads.
-        return res.status(403).json({
-            message: 'Subscription required to view leads',
-            leads: [],
-            subscriptionRequired: true
-        });
-    }
-
-    // Check expiry
-    if (new Date(user.subscription.endDate) < new Date()) {
-        return res.status(403).json({
-            message: 'Subscription expired',
-            leads: [],
-            subscriptionRequired: true
-        });
-    }
-
     const leads = await Lead.find({ worker: req.user._id })
         .populate('user', 'name email phone city profileImage') // Populate user details who viewed
         .sort({ viewedAt: -1 });
 
-    res.json(leads);
+    // Check subscription
+    const isSubscribed = user.subscription && user.subscription.isActive && new Date(user.subscription.endDate) > new Date();
+
+    if (!isSubscribed) {
+        // Return masked leads
+        const maskedLeads = leads.map(lead => {
+            const leadObj = lead.toObject();
+            if (leadObj.user) {
+                leadObj.user.name = "Verified Customer"; // Mask name
+                leadObj.user.phone = "**********"; // Mask phone
+                leadObj.user.email = "********@****.com"; // Mask email
+                leadObj.user.city = "Hidden";
+                leadObj.user.profileImage = null; // Hide image
+            } else if (leadObj.phoneNumber) {
+                leadObj.phoneNumber = "**********"; // Mask anonymous phone
+            }
+            return {
+                ...leadObj,
+                isMasked: true
+            };
+        });
+
+        return res.json({
+            message: 'Subscription required to view full lead details',
+            leads: maskedLeads,
+            subscriptionRequired: true
+        });
+    }
+
+    res.json({
+        message: 'Leads fetched successfully',
+        leads: leads,
+        subscriptionRequired: false
+    });
 });
 
 // @desc    Record an anonymous lead with phone number

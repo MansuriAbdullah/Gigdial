@@ -84,6 +84,33 @@ const WorkerPackages = () => {
         }
     };
 
+    const handleCancel = async () => {
+        if (!window.confirm("Are you sure you want to cancel your active plan? This action cannot be undone.")) return;
+
+        setLoading(true);
+        try {
+            const response = await fetch('/api/subscriptions/cancel', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${userInfo?.token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success('Plan cancelled successfully');
+                checkSubscription();
+            } else {
+                toast.error(data.message || 'Cancellation failed');
+            }
+        } catch (error) {
+            toast.error('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const packages = [
         {
             id: 'monthly',
@@ -119,13 +146,22 @@ const WorkerPackages = () => {
                         </div>
 
                         {currentPlan.refundStatus === 'none' ? (
-                            <button
-                                onClick={handleRefund}
-                                disabled={loading}
-                                className="text-xs font-bold text-red-600 hover:text-red-700 underline underline-offset-4"
-                            >
-                                Request Refund (Conditions apply)
-                            </button>
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={handleRefund}
+                                    disabled={loading}
+                                    className="text-xs font-bold text-red-600 hover:text-red-700 underline underline-offset-4"
+                                >
+                                    Request Refund (Conditions apply)
+                                </button>
+                                <button
+                                    onClick={handleCancel}
+                                    disabled={loading}
+                                    className="text-xs font-bold text-slate-600 hover:text-slate-900 underline underline-offset-4"
+                                >
+                                    Cancel Plan
+                                </button>
+                            </div>
                         ) : (
                             <div className="flex flex-col items-end">
                                 <span className={`text-sm font-bold px-3 py-1 rounded-full ${currentPlan.refundStatus === 'pending' ? 'bg-orange-100 text-orange-700' :

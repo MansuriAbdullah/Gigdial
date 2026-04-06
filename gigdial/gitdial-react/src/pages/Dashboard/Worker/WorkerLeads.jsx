@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, MapPin, Clock, DollarSign, Phone, Mail, User, Eye, Lock, Globe, MessageSquare } from 'lucide-react';
+import { Briefcase, MapPin, Clock, DollarSign, Phone, Mail, User, Eye, Lock, Globe, MessageSquare, Bell } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getFullImagePath } from '../../../utils/imagePath';
 
@@ -107,10 +107,8 @@ const WorkerLeads = () => {
             const data = await response.json();
 
             if (response.ok) {
-                setVisitorLeads(data);
-            } else if (response.status === 403 && data.subscriptionRequired) {
-                setSubscriptionRequired(true);
-                setVisitorLeads([]);
+                setVisitorLeads(data.leads || []);
+                setSubscriptionRequired(data.subscriptionRequired === true);
             } else {
                 setVisitorLeads([]);
             }
@@ -452,89 +450,124 @@ const WorkerLeads = () => {
                 )
             ) : (
                 /* Profile Visitors Content */
-                subscriptionRequired ? (
-                    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 text-center text-white relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-32 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div className="space-y-6">
+                    {subscriptionRequired && (
+                        <div className="bg-gradient-to-br from-blue-600 to-[#003366] rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-24 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
+                            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+                                <div className="space-y-2">
+                                    <h3 className="text-xl font-black flex items-center gap-2 justify-center md:justify-start uppercase tracking-tight">
+                                        <Lock size={20} className="text-blue-300" />
+                                        Unlock Premium Customer Data
+                                    </h3>
+                                    <p className="text-blue-100 font-medium text-sm">
+                                        You have {visitorLeads.length} leads waiting. Purchase the ₹499 plan to see their full profile and contact details!
+                                    </p>
+                                </div>
+                                <Link
+                                    to="/worker-dashboard/packages"
+                                    className="px-8 py-3 bg-white text-blue-800 font-black rounded-xl hover:bg-blue-50 transition-all shadow-lg active:scale-95 text-sm"
+                                >
+                                    UPGRADE TO PREMIUM
+                                </Link>
+                            </div>
+                        </div>
+                    )}
 
-                        <div className="relative z-10 max-w-lg mx-auto">
-                            <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Lock className="text-blue-400" size={32} />
+                    {visitorLeads.length === 0 ? (
+                        <div className="text-center py-12">
+                            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <User className="text-slate-400" size={32} />
                             </div>
-                            <h3 className="text-2xl font-bold mb-3">Unlock Premium Insights</h3>
-                            <p className="text-slate-300 mb-8 leading-relaxed">
-                                See exactly who is viewing your profile! Upgrade to a Premium Package to unlock user leads and grow your business faster.
-                            </p>
-                            <Link
-                                to="/worker-dashboard/packages"
-                                className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-600/30"
-                            >
-                                View Packages
-                            </Link>
+                            <h3 className="text-lg font-bold text-slate-900 mb-2">No profile visitors yet</h3>
+                            <p className="text-slate-500">Share your profile to get more views!</p>
                         </div>
-                    </div>
-                ) : visitorLeads.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <User className="text-slate-400" size={32} />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-900 mb-2">No profile visitors yet</h3>
-                        <p className="text-slate-500">Share your profile to get more views!</p>
-                    </div>
-                ) : (
-                    <div className="grid gap-4">
-                        {visitorLeads.map((item) => (
-                            <div key={item._id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition-all">
-                                <div className="w-12 h-12 bg-slate-100 rounded-full overflow-hidden flex-shrink-0">
-                                    {item.user?.profileImage ? (
-                                        <img src={getFullImagePath(item.user.profileImage)} alt={item.user.name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-slate-400">
-                                            <User size={20} />
+                    ) : (
+                        <div className="grid gap-4">
+                            {visitorLeads.map((item) => (
+                                <div key={item._id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col sm:flex-row items-center gap-4 hover:shadow-md transition-all group/item">
+                                    <div className="w-14 h-14 bg-slate-100 rounded-full overflow-hidden flex-shrink-0 border-2 border-slate-50 group-hover/item:border-blue-100 transition-colors">
+                                        {item.user?.profileImage ? (
+                                            <img src={getFullImagePath(item.user.profileImage)} alt={item.user.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                                <User size={24} />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 text-center sm:text-left">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1 justify-center sm:justify-start">
+                                            <h4 className="font-black text-slate-900 text-lg">
+                                                {item.user?.name || 'Verified Customer'}
+                                            </h4>
+                                            <div className="flex items-center gap-2 justify-center sm:justify-start">
+                                                {item.isAnonymous && (
+                                                    <span className="px-2.5 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100 flex items-center gap-1">
+                                                        <Bell size={10} className="fill-blue-600" />
+                                                        Fresh Lead
+                                                    </span>
+                                                )}
+                                                {item.isMasked && (
+                                                    <span className="px-2.5 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-amber-100 flex items-center gap-1">
+                                                        <Lock size={10} className="fill-amber-600" />
+                                                        Locked
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
-                                    )}
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <h4 className="font-bold text-slate-900">
-                                            {item.isAnonymous ? 'Landing Page Visitor' : (item.user?.name || 'Guest User')}
-                                        </h4>
-                                        {item.isAnonymous && (
-                                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100">
-                                                New Lead
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                                        <p className="text-sm text-slate-500 flex items-center gap-2">
-                                            <Clock size={12} />
-                                            Viewed on {new Date(item.viewedAt).toLocaleDateString()} at {new Date(item.viewedAt).toLocaleTimeString()}
-                                        </p>
-                                        {item.phoneNumber && (
-                                            <p className="text-sm font-black text-blue-600 flex items-center gap-2">
-                                                <Phone size={12} />
-                                                {item.phoneNumber}
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 justify-center sm:justify-start">
+                                            <p className="text-xs text-slate-500 font-bold flex items-center gap-2 justify-center sm:justify-start">
+                                                <Clock size={14} className="text-slate-400" />
+                                                Viewed on {new Date(item.viewedAt).toLocaleDateString()} at {new Date(item.viewedAt).toLocaleTimeString()}
                                             </p>
+                                            {!item.isMasked && (item.user?.phone || item.phoneNumber) && (
+                                                <p className="text-xs text-blue-600 font-black flex items-center gap-2 justify-center sm:justify-start">
+                                                    <Phone size={14} />
+                                                    {item.user?.phone || item.phoneNumber}
+                                                </p>
+                                            )}
+                                            {item.user?.city && item.user.city !== 'Hidden' && (
+                                                <p className="text-xs text-slate-500 font-bold flex items-center gap-2 justify-center sm:justify-start">
+                                                    <MapPin size={14} className="text-slate-400" />
+                                                    {item.user.city}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 w-full sm:w-auto">
+                                        {item.isMasked ? (
+                                            <Link
+                                                to="/worker-dashboard/packages"
+                                                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-50 text-blue-700 text-xs font-black rounded-xl hover:bg-blue-100 transition-all border border-blue-100 whitespace-nowrap"
+                                            >
+                                                <Lock size={14} />
+                                                UNLOCK CONTACT
+                                            </Link>
+                                        ) : (
+                                            <>
+                                                {(item.user?.phone || item.phoneNumber) && (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-black text-blue-700 hidden md:inline">
+                                                            {item.user?.phone || item.phoneNumber}
+                                                        </span>
+                                                        <a href={`tel:${item.user?.phone || item.phoneNumber}`} className="flex-1 sm:flex-none p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-colors shadow-sm" title="Call">
+                                                            <Phone size={18} />
+                                                        </a>
+                                                    </div>
+                                                )}
+                                                {item.user?.email && (
+                                                    <a href={`mailto:${item.user.email}`} className="flex-1 sm:flex-none p-3 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 transition-colors border border-slate-100" title="Email">
+                                                        <Mail size={18} />
+                                                    </a>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </div>
-                                {(item.user || item.phoneNumber) && (
-                                    <div className="flex gap-2">
-                                        {(item.user?.phone || item.phoneNumber) && (
-                                            <a href={`tel:${item.user?.phone || item.phoneNumber}`} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors shadow-sm" title="Call">
-                                                <Phone size={18} />
-                                            </a>
-                                        )}
-                                        {item.user?.email && (
-                                            <a href={`mailto:${item.user.email}`} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors" title="Email">
-                                                <Mail size={18} />
-                                            </a>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )
+                            ))}
+                        </div>
+                    )}
+                </div>
             )}
             {/* OTP Modal */}
             {isOtpModalOpen && (

@@ -139,10 +139,35 @@ const getSubscriptionStatus = asyncHandler(async (req, res) => {
     res.json(user.subscription || { plan: 'none', isActive: false });
 });
 
+// @desc    Cancel Current Subscription
+// @route   PUT /api/subscriptions/cancel
+// @access  Private (Worker only)
+const cancelSubscription = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    if (!user.subscription || !user.subscription.isActive) {
+        res.status(400);
+        throw new Error('No active subscription found to cancel');
+    }
+
+    user.subscription.isActive = false;
+    user.subscription.cancelledAt = new Date();
+
+    await user.save();
+
+    res.json({ message: 'Subscription cancelled successfully', subscription: user.subscription });
+});
+
 export {
     purchaseSubscription,
     getSubscriptionStatus,
     requestRefund,
     getAllRefundRequests,
-    updateRefundStatus
+    updateRefundStatus,
+    cancelSubscription
 };

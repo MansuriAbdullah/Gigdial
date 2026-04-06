@@ -4,7 +4,8 @@ import {
     getSubscriptionStatus,
     requestRefund,
     getAllRefundRequests,
-    updateRefundStatus
+    updateRefundStatus,
+    cancelSubscription
 } from '../controllers/subscriptionController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -13,6 +14,7 @@ const router = express.Router();
 router.post('/purchase', protect, purchaseSubscription);
 router.get('/status', protect, getSubscriptionStatus);
 router.post('/refund', protect, requestRefund);
+router.put('/cancel', protect, cancelSubscription);
 
 // Admin routes
 router.get('/refunds', protect, admin, getAllRefundRequests);

@@ -251,47 +251,79 @@ const Hero = () => {
                                 </motion.div>
                             </div>
 
-                            {/* Floating "Congratulations" Card (No Phone Frame) */}
+                            {/* Floating "Subscription" Card */}
                             <motion.div
                                 initial={{ y: 40, opacity: 0, scale: 0.9 }}
                                 animate={{ y: 0, opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.8, type: "spring", stiffness: 100 }}
                                 className="relative sm:absolute bottom-auto sm:-bottom-10 md:bottom-24 sm:-left-10 md:-left-16 z-30 pointer-events-auto mt-6 sm:mt-0 mx-auto sm:mx-0 w-max"
                             >
-                                <div className="bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] p-4 sm:p-5 w-[220px] sm:w-[240px] border border-slate-100 relative overflow-hidden">
-                                    {/* Background Decoration */}
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-50 to-transparent rounded-bl-3xl -z-10"></div>
+                                <div className="relative group/card p-[2px] rounded-3xl overflow-hidden hover:scale-105 transition-all duration-500 shadow-[0_20px_50px_-15px_rgba(0,51,102,0.3)]">
+                                    {/* Animated Logo Color Gradient Border */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-[#003366] via-[#66CC33] to-[#003366] bg-[length:200%_auto] animate-gradient opacity-90 group-hover/card:opacity-100 transition-opacity"></div>
+                                    
+                                    <div className="relative bg-white/95 backdrop-blur-md rounded-[calc(1.5rem-1px)] p-5 w-[230px] sm:w-[260px] flex flex-col gap-4 overflow-hidden">
+                                        {/* Luxury Glass Shine Effect */}
+                                        <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-1000 pointer-events-none">
+                                            <div className="absolute top-0 -left-[100%] w-[100%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer"></div>
+                                        </div>
 
-                                    <div className="flex flex-col items-start gap-3">
-                                        <div className="flex items-center gap-3 w-full">
-                                            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">
-                                                <Check size={20} strokeWidth={3} />
+                                        <div className="flex items-center gap-3 relative z-10">
+                                            <div className="w-11 h-11 bg-gradient-to-br from-[#003366] to-[#014c96] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#003366]/20 group-hover/card:rotate-6 transition-transform">
+                                                <Shield size={22} strokeWidth={2.5} className="group-hover/card:animate-pulse" />
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-slate-800 text-sm">Congratulations!</h3>
-                                                <p className="text-[10px] text-slate-500 font-medium">Number Activated</p>
+                                                <h3 className="font-black text-slate-950 text-[13px] tracking-tight uppercase leading-none mb-1">RISK-FREE SUBSCRIPTION</h3>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-[#66CC33] animate-pulse"></div>
+                                                    <p className="text-[10px] text-[#003366] font-black">Unlimited Verified Leads</p>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="w-full bg-slate-50 border border-slate-100 rounded-lg p-3 text-center relative group">
-                                            <p className="text-[9px] uppercase text-slate-400 font-bold tracking-wider mb-1">GIGDIAL BUSINESS NUMBER</p>
-                                            <p className="text-lg font-mono font-bold text-slate-900 tracking-wider">
-                                                081 4331 <span className="text-emerald-500">44XX</span>
-                                            </p>
+                                        <div className="space-y-4 relative z-10">
+                                            {/* Price Section with Border */}
+                                            <div className="bg-white border-2 border-[#003366]/20 rounded-2xl p-4 text-center transform group-hover/card:translate-y-[-2px] transition-all duration-300 group-hover/card:border-[#003366]/40 shadow-sm leading-none">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <p className="text-3xl font-black text-slate-950">₹499</p>
+                                                    <div className="text-left mt-1">
+                                                        <p className="text-xs font-bold text-slate-600 leading-none">/mo</p>
+                                                        <p className="text-[8px] font-black text-[#66CC33] uppercase">Best Value</p>
+                                                    </div>
+                                                </div>
+                                                <p className="text-[9px] text-slate-500 font-extrabold mt-2 uppercase tracking-widest leading-none">(Taxes Included)</p>
+                                            </div>
+
+                                            {/* Guarantee Section with Border */}
+                                            <div className="relative group/box">
+                                                <div className="bg-gradient-to-br from-[#003366]/5 to-[#66CC33]/5 border-2 border-[#66CC33]/30 rounded-2xl p-4 group-hover/card:bg-white transition-all duration-500 text-center group-hover/card:border-[#66CC33]/50 shadow-sm">
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <p className="text-[10px] text-slate-950 font-black">0 Qualified Leads = Refund*</p>
+                                                        <div className="flex items-center gap-2 w-full">
+                                                            <div className="h-px flex-1 bg-slate-200"></div>
+                                                            <p className="text-[9px] text-[#003366] font-black italic whitespace-nowrap px-1">Refund within 24 Hours</p>
+                                                            <div className="h-px flex-1 bg-slate-200"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        {/* Start Calling Button */}
-                                        <button className="w-full bg-slate-900 text-white font-bold text-[10px] py-3 rounded-lg shadow-lg shadow-slate-900/10 hover:bg-emerald-600 hover:shadow-emerald-500/20 transition-all duration-300 flex items-center justify-center gap-2 group mt-1">
-                                            <Phone size={12} className="group-hover:animate-pulse" />
-                                            START CALLING
-                                        </button>
-
-                                        <div className="w-full flex items-center justify-between text-[10px] font-semibold text-slate-400 pt-1 border-t border-slate-100 mt-1">
-                                            <span>Active Now</span>
-                                            <div className="flex gap-1 items-center">
-                                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                                                <span className="text-emerald-600">Online</span>
+                                        <div className="flex flex-col gap-2 pt-2 border-t border-slate-200 relative z-10">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex -space-x-2">
+                                                    {[1,2,3,4].map(i => (
+                                                        <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-slate-200 shadow-sm overflow-hidden hover:z-20 transform hover:scale-110 transition-transform">
+                                                            <img src={`https://i.pravatar.cc/100?img=${i+50}`} className="w-full h-full object-cover" alt="User" />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[10px] text-slate-950 font-black">1000+ Workers</p>
+                                                    <p className="text-[8px] text-[#66CC33] font-black uppercase">Platform Choice</p>
+                                                </div>
                                             </div>
+                                            <p className="text-[8px] text-slate-500 font-black italic text-center">*Tax Charges Deducted</p>
                                         </div>
                                     </div>
                                 </div>
