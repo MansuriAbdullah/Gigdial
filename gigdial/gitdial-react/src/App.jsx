@@ -15,6 +15,8 @@ const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const Login = React.lazy(() => import('./pages/Auth/Login'));
 const Register = React.lazy(() => import('./pages/Auth/Register'));
 const CustomerRegister = React.lazy(() => import('./pages/Auth/CustomerRegister'));
+const ForgotPassword = React.lazy(() => import('./pages/Auth/ForgotPassword'));
+const ResetPassword = React.lazy(() => import('./pages/Auth/ResetPassword'));
 const RoleSelection = React.lazy(() => import('./pages/Auth/RoleSelection'));
 const WorkerDashboard = React.lazy(() => import('./pages/Dashboard/WorkerDashboard'));
 const CustomerDashboard = React.lazy(() => import('./pages/Dashboard/CustomerDashboard'));
@@ -76,6 +78,8 @@ function AnimatedRoutes() {
             <Route path="/register" element={<RoleSelection />} />
             <Route path="/register/worker" element={<Register />} />
             <Route path="/register/customer" element={<CustomerRegister />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
             {/* Dashboard Routes (Custom Layout) */}
             <Route element={<ProtectedRoute allowedRoles={['worker']} />}>

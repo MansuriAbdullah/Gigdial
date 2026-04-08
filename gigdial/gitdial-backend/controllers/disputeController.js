@@ -20,11 +20,16 @@ const createDispute = asyncHandler(async (req, res) => {
     res.status(201).json(dispute);
 });
 
-// @desc    Get all disputes (Admin)
+// @desc    Get disputes (Admin gets all, user gets their own)
 // @route   GET /api/disputes
-// @access  Private/Admin
+// @access  Private
 const getDisputes = asyncHandler(async (req, res) => {
-    const disputes = await Dispute.find({})
+    let query = {};
+    if (!req.user.isAdmin) {
+        query = { complainant: req.user._id };
+    }
+
+    const disputes = await Dispute.find(query)
         .populate('complainant', 'name email')
         .populate('defendant', 'name email')
         .populate('order', 'title status price')

@@ -1,10 +1,12 @@
 import asyncHandler from 'express-async-handler';
+import crypto from 'crypto';
 import User from '../models/User.js';
 import Order from '../models/Order.js';
 import Review from '../models/Review.js';
 import Wallet from '../models/Wallet.js';
 import Notification from '../models/Notification.js';
 import generateToken from '../utils/generateToken.js';
+import sendEmail from '../utils/sendEmail.js';
 
 // @desc    Auth user/set token
 // @route   POST /api/users/auth
@@ -104,6 +106,57 @@ const registerUser = async (req, res) => {
             await Wallet.create({ user: user._id, balance: 0 });
 
             const token = generateToken(res, user._id);
+
+            // Send Emails in background (No await to keep response fast)
+            (async () => {
+                try {
+                    const message = `Welcome to GigDial, ${user.name}! \n\nWe are excited to have you as a ${user.role} on our platform. Find services or list your expertise instantly. \n\nBest Regards,\nTeam GigDial`;
+                    const html = `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <img src="https://i.ibb.co/Xz9kXkX/logo-png.png" alt="GigDial" style="height: 60px;">
+                            </div>
+                            <h2 style="color: #0f172a; font-size: 24px;">Welcome to GigDial, ${user.name}!</h2>
+                            <p style="color: #475569; line-height: 1.6;">We are excited to have you as a <strong>${user.role}</strong> on our platform. Whether you're looking for expert help or offering your services, we're here to help you get the job done.</p>
+                            <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 24px 0;">
+                            <p style="color: #64748b; font-size: 14px;">If you have any questions, feel free to reply to this email.</p>
+                            <p style="color: #0f172a; font-weight: bold; margin-top: 24px;">Best Regards,<br>Team GigDial</p>
+                        </div>
+                    `;
+
+                    console.log(`[Email] Attempting welcome mail to: ${user.email}`);
+                    await sendEmail({
+                        email: user.email,
+                        subject: 'Welcome to GigDial!',
+                        message,
+                        html
+                    });
+                    console.log(`✔ [Email] User mail sent: ${user.email}`);
+
+                    // Admin Notification (Sending to self as alert)
+                    const adminMail = process.env.EMAIL_USER;
+                    const adminMessage = `New ${user.role} Registered! \nName: ${user.name} \nEmail: ${user.email} \nPhone: ${user.phone}`;
+                    await sendEmail({
+                        email: adminMail,
+                        subject: `New ${user.role} Alert: ${user.name}`,
+                        message: adminMessage,
+                        html: `
+                            <div style="font-family: sans-serif; background: #f8fafc; padding: 20px;">
+                                <h2 style="color: #1e293b;">New ${user.role.toUpperCase()} Joined GigDial!</h2>
+                                <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+                                    <p><strong>Name:</strong> ${user.name}</p>
+                                    <p><strong>Email:</strong> ${user.email}</p>
+                                    <p><strong>Phone:</strong> ${user.phone}</p>
+                                    <p><strong>City:</strong> ${user.city}</p>
+                                </div>
+                            </div>
+                        `
+                    });
+                    console.log(`✔ [Email] Admin notification sent to ${adminMail}`);
+                } catch (err) {
+                    console.error(`✘ [Email] Critical Error:`, err);
+                }
+            })();
 
             res.status(201).json({
                 _id: user._id,
@@ -859,6 +912,101 @@ const getWorkerCategories = async (req, res) => {
     res.json(['Driver', 'Plumber', 'Electrician', 'House Help', 'Tutor', 'Fitness', 'Elder Care', 'IT Support', 'Cleaning', 'Electrical', 'Carpentry', 'Painting', 'Appliance Repair']);
 };
 
+
+// @desc    Forgot Password
+// @route   POST /api/users/forgot-password
+// @access  Public
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found with this email' });
+        }
+
+        // Generate reset token
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        // Hash token and set to field
+        user.resetPasswordToken = crypto
+            .createHash('sha256')
+            .update(resetToken)
+            .digest('hex');
+
+        // Set expire (10 minutes)
+        user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+
+        await user.save({ validateBeforeSave: false });
+
+        // Create reset URL (Point to Frontend, not backend)
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+
+        const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please click on the following link, or paste this into your browser to complete the process: \n\n ${resetUrl}`;
+        const html = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h2 style="color: #0b3a69;">Password Reset Request</h2>
+                <p>You requested a password reset. Please click the button below to reset your password. This link is valid for 10 minutes.</p>
+                <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #0b3a69; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0;">Reset Password</a>
+                <p>If you did not request this, please ignore this email.</p>
+            </div>
+        `;
+
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: 'Password Reset Request',
+                message,
+                html
+            });
+
+            res.status(200).json({ success: true, message: 'Email sent' });
+        } catch (err) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            await user.save({ validateBeforeSave: false });
+
+            return res.status(500).json({ message: 'Email could not be sent' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Reset Password
+// @route   PUT /api/users/reset-password/:resettoken
+// @access  Public
+const resetPassword = async (req, res) => {
+    try {
+        // Hash the token sent in the request
+        const resetPasswordToken = crypto
+            .createHash('sha256')
+            .update(req.params.resettoken)
+            .digest('hex');
+
+        const user = await User.findOne({
+            resetPasswordToken,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired reset token' });
+        }
+
+        // Set new password
+        user.password = req.body.password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Password reset successful' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     authUser,
     registerUser,
@@ -885,5 +1033,7 @@ export {
     toggleBlockUser,
     getFavourites,
     toggleFavorite,
-    getWorkerCategories
+    getWorkerCategories,
+    forgotPassword,
+    resetPassword
 };

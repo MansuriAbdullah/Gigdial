@@ -56,7 +56,7 @@ const Header = () => {
 
                         {/* Logo */}
                         <Link to="/" className="flex-shrink-0 group flex items-center gap-2.5">
-                            <img src="/logo.png" alt="GigDial" className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain group-hover:scale-105 transition-transform" />
+                            <img src="/images/gigdial-logo.png" alt="GigDial" className="h-10 sm:h-12 md:h-14 lg:h-16 w-auto object-contain group-hover:scale-105 transition-transform" />
                         </Link>
 
                         {/* Navigation (Desktop) */}
@@ -220,7 +220,7 @@ const Header = () => {
                         >
                             <div className="flex justify-between items-center mb-8 border-b border-slate-50 pb-6">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logo.png" alt="GigDial" className="h-16 w-auto object-contain" />
+                                    <img src="/images/gigdial-logo.png" alt="GigDial" className="h-16 w-auto object-contain" />
                                 </div>
                                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-50 rounded-full text-slate-500">
                                     <X size={24} />

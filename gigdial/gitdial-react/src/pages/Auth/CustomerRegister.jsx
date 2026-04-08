@@ -136,7 +136,7 @@ const CustomerRegister = () => {
             <div className="container max-w-6xl mx-auto relative z-10 px-0 sm:px-4">
                 <div className="text-center mb-6 lg:mb-10 px-4">
                     <Link to="/" className="inline-block mb-4 sm:mb-8 group focus:outline-none active:bg-transparent">
-                        <img src="/images/login-logo.png" alt="GigDial" className="h-8 sm:h-12 w-auto mx-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
+                        <img src="/images/gigdial-logo.png" alt="GigDial" className="h-8 sm:h-12 w-auto mx-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
                     </Link>
                     <h1 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-slate-800 mb-3 md:mb-4">Join as a Customer</h1>
                     <p className="text-slate-500 text-sm sm:text-lg max-w-2xl mx-auto">Find the perfect professional for your needs instantly.</p>

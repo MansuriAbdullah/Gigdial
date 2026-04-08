@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/User.js';
+import sendEmail from '../utils/sendEmail.js';
 
 // @desc    Purchase or Update Subscription Plan
 // @route   POST /api/subscription/purchase
@@ -34,6 +35,48 @@ const purchaseSubscription = asyncHandler(async (req, res) => {
     };
 
     const updatedUser = await user.save();
+
+    // Send Confirmation Emails in background
+    (async () => {
+        try {
+            // 1. To Worker
+            const workerMessage = `Hi ${updatedUser.name}, your ₹499 Monthly Package is now active! \n\nValidity: ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()} \n\nYou can now access premium leads and contact customers directly. \n\nBest Regards,\nTeam GigDial`;
+            const workerHtml = `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background: #ffffff;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="https://i.ibb.co/Xz9kXkX/logo-png.png" alt="GigDial" style="height: 50px;">
+                    </div>
+                    <h2 style="color: #059669; margin-bottom: 10px;">Package Activated Successfully!</h2>
+                    <p style="color: #475569; font-size: 16px;">Hello <strong>${updatedUser.name}</strong>, your premium ₹499 monthly subscription is now active on GigDial.</p>
+                    <div style="background: #f0fdf4; padding: 15px; border-radius: 12px; margin: 20px 0; border: 1px solid #d1fae5;">
+                        <p style="margin: 5px 0;"><strong>Plan:</strong> Monthly Membership</p>
+                        <p style="margin: 5px 0;"><strong>Valid Until:</strong> ${endDate.toLocaleDateString()}</p>
+                        <p style="margin: 5px 0;"><strong>Price Paid:</strong> ₹499</p>
+                    </div>
+                    <p style="color: #64748b; font-size: 14px;">Now you can unlock leads and boost your business earnings.</p>
+                </div>
+            `;
+            await sendEmail({
+                email: updatedUser.email,
+                subject: 'GigDial Package Activated: ₹499 Monthly Plan',
+                message: workerMessage,
+                html: workerHtml
+            });
+
+            // 2. To Admin (Self)
+            const adminMail = process.env.EMAIL_USER;
+            await sendEmail({
+                email: adminMail,
+                subject: `Plan Purchase: ${updatedUser.name} (₹499)`,
+                message: `Worker ${updatedUser.name} (${updatedUser.email}) has purchased the ₹499 monthly plan.`,
+                html: `<div style="padding:20px; background:#f4f4f4;"><h3>Subscription Purchase</h3><p>Worker: ${updatedUser.name}</p><p>Email: ${updatedUser.email}</p><p>Plan: ₹499 Monthly</p></div>`
+            });
+
+            console.log(`✔ [Subscription] Emails sent for ${updatedUser.email}`);
+        } catch (err) {
+            console.error('✘ [Subscription] Email Error:', err);
+        }
+    })();
 
     res.json({
         _id: updatedUser._id,

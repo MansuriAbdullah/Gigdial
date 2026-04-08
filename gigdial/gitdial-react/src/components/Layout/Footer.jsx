@@ -35,7 +35,7 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-4 space-y-6">
                         <Link to="/" className="flex items-center">
-                            <img src="/images/gigdial-logo1.png" alt="GigDial Logo" className="h-12 md:h-14 w-auto object-contain" />
+                            <img src="/images/gigdial-logo.png" alt="GigDial Logo" className="h-12 md:h-14 w-auto object-contain" />
                         </Link>
                         <p className="text-slate-300 text-sm leading-relaxed max-w-sm font-medium">
                             India's leading commission-free marketplace. Empowering connections between verified gig workers and customers with trust and transparency.

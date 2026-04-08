@@ -73,6 +73,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
         { icon: MapPin, label: t('savedAddresses'), path: '/customer-dashboard/addresses' },
         { icon: User, label: t('profile'), path: '/customer-dashboard/profile' },
         { icon: Gift, label: t('referEarn'), path: '/customer-dashboard/refer-earn' },
+        { icon: AlertCircle, label: t('complain'), path: '/customer-dashboard/complain' },
     ];
 
     const adminLinks = [
@@ -123,7 +124,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
                 {/* Logo Section */}
                 <div className="h-20 flex items-center justify-between px-6 border-b border-slate-50 shrink-0">
                     <div className={`flex items-center gap-3 ${!isSidebarOpen && 'lg:justify-center'}`}>
-                        <img src="/logo.png" alt="GigDial" className={`h-16 w-auto object-contain transition-transform ${isSidebarOpen ? '' : 'lg:scale-125'}`} />
+                        <img src="/images/gigdial-logo.png" alt="GigDial" className={`h-16 w-auto object-contain transition-transform ${isSidebarOpen ? '' : 'lg:scale-125'}`} />
                     </div>
                     <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 hover:bg-slate-50 rounded-full text-slate-400">
                         <X size={20} />

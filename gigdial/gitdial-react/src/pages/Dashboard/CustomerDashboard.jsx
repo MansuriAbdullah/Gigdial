@@ -12,6 +12,7 @@ import BrowseServices from './Customer/BrowseServices';
 import BrowseWorkers from './Customer/BrowseWorkers';
 import CustomerMessages from './Customer/CustomerMessages';
 import CustomerProfile from './Customer/CustomerProfile';
+import CustomerComplain from './Customer/CustomerComplain';
 
 const CustomerDashboard = () => {
     return (
@@ -26,6 +27,7 @@ const CustomerDashboard = () => {
                 <Route path="addresses" element={<SavedAddresses />} />
                 <Route path="profile" element={<CustomerProfile />} />
                 <Route path="refer-earn" element={<ReferAndEarn />} />
+                <Route path="complain" element={<CustomerComplain />} />
                 <Route path="*" element={<Navigate to="/customer-dashboard" replace />} />
             </Routes>
         </DashboardLayout>

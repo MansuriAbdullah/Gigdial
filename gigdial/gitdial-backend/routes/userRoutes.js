@@ -25,7 +25,9 @@ import {
     toggleBlockUser,
     getFavourites,
     toggleFavorite,
-    getWorkerCategories
+    getWorkerCategories,
+    forgotPassword,
+    resetPassword
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -42,6 +44,8 @@ router.post('/', upload.fields([
 ]), registerUser);
 router.post('/auth', authUser);
 router.post('/logout', logoutUser);
+router.post('/forgot-password', forgotPassword);
+router.put('/reset-password/:resettoken', resetPassword);
 router.get('/workers', getWorkers);
 router.get('/workers/:id', getWorkerById);
 

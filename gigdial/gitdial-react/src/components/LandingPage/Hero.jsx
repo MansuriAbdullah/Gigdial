@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
-import { Search, Briefcase, MapPin, CheckCircle, Shield, Zap, CreditCard, Phone, Check } from 'lucide-react';
+import { Search, Briefcase, MapPin, CheckCircle, Shield, Zap, CreditCard, Phone, Check, Sparkles } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -24,13 +24,13 @@ const TrustBadge = ({ icon: Icon, title, desc, color = "blue" }) => {
         >
             {/* Always Visible Shimmer Border effect */}
             <div className={`absolute -inset-[1px] bg-gradient-to-r ${gradients[color]} rounded-[1.2rem] blur-[2px] opacity-25 group-hover:opacity-100 transition-opacity duration-300`}></div>
-            
+
             {/* Card Content */}
             <div className={`relative px-4 py-3 rounded-[1.2rem] bg-white border border-slate-100 shadow-lg shadow-slate-200/40 flex items-center gap-4 group-hover:bg-slate-50 transition-colors overflow-hidden`}>
                 <div className={`w-11 h-11 bg-gradient-to-br ${gradients[color]} rounded-[0.9rem] flex items-center justify-center text-white shadow-md transition-transform duration-500 group-hover:rotate-12`}>
                     <Icon size={20} strokeWidth={2.5} />
                 </div>
-                
+
                 <div className="flex-1">
                     <h4 className="text-[13px] font-black text-slate-900 tracking-tight transition-colors">{title}</h4>
                     <p className="text-[10px] font-bold text-slate-500 mt-0.5 italic">{desc}</p>
@@ -91,16 +91,28 @@ const Hero = () => {
                     {/* Left Column: Content */}
                     <div className="flex flex-col items-center text-center lg:items-start lg:text-left order-1 px-2 lg:px-0">
                         <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
+                            className="mb-4 relative"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.8 }}
                         >
-                            <div className="inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-blue-50 border border-blue-100 backdrop-blur-md text-blue-700 text-xs sm:text-sm font-medium mb-4 shadow-sm">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-                                </span>
-                                <span>#1 Marketplace for Gig Workers</span>
+                            <div className="flex items-center gap-4">
+                                <div className="flex flex-col">
+                                    <div className="flex items-center gap-3 mb-1">
+
+                                        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tight leading-tight max-w-2xl">
+                                            <span className="bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-700 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent drop-shadow-sm">
+                                                GigDial kijiye
+                                            </span>
+                                            <span className="text-slate-900 mx-3 italic font-black">aur</span>
+                                            <span className="bg-gradient-to-r from-blue-600 via-emerald-600 to-lime-600 bg-clip-text text-transparent">
+                                                apne kaam ki problem turant solve kijiye.
+                                            </span>
+                                        </h2>
+                                    </div>
+                                    {/* Stylized Underline */}
+
+                                </div>
                             </div>
                         </motion.div>
 
@@ -123,15 +135,7 @@ const Hero = () => {
                             {t('heroSubtitle')}
                         </motion.p>
 
-                        <motion.p
-                            className="max-w-xl text-base md:text-lg text-slate-600 mb-8 leading-relaxed mx-auto lg:mx-0"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6, delay: 0.4 }}
-                        >
-                            Digital Marketplace for Verified Gig Workers & On-Demand Services.
-                            Find the right person for the job, instantly.
-                        </motion.p>
+
 
                         <motion.div
                             className="w-full max-w-lg mb-8"
@@ -261,7 +265,7 @@ const Hero = () => {
                                 <div className="relative group/card p-[2px] rounded-3xl overflow-hidden hover:scale-105 transition-all duration-500 shadow-[0_20px_50px_-15px_rgba(0,51,102,0.3)]">
                                     {/* Animated Logo Color Gradient Border */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-[#003366] via-[#66CC33] to-[#003366] bg-[length:200%_auto] animate-gradient opacity-90 group-hover/card:opacity-100 transition-opacity"></div>
-                                    
+
                                     <div className="relative bg-white/95 backdrop-blur-md rounded-[calc(1.5rem-1px)] p-5 w-[230px] sm:w-[260px] flex flex-col gap-4 overflow-hidden">
                                         {/* Luxury Glass Shine Effect */}
                                         <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-1000 pointer-events-none">
@@ -312,9 +316,9 @@ const Hero = () => {
                                         <div className="flex flex-col gap-2 pt-2 border-t border-slate-200 relative z-10">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex -space-x-2">
-                                                    {[1,2,3,4].map(i => (
+                                                    {[1, 2, 3, 4].map(i => (
                                                         <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-slate-200 shadow-sm overflow-hidden hover:z-20 transform hover:scale-110 transition-transform">
-                                                            <img src={`https://i.pravatar.cc/100?img=${i+50}`} className="w-full h-full object-cover" alt="User" />
+                                                            <img src={`https://i.pravatar.cc/100?img=${i + 50}`} className="w-full h-full object-cover" alt="User" />
                                                         </div>
                                                     ))}
                                                 </div>

@@ -86,7 +86,7 @@ const Login = () => {
                     {/* Role Toggle Switch */}
                     <div className="flex items-center justify-between gap-4 mb-8 lg:absolute lg:top-12 lg:right-12 lg:mb-0">
                         <Link to="/" className="inline-block lg:hidden group focus:outline-none active:bg-transparent">
-                            <img src="/images/login-logo.png" alt="GigDial" className="h-8 md:h-10 w-auto mix-blend-multiply select-none" />
+                            <img src="/images/gigdial-logo.png" alt="GigDial" className="h-8 md:h-10 w-auto mix-blend-multiply select-none" />
                         </Link>
                         <div className="bg-slate-100/80 p-1.5 rounded-2xl flex shadow-inner border border-slate-200/60 w-fit backdrop-blur-sm relative">
                             <button
@@ -124,7 +124,7 @@ const Login = () => {
 
                     <div className="mb-6 lg:mb-10 lg:mt-0">
                         <Link to="/" className="hidden lg:inline-block mb-6 group focus:outline-none active:bg-transparent">
-                            <img src="/images/login-logo.png" alt="GigDial" className="h-14 w-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
+                            <img src="/images/gigdial-logo.png" alt="GigDial" className="h-14 w-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply select-none" />
                         </Link>
                         <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-display font-black text-slate-800 mb-3 md:mb-4 tracking-tighter uppercase whitespace-nowrap">
                             Login with {role}
@@ -161,7 +161,7 @@ const Login = () => {
                         <div className="space-y-2 group">
                             <div className="flex justify-between items-center ml-1">
                                 <label className="text-sm font-semibold text-slate-700">Passcode</label>
-                                <a href="#" className="text-xs font-semibold text-primary hover:text-primary-dark transition-colors">Forgot Password?</a>
+                                <Link to="/forgot-password" title="Forgot Password?" className="text-xs font-semibold text-primary hover:text-primary-dark transition-colors">Forgot Password?</Link>
                             </div>
                             <div className="relative transform group-focus-within:scale-[1.01] transition-transform duration-300">
                                 <div className="absolute left-0 top-0 bottom-0 w-14 flex items-center justify-center text-slate-400 group-focus-within:text-primary transition-colors">

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route('/')
     .post(protect, createDispute)
-    .get(protect, admin, getDisputes);
+    .get(protect, getDisputes);
 
 router.route('/:id')
     .put(protect, admin, updateDispute);

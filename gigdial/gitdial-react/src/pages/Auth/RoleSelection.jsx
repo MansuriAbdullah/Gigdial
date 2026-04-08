@@ -17,7 +17,7 @@ const RoleSelection = () => {
             <div className="container max-w-5xl mx-auto relative z-10 px-4">
                 <div className="text-center mb-10">
                     <Link to="/" className="inline-block mb-8 group focus:outline-none">
-                        <img src="/images/login-logo.png" alt="GigDial" className="h-10 sm:h-12 w-auto mx-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply" />
+                        <img src="/images/gigdial-logo.png" alt="GigDial" className="h-10 sm:h-12 w-auto mx-auto group-hover:scale-105 transition-transform duration-300 mix-blend-multiply" />
                     </Link>
                     <h1 className="text-3xl md:text-5xl font-display font-bold text-slate-800 mb-4">Join GigDial</h1>
                     <p className="text-slate-500 text-lg">Choose how you want to use our platform</p>
