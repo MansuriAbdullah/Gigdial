@@ -8,6 +8,24 @@ import Order from '../models/Order.js';
 const createDispute = asyncHandler(async (req, res) => {
     const { orderId, defendantId, reason, description } = req.body;
 
+    // If worker is complainant, verify they have served the defendant
+    if (req.user.isProvider && !req.user.isAdmin) {
+        let hasHistory = false;
+        
+        if (orderId) {
+            const order = await Order.findOne({ _id: orderId, seller: req.user._id, buyer: defendantId });
+            if (order) hasHistory = true;
+        } else if (defendantId) {
+            const order = await Order.findOne({ seller: req.user._id, buyer: defendantId });
+            if (order) hasHistory = true;
+        }
+
+        if (!hasHistory) {
+            res.status(403);
+            throw new Error('You can only complain about customers you have served.');
+        }
+    }
+
     const dispute = await Dispute.create({
         complainant: req.user._id,
         defendant: defendantId, // Optional if orderId provided

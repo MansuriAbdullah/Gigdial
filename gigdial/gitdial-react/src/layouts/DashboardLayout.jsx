@@ -61,6 +61,7 @@ const DashboardLayout = ({ children, role = 'worker' }) => {
         { icon: FileText, label: t('earnings'), path: '/worker-dashboard/earnings' },
         { icon: User, label: t('profile'), path: '/worker-dashboard/profile' },
         { icon: Settings, label: t('settings'), path: '/worker-dashboard/settings' },
+        { icon: AlertCircle, label: t('complain'), path: '/worker-dashboard/complain' },
     ];
 
     const customerLinks = [
