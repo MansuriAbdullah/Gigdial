@@ -4,7 +4,8 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 import Hero from '../components/LandingPage/Hero';
-import Stats from '../components/LandingPage/Stats';
+import ServiceGrid from '../components/LandingPage/ServiceGrid';
+import HowItWorksMockup from '../components/LandingPage/HowItWorksMockup';
 import ServiceShowcase from '../components/LandingPage/ServiceShowcase';
 import BrowseWorkersMinimal from '../components/LandingPage/BrowseWorkersMinimal';
 import Testimonials from '../components/LandingPage/Testimonials';
@@ -44,11 +45,15 @@ const LandingPage = () => {
             exit="exit"
         >
             <SEO title="Home" description="Connect with verified local professionals for all your service needs. Reliable, fast, and secure." />
-            {/* Hero Section with integrated animations */}
+            {/* Hero Section */}
             <Hero />
 
-            {/* Stats Bar - Overlapping the Hero bottom */}
-            <Stats />
+            {/* 45+ Services Grid - Directly below hero cards */}
+            <ServiceGrid />
+
+            {/* How It Works + Trusted Users */}
+            <HowItWorksMockup />
+
 
             {/* Live Demo Section - New Addition */}
             <LiveDemoSection />

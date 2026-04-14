@@ -131,9 +131,10 @@ const AppShowcase = () => {
                         Next-Gen Mobile Platform
                     </motion.div>
 
-                    <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter leading-[1.1]">
-                        One Mobile App to Manage <br className="hidden md:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-500">All Your Requirements</span>
+                    <h2 className="text-4xl sm:text-5xl lg:text-5xl font-bold text-slate-900 tracking-tight leading-[1.1] mb-6">
+                        One Mobile App to Manage
+                        <br />
+                        All Your Requirements
                     </h2>
                     <p className="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto font-bold italic leading-relaxed">
                         Powerful features packaged in a simple, intuitive mobile interface designed for speed and reliability.

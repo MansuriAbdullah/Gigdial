@@ -91,9 +91,9 @@ const Testimonials = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-[1.1]"
+                        className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight mb-6"
                     >
-                        Loved by <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-rose-500 to-emerald-500">Industry Leaders</span> & Locals
+                        Loved by Industry Leaders & Locals
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}

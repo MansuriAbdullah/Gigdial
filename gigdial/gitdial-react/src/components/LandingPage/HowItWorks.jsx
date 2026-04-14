@@ -78,8 +78,8 @@ const HowItWorks = () => {
                         <span className="text-[9px] font-black uppercase text-blue-700 tracking-widest">How It Works</span>
                     </div>
 
-                    <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-                        How <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-rose-500">GigDial</span> Works
+                    <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight mb-4">
+                        How GigDial Works
                     </h2>
                     <p className="text-slate-500 max-w-2xl mx-auto text-lg font-medium opacity-80">
                         A seamless experience, from search to service.

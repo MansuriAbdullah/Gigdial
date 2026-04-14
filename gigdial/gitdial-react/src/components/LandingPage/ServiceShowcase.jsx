@@ -463,8 +463,8 @@ const ServiceShowcase = () => {
             <Zap className="w-4 h-4 text-blue-600" />
             <span className="text-sm font-semibold text-blue-700">Handpicked Premium Services</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Premium Services</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-6">
+            Discover Premium Services
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Handpicked professionals delivering exceptional service with verified ratings and instant booking.
@@ -656,7 +656,7 @@ const ServiceShowcase = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-lime-600 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-lime-500/30 transition-all duration-300"
+              className="px-8 py-3 bg-gradient-to-r from-[#2f5af4] to-[#6049e6] hover:from-[#2143bf] hover:to-[#4a39b3] text-white font-black rounded-[2rem] hover:shadow-2xl shadow-lg shadow-indigo-500/30 transition-all duration-300"
             >
               Browse All Categories
             </motion.button>

@@ -53,9 +53,9 @@ const BlogSection = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-[1.1]"
+                            className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-[1.1]"
                         >
-                            Knowledge <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-rose-500 to-emerald-500">Center</span>
+                            Knowledge Center
                         </motion.h2>
                     </div>
                     <motion.div
@@ -63,7 +63,7 @@ const BlogSection = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                     >
-                        <Link to="/blog" className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all group shadow-xl shadow-slate-900/10">
+                        <Link to="/blog" className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#2f5af4] to-[#6049e6] hover:from-[#2143bf] hover:to-[#4a39b3] text-white rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all group shadow-lg shadow-indigo-500/30 hover:shadow-xl">
                             View All Stories
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>

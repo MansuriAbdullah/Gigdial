@@ -192,8 +192,8 @@ const BrowseWorkersMinimal = () => {
                         <Zap className="w-4 h-4 text-blue-600" />
                         <span className="text-sm font-black uppercase text-blue-700 tracking-widest">Verified Professionals</span>
                     </motion.div>
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6">
-                        Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-lime-600">Top Rated</span> Talent
+                    <h2 className="text-3xl md:text-5xl lg:text-[56px] font-bold text-slate-900 tracking-tight leading-[1.05] mb-6">
+                        Discover Top Rated Talent
                     </h2>
                     <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
                         Browse our exclusive network of background-checked gig workers ready to help you with any task, anywhere.

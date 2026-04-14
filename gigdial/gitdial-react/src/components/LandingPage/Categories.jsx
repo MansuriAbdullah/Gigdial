@@ -145,9 +145,9 @@ const Categories = () => {
             initial={{ opacity: 0, y: -10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+            className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight mb-4 leading-tight"
           >
-            Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Premium</span> Services
+            Discover Premium Services
           </motion.h2>
 
           <motion.p
